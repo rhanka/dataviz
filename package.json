@@ -1,0 +1,27 @@
+{
+  "name": "@sentropic/dataviz-root",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "BI / dashboard layer built natively on the Sent Tech design system.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rhanka/dataviz.git"
+  },
+  "license": "MIT",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "build": "npm run build --workspaces --if-present",
+    "check": "npm run check --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present",
+    "lint": "npm run lint --workspaces --if-present",
+    "verify": "npm run build && npm run check && npm run test"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.5"
+  }
+}
