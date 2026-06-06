@@ -51,7 +51,7 @@ Source de vérité : `~/src/sent-tech-design-system/docs/bi-study/INVENTORY.md` 
 - [~] Cartographie géo (pin, choroplèthe/filled, densité, GeoJSON/shape, flux/arcs, hexbin, clustering/couches ; 3D hors-DS) — contrats core pin/choropleth/densité/GeoJSON/flow/hexbin/cluster faits ; reste câblage DS
 
 ## Vague 4 — Authoring & signets  *(claude:dataviz)*
-- [ ] Filtres BI avancés (range slider 2 poignées, date relative, time range, granularité, filtre et/ou, Top N)
+- [~] Filtres BI avancés (range slider 2 poignées, date relative, time range, granularité, filtre et/ou, Top N) — **faits à parité 3 fw** : `TopNFilter` (Top N par mesure), `ValueSlicer` (filtre OU multi-valeurs, CheckboxGroup), `DateRangeFilter` (DatePicker range → filtre range dates) ; **reste** : range slider 2 poignées (FR DS RangeSlider en attente → RangeSliderFilter)
 - [ ] Signets & actions (bookmarks, navigateur/diaporama, actions filtre/URL/set/aller-à, click behavior)
 - [ ] Panneau format & axes (volet Format, éditeur d'axe plage/log/inversé, légendes éditables, marqueurs/forme)
 - [ ] Éditeur de calcul / expression (champ calculé, formule+autocomplétion, calculs table/visuels, variables, bins, groupes, sets)
