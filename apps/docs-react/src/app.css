@@ -1,0 +1,52 @@
+body {
+  margin: 0;
+  background: var(--st-semantic-surface-base, #fff);
+  color: var(--st-semantic-text-primary, #0f172a);
+  font-family: system-ui, sans-serif;
+}
+.page {
+  margin: 0 auto;
+  max-width: 1100px;
+  padding: var(--st-spacing-6, 1.5rem);
+  display: flex;
+  flex-direction: column;
+  gap: var(--st-spacing-6, 1.5rem);
+}
+.page__head {
+  align-items: flex-start;
+  display: flex;
+  gap: var(--st-spacing-4, 1rem);
+  justify-content: space-between;
+}
+.page h1 {
+  margin: 0 0 0.25rem;
+  font-size: 1.5rem;
+}
+.page h2 {
+  margin: 0 0 var(--st-spacing-3, 0.75rem);
+  font-size: 1.0625rem;
+}
+.page .hint,
+.page p {
+  color: var(--st-semantic-text-secondary, #475569);
+  font-size: 0.875rem;
+  margin: 0 0 var(--st-spacing-3, 0.75rem);
+}
+.bar,
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--st-spacing-4, 1rem);
+  align-items: flex-end;
+}
+.charts {
+  display: grid;
+  gap: var(--st-spacing-4, 1rem);
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+}
+.card {
+  background: var(--st-semantic-surface-raised, #fff);
+  border: 1px solid var(--st-semantic-border-subtle, #e2e8f0);
+  border-radius: var(--st-radius-lg, 0.5rem);
+  padding: var(--st-spacing-4, 1rem);
+}
