@@ -34,11 +34,10 @@ export type {
   FilterState,
   SelectionState,
   DashboardState,
-  FilterInput,
   DashboardStoreConfig,
   DashboardStore,
 } from './store.js';
-export { createDashboardStore, specToPredicate, applyFilters } from './store.js';
+export { createDashboardStore, specToPredicate, applyFilters, isFilterSpec } from './store.js';
 
 // Crossfilter
 export type { CrossfilterView, CrossfilterGraph } from './crossfilter.js';
@@ -54,4 +53,4 @@ export {
 } from './aggregate.js';
 
 // Serialize
-export { isFilterSpec, serializeFilters, deserializeFilters } from './serialize.js';
+export { serializeFilters, deserializeFilters } from './serialize.js';

@@ -33,6 +33,11 @@ describe('isFilterSpec', () => {
   it('rejects range with non-numeric bounds', () => {
     expect(isFilterSpec({ kind: 'range', min: 'x' })).toBe(false);
   });
+  it('rejects range with non-finite bounds', () => {
+    expect(isFilterSpec({ kind: 'range', min: Number.NaN })).toBe(false);
+    expect(isFilterSpec({ kind: 'range', max: Number.POSITIVE_INFINITY })).toBe(false);
+    expect(isFilterSpec({ kind: 'range', min: Number.NEGATIVE_INFINITY })).toBe(false);
+  });
   it('rejects null / non-object', () => {
     expect(isFilterSpec(null)).toBe(false);
     expect(isFilterSpec('x')).toBe(false);
@@ -90,6 +95,13 @@ describe('serialize / deserialize round-trip', () => {
     });
     expect(a).toBe(b);
   });
+
+  it('throws rather than serialising malformed specs lossily', () => {
+    const filters = {
+      age: { kind: 'range', min: Number.NaN } as unknown as FilterState[string],
+    };
+    expect(() => serializeFilters({ filters })).toThrow(/Cannot serialize malformed filter spec/);
+  });
 });
 
 describe('deserialize robustness', () => {
@@ -120,5 +132,9 @@ describe('deserialize robustness', () => {
     expect(deserializeFilters(payload, model)).toEqual({
       country: { kind: 'include', values: ['FR'] },
     });
+  });
+  it('drops non-finite numeric bounds from malicious JSON', () => {
+    const payload = encodeURIComponent('{"age":{"kind":"range","min":1e309}}');
+    expect(deserializeFilters(payload, model)).toEqual({});
   });
 });
