@@ -1,4 +1,4 @@
-import { defineComponent, h, ref, watch, type PropType } from 'vue';
+import { defineComponent, h, ref, watch, type Component, type PropType } from 'vue';
 import { NumberInput } from '@sentropic/design-system-vue';
 import { findMeasure, groupAggregate, type DashboardStore, type Row } from '@sentropic/dataviz-core';
 
@@ -43,8 +43,11 @@ export const TopNFilter = defineComponent({
       props.store.setFilter(props.dimension, { kind: 'include', values: ranked });
     };
     watch(n, apply, { immediate: true });
+    // NumberInput is cast to the generic Vue `Component` type: its highly
+    // generic DefineComponent signature otherwise trips `h()`'s overload
+    // resolution on the `modelValue`/`update:modelValue` (v-model) props.
     return () =>
-      h(NumberInput, {
+      h(NumberInput as Component, {
         label: props.label,
         modelValue: n.value,
         min: 1,
