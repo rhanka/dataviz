@@ -51,7 +51,7 @@ Source de vérité : `~/src/sent-tech-design-system/docs/bi-study/INVENTORY.md` 
 - [~] Cartographie géo (pin, choroplèthe/filled, densité, GeoJSON/shape, flux/arcs, hexbin, clustering/couches ; 3D hors-DS) — contrats core pin/choropleth/densité/GeoJSON/flow/hexbin/cluster faits ; reste câblage DS
 
 ## Vague 4 — Authoring & signets  *(claude:dataviz)*
-- [~] Filtres BI avancés (range slider 2 poignées, date relative, time range, granularité, filtre et/ou, Top N) — **faits à parité 3 fw** : `TopNFilter` (Top N par mesure), `ValueSlicer` (filtre OU multi-valeurs, CheckboxGroup), `DateRangeFilter` (DatePicker range → filtre range dates) ; **reste** : range slider 2 poignées (FR DS RangeSlider en attente → RangeSliderFilter)
+- [~] Filtres BI avancés (range slider 2 poignées, date relative, time range, granularité, filtre et/ou, Top N) — **faits à parité 3 fw** : `TopNFilter` (Top N par mesure), `ValueSlicer` (filtre OU multi-valeurs, CheckboxGroup), `DateRangeFilter` (DatePicker range → filtre range dates), `RelativeDateFilter` (DS `Select` de presets → filtre `range` fenêtre glissante : tout / 7 / 30 / 90 j / 12 mois, `now` injectable) ; **reste** : range slider 2 poignées (le DS `Slider` est mono-poignée → soit composer 2 `Slider`, soit FR DS RangeSlider 2 poignées → `RangeSliderFilter`)
 - [ ] Signets & actions (bookmarks, navigateur/diaporama, actions filtre/URL/set/aller-à, click behavior)
 - [ ] Panneau format & axes (volet Format, éditeur d'axe plage/log/inversé, légendes éditables, marqueurs/forme)
 - [ ] Éditeur de calcul / expression (champ calculé, formule+autocomplétion, calculs table/visuels, variables, bins, groupes, sets)
@@ -63,7 +63,7 @@ Source de vérité : `~/src/sent-tech-design-system/docs/bi-study/INVENTORY.md` 
 
 ## Démo & revue  *(claude:dataviz)*
 - [x] `apps/docs` — dashboard de démo cross-filter sur les 3 frameworks — démos Svelte (`apps/docs`), React (`apps/docs-react`), Vue (`apps/docs-vue`), même dashboard (FilterBar, SelectionLegend, CrossfilteredBarChart ×2 liés, SmallMultiples, Drill, RecordsTable, TopNFilter, ValueSlicer, ExportMenu) ; `vite build` vert (alias workspace)
-- [~] Déploiement GitHub Pages — workflow `.github/workflows/pages.yml` (build des 3 démos + landing, deploy-pages) ; reste à activer Pages côté réglages du dépôt (source = GitHub Actions)
+- [x] Déploiement GitHub Pages — workflow `.github/workflows/pages.yml` (build des 3 démos + landing, deploy-pages) ; **live sur https://rhanka.github.io/dataviz/** (Pages activé source = GitHub Actions par le créateur du dépôt ; 3 démos + landing déployées, HTTP 200)
 - [ ] Revue intégrale « en tant que design system » (tokens/contraste/a11y/parité)
 
 ## Hors couverture (assumé)

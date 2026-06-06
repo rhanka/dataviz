@@ -40,3 +40,9 @@ export { ExportMenu, rowsToCsv } from './lib/ExportMenu.js';
 export type { ExportMenuProps } from './lib/ExportMenu.js';
 export { DateRangeFilter, dateRangeToSpec } from './lib/DateRangeFilter.js';
 export type { DateRangeFilterProps } from './lib/DateRangeFilter.js';
+export {
+  RelativeDateFilter,
+  relativeRangeToSpec,
+  DEFAULT_RELATIVE_PRESETS,
+} from './lib/RelativeDateFilter.js';
+export type { RelativeDateFilterProps, RelativeDatePreset } from './lib/RelativeDateFilter.js';
