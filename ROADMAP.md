@@ -64,7 +64,7 @@ Source de vérité : `~/src/sent-tech-design-system/docs/bi-study/INVENTORY.md` 
 ## Démo & revue  *(claude:dataviz)*
 - [x] `apps/docs` — dashboard de démo cross-filter sur les 3 frameworks — démos Svelte (`apps/docs`), React (`apps/docs-react`), Vue (`apps/docs-vue`), même dashboard (FilterBar, SelectionLegend, CrossfilteredBarChart ×2 liés, SmallMultiples, Drill, RecordsTable, TopNFilter, ValueSlicer, RelativeDateFilter, RangeSliderFilter, ExportMenu ; modèle démo enrichi de dimensions continues `date`/`price`) ; `vite build` vert (alias workspace)
 - [x] Déploiement GitHub Pages — workflow `.github/workflows/pages.yml` (build des 3 démos + landing, deploy-pages) ; **live sur https://rhanka.github.io/dataviz/** (Pages activé source = GitHub Actions par le créateur du dépôt ; 3 démos + landing déployées, HTTP 200)
-- [ ] Revue intégrale « en tant que design system » (tokens/contraste/a11y/parité)
+- [x] Revue intégrale « en tant que design system » (tokens/contraste/a11y/parité) — **audit des 13 composants × 3 fw : RÈGLE D'OR 100% respectée** (aucune présentation cuite — ni markup/CSS/style inline/couleur brute ; tout vient du DS), **parité API stricte** des 13 composants, props label/aria/caption/legend forwardées au composant DS (a11y déléguée au DS audité), tokens réels uniquement. Seul correctif : `RangeSliderFilter` a reçu le passthrough `class`/`className` manquant (cohérence avec les autres filtres). Contraste/clavier/focus/reduced-motion garantis par les composants DS consommés.
 
 ## Hors couverture (assumé)
 SQL Lab/IDE · semantic models · IA/smart narrative · embed/SDK · subscriptions ·

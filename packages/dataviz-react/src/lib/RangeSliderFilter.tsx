@@ -15,6 +15,7 @@ export type RangeSliderFilterProps = {
   /** Upper bound of the track; defaults to the data maximum. */
   max?: number;
   step?: number;
+  className?: string;
 };
 
 /**
@@ -49,7 +50,7 @@ export function rangeBoundsToSpec(lower: number, upper: number, domain: NumericD
  * A two-handle numeric range filter built on the design-system RangeSlider,
  * bound to a core `range` filter on a continuous dimension.
  */
-export function RangeSliderFilter({ store, dimension, label, min, max, step = 1 }: RangeSliderFilterProps) {
+export function RangeSliderFilter({ store, dimension, label, min, max, step = 1, className }: RangeSliderFilterProps) {
   const [domain] = useState<NumericDomain>(() => {
     const d = numericDomain(store.data, dimension);
     return { min: min ?? d.min, max: max ?? d.max };
@@ -71,6 +72,7 @@ export function RangeSliderFilter({ store, dimension, label, min, max, step = 1 
       max={domain.max}
       step={step}
       showValue
+      className={className}
       onChange={setValue}
     />
   );
