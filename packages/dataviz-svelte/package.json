@@ -1,0 +1,40 @@
+{
+  "name": "@sentropic/dataviz-svelte",
+  "version": "0.1.0",
+  "description": "Svelte 5 adapter for @sentropic/dataviz-core, built on @sentropic/design-system-svelte.",
+  "type": "module",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rhanka/dataviz.git",
+    "directory": "packages/dataviz-svelte"
+  },
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "types": "./dist/index.d.ts",
+  "main": "./dist/index.js",
+  "sideEffects": false,
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "check": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run src"
+  },
+  "dependencies": {
+    "@sentropic/dataviz-core": "0.1.0",
+    "@sentropic/design-system-svelte": "0.21.0",
+    "@sentropic/design-system-themes": "0.11.0"
+  },
+  "peerDependencies": {
+    "svelte": "^5"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

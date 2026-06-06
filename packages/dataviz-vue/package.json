@@ -1,0 +1,46 @@
+{
+  "name": "@sentropic/dataviz-vue",
+  "version": "0.1.0",
+  "description": "Vue 3 adapter for @sentropic/dataviz-core, built on @sentropic/design-system-vue.",
+  "type": "module",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rhanka/dataviz.git",
+    "directory": "packages/dataviz-vue"
+  },
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "types": "./dist/index.d.ts",
+  "main": "./dist/index.js",
+  "sideEffects": false,
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "check": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@sentropic/dataviz-core": "0.1.0",
+    "@sentropic/design-system-vue": "0.16.0",
+    "@sentropic/design-system-themes": "0.11.0"
+  },
+  "peerDependencies": {
+    "vue": "^3"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^6.0.7",
+    "@vue/test-utils": "^2.4.11",
+    "jsdom": "^29.1.1",
+    "vue": "^3.5.35"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
