@@ -78,8 +78,19 @@ export type {
   CategoricalMeasure,
   CategoricalSeries,
   CategoricalSeriesModel,
+  ParetoConfig,
+  ParetoItem,
+  ParetoModel,
+  DivergingDirection,
+  DivergingBarConfig,
+  DivergingBarItem,
+  DivergingBarModel,
 } from './categorical.js';
-export { buildCategoricalSeries } from './categorical.js';
+export {
+  buildCategoricalSeries,
+  buildParetoModel,
+  buildDivergingBarModel,
+} from './categorical.js';
 
 // Part-of-whole / flow
 export type {

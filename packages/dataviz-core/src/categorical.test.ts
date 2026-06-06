@@ -1,5 +1,11 @@
 import { describe, it, expect } from 'vitest';
-import { type DataModel, type Row, buildCategoricalSeries } from './index.js';
+import {
+  type DataModel,
+  type Row,
+  buildCategoricalSeries,
+  buildDivergingBarModel,
+  buildParetoModel,
+} from './index.js';
 
 const model: DataModel = {
   dimensions: [
@@ -99,6 +105,52 @@ describe('buildCategoricalSeries', () => {
     ]);
   });
 
+  it('builds a Pareto model sorted by aggregate value with cumulative percentage', () => {
+    expect(buildParetoModel(model, data, { category: 'region', measure: 'revenue' })).toEqual({
+      categoryId: 'region',
+      measureId: 'revenue',
+      total: 450,
+      items: [
+        {
+          key: 'EU',
+          label: 'EU',
+          value: 300,
+          rank: 1,
+          cumulativeValue: 300,
+          cumulativePercent: 300 / 450,
+        },
+        {
+          key: 'NA',
+          label: 'NA',
+          value: 150,
+          rank: 2,
+          cumulativeValue: 450,
+          cumulativePercent: 1,
+        },
+      ],
+    });
+  });
+
+  it('builds a diverging bar model with positive, negative and neutral bars', () => {
+    const signedRows: Row[] = [
+      { month: 'Jan', revenue: 100 },
+      { month: 'Feb', revenue: -50 },
+      { month: 'Mar', revenue: 0 },
+    ];
+
+    expect(buildDivergingBarModel(model, signedRows, { category: 'month', measure: 'revenue' })).toEqual({
+      categoryId: 'month',
+      measureId: 'revenue',
+      baseline: 0,
+      domain: [-50, 100],
+      items: [
+        { key: 'Jan', label: 'Jan', value: 100, start: 0, end: 100, direction: 'positive' },
+        { key: 'Feb', label: 'Feb', value: -50, start: -50, end: 0, direction: 'negative' },
+        { key: 'Mar', label: 'Mar', value: 0, start: 0, end: 0, direction: 'neutral' },
+      ],
+    });
+  });
+
   it('validates category, series and measure ids', () => {
     expect(() =>
       buildCategoricalSeries(model, data, { category: 'ghost', measures: ['revenue'] }),
@@ -113,5 +165,11 @@ describe('buildCategoricalSeries', () => {
     expect(() =>
       buildCategoricalSeries(model, data, { category: 'month', measures: ['ghost'] }),
     ).toThrow(/Unknown categorical measure: ghost/);
+    expect(() => buildParetoModel(model, data, { category: 'ghost', measure: 'revenue' })).toThrow(
+      /Unknown Pareto category dimension: ghost/,
+    );
+    expect(() =>
+      buildDivergingBarModel(model, data, { category: 'month', measure: 'ghost' }),
+    ).toThrow(/Unknown diverging bar measure: ghost/);
   });
 });
