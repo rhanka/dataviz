@@ -52,6 +52,9 @@ describe('isDimension', () => {
   it('accepts a dimension with hierarchy', () => {
     expect(isDimension({ id: 'x', label: 'X', type: 'discrete', hierarchy: ['x'] })).toBe(true);
   });
+  it('accepts a dimension with a folder', () => {
+    expect(isDimension({ id: 'x', label: 'X', type: 'discrete', folder: 'Geo' })).toBe(true);
+  });
   it('rejects missing fields', () => {
     expect(isDimension({ id: 'x', type: 'discrete' })).toBe(false);
     expect(isDimension({ id: '', label: 'X', type: 'discrete' })).toBe(false);
@@ -61,6 +64,9 @@ describe('isDimension', () => {
   });
   it('rejects non-string hierarchy entries', () => {
     expect(isDimension({ id: 'x', label: 'X', type: 'discrete', hierarchy: [1] })).toBe(false);
+  });
+  it('rejects non-string folders', () => {
+    expect(isDimension({ id: 'x', label: 'X', type: 'discrete', folder: 1 })).toBe(false);
   });
   it('rejects null/non-object', () => {
     expect(isDimension(null)).toBe(false);
@@ -72,8 +78,14 @@ describe('isMeasure', () => {
   it('accepts a valid measure', () => {
     expect(isMeasure({ id: 'm', label: 'M', aggregation: 'sum' })).toBe(true);
   });
+  it('accepts a measure with a folder', () => {
+    expect(isMeasure({ id: 'm', label: 'M', aggregation: 'sum', folder: 'Sales' })).toBe(true);
+  });
   it('rejects bad aggregation', () => {
     expect(isMeasure({ id: 'm', label: 'M', aggregation: 'median' })).toBe(false);
+  });
+  it('rejects non-string measure folders', () => {
+    expect(isMeasure({ id: 'm', label: 'M', aggregation: 'sum', folder: 1 })).toBe(false);
   });
   it('rejects missing label', () => {
     expect(isMeasure({ id: 'm', aggregation: 'sum' })).toBe(false);

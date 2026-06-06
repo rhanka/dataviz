@@ -28,6 +28,25 @@ export {
   findMeasure,
 } from './model.js';
 
+// Fields / field pane
+export type {
+  FieldKind,
+  FieldId,
+  FieldPillTone,
+  FieldDescriptor,
+  FieldPaneNode,
+  FieldPaneTree,
+  FieldPaneOptions,
+  FieldPillModel,
+} from './fields.js';
+export {
+  fieldId,
+  parseFieldId,
+  listFields,
+  buildFieldPaneTree,
+  fieldToPill,
+} from './fields.js';
+
 // Store
 export type {
   FilterSpec,
