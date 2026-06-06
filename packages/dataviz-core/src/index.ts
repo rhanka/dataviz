@@ -104,6 +104,24 @@ export {
   buildFlowModel,
 } from './partOfWhole.js';
 
+// Distribution / statistics
+export type {
+  HistogramConfig,
+  HistogramBin,
+  HistogramModel,
+  BoxPlotConfig,
+  BoxPlotGroup,
+  BoxPlotModel,
+  HeatmapConfig,
+  HeatmapCell,
+  HeatmapModel,
+} from './distribution.js';
+export {
+  buildHistogramModel,
+  buildBoxPlotModel,
+  buildHeatmapModel,
+} from './distribution.js';
+
 // Store
 export type {
   FilterSpec,
