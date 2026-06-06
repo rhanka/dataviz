@@ -15,6 +15,14 @@
     label: string;
     /** Bar colour tone from the design system. */
     tone?: BarChartTone;
+    /**
+     * When true (default) clicking a bar toggles this view's selection
+     * (brushing input → `store.toggleSelection`); selected bars are highlighted.
+     * Set false for an output-only facet.
+     */
+    selectable?: boolean;
+    /** Fixed value-axis domain `[min, max]` for a shared scale across facets. */
+    domain?: [number, number];
     orientation?: 'vertical' | 'horizontal';
     width?: number;
     height?: number;
@@ -34,6 +42,8 @@
     measure,
     label,
     tone,
+    selectable = true,
+    domain,
     orientation = 'vertical',
     width,
     height,
@@ -54,6 +64,17 @@
       tone ? { label: key, value, tone } : { label: key, value },
     );
   });
+  const selectedKeys = $derived($dash.selections[viewId] ?? []);
 </script>
 
-<BarChart {data} {label} {orientation} {width} {height} class={className} />
+<BarChart
+  {data}
+  {label}
+  {orientation}
+  {width}
+  {height}
+  {domain}
+  class={className}
+  selectedKeys={selectable ? selectedKeys : []}
+  onSelect={selectable ? (key) => store.toggleSelection(viewId, key) : undefined}
+/>

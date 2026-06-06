@@ -19,35 +19,43 @@ const data: Row[] = [
 ];
 
 const newStore = () => createDashboardStore({ model, data });
+const base = { viewId: 'byCountry', dimension: 'country', measure: 'sales', label: 'Ventes par pays' };
+const chip = (w: ReturnType<typeof mount>, key: string) =>
+  w.findAll('button.st-barChart__filterChip').find((b) => b.text().split(':')[0].trim() === key);
 
 describe('CrossfilteredBarChart (vue)', () => {
   it('exposes the chart with its accessible label', () => {
-    const w = mount(CrossfilteredBarChart, {
-      props: { store: newStore(), viewId: 'byCountry', dimension: 'country', measure: 'sales', label: 'Ventes par pays' },
-    });
-    const img = w.find('[role="img"]');
-    expect(img.exists()).toBe(true);
-    expect(img.attributes('aria-label')).toBe('Ventes par pays');
+    const w = mount(CrossfilteredBarChart, { props: { store: newStore(), ...base } });
+    expect(w.find('[role="img"]').attributes('aria-label')).toBe('Ventes par pays');
   });
 
-  it('aggregates rows into one bar per distinct dimension value', () => {
-    const w = mount(CrossfilteredBarChart, {
-      props: { store: newStore(), viewId: 'byCountry', dimension: 'country', measure: 'sales', label: 'Ventes par pays' },
-    });
+  it('aggregates rows into one bar (and one selection chip) per distinct value', () => {
+    const w = mount(CrossfilteredBarChart, { props: { store: newStore(), ...base } });
     expect(w.findAll('.st-barChart__bar')).toHaveLength(2);
-    expect(w.text()).toContain('FR');
-    expect(w.text()).toContain('US');
+    expect(chip(w, 'FR')?.exists()).toBe(true);
+    expect(chip(w, 'US')?.exists()).toBe(true);
+  });
+
+  it('toggles this view selection when a bar chip is clicked (brushing input)', async () => {
+    const store = newStore();
+    const w = mount(CrossfilteredBarChart, { props: { store, ...base } });
+    await chip(w, 'FR')!.trigger('click');
+    expect(store.getState().selections.byCountry).toEqual(['FR']);
   });
 
   it('re-aggregates reactively as the shared filter state narrows the rows', async () => {
     const store = newStore();
-    const w = mount(CrossfilteredBarChart, {
-      props: { store, viewId: 'byCountry', dimension: 'country', measure: 'sales', label: 'Ventes par pays' },
-    });
+    const w = mount(CrossfilteredBarChart, { props: { store, ...base } });
     expect(w.findAll('.st-barChart__bar')).toHaveLength(2);
     store.setFilter('country', { kind: 'include', values: ['FR'] });
     await nextTick();
     expect(w.findAll('.st-barChart__bar')).toHaveLength(1);
+    expect(chip(w, 'US')).toBeUndefined();
+  });
+
+  it('is output-only when selectable is false (no selection chips)', () => {
+    const w = mount(CrossfilteredBarChart, { props: { store: newStore(), ...base, selectable: false } });
+    expect(w.findAll('button.st-barChart__filterChip')).toHaveLength(0);
   });
 
   it('renders no bars when the measure or dimension is unknown', () => {
