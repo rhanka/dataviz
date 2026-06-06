@@ -2,6 +2,7 @@ import { describe, it, expect, vi } from 'vitest';
 import {
   type DataModel,
   createDashboardStore,
+  buildFieldPaneTree,
   toSvelteStore,
   createDashboard,
   useDashboard,
@@ -60,5 +61,14 @@ describe('useDashboard (canonical hook)', () => {
     const run = vi.fn();
     useDashboard(store).subscribe(run);
     expect(run).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe('core field pane re-export', () => {
+  it('exposes the core field pane view model helpers', () => {
+    expect(buildFieldPaneTree(model).nodes.map((node) => node.id)).toEqual([
+      'group:dimensions',
+      'group:measures',
+    ]);
   });
 });

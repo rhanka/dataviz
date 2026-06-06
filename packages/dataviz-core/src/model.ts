@@ -23,6 +23,8 @@ export interface Dimension {
   id: string;
   label: string;
   type: DimensionType;
+  /** Optional field-pane folder/group label. */
+  folder?: string;
   /**
    * Optional drill-down path, ordered from coarse to fine, e.g.
    * `['country', 'region', 'city']`. Each entry is a dimension id.
@@ -35,6 +37,8 @@ export interface Measure {
   id: string;
   label: string;
   aggregation: Aggregation;
+  /** Optional field-pane folder/group label. */
+  folder?: string;
 }
 
 /** The full declarative model of a dataset. */
@@ -63,6 +67,7 @@ export function isDimension(value: unknown): value is Dimension {
   const d = value as Record<string, unknown>;
   if (!isNonEmptyString(d.id) || !isNonEmptyString(d.label)) return false;
   if (!isDimensionType(d.type)) return false;
+  if (d.folder !== undefined && !isNonEmptyString(d.folder)) return false;
   if (d.hierarchy !== undefined) {
     if (!Array.isArray(d.hierarchy)) return false;
     if (!d.hierarchy.every((h) => isNonEmptyString(h))) return false;
@@ -74,6 +79,7 @@ export function isMeasure(value: unknown): value is Measure {
   if (typeof value !== 'object' || value === null) return false;
   const m = value as Record<string, unknown>;
   if (!isNonEmptyString(m.id) || !isNonEmptyString(m.label)) return false;
+  if (m.folder !== undefined && !isNonEmptyString(m.folder)) return false;
   return isAggregation(m.aggregation);
 }
 

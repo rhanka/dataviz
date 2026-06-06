@@ -4,6 +4,7 @@ import { mount } from '@vue/test-utils';
 import {
   type DataModel,
   createDashboardStore,
+  buildFieldPaneTree,
   useDashboard,
   provideDashboard,
   injectDashboard,
@@ -86,5 +87,14 @@ describe('provide / inject', () => {
     mount(Lonely);
     expect(error).toBeInstanceOf(Error);
     expect((error as Error).message).toMatch(/no DashboardStore provided/);
+  });
+});
+
+describe('core field pane re-export', () => {
+  it('exposes the core field pane view model helpers', () => {
+    expect(buildFieldPaneTree(model).nodes.map((node) => node.id)).toEqual([
+      'group:dimensions',
+      'group:measures',
+    ]);
   });
 });

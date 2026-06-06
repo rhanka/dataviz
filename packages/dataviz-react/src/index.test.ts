@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
-import { type DataModel, createDashboardStore, useDashboard } from './index.js';
+import { type DataModel, createDashboardStore, buildFieldPaneTree, useDashboard } from './index.js';
 
 const model: DataModel = {
   dimensions: [{ id: 'country', label: 'Country', type: 'discrete' }],
@@ -64,5 +64,14 @@ describe('useDashboard', () => {
     });
     // result.current is frozen at last render before unmount
     expect(result.current).toEqual({ filters: {}, selections: {} });
+  });
+});
+
+describe('core field pane re-export', () => {
+  it('exposes the core field pane view model helpers', () => {
+    expect(buildFieldPaneTree(model).nodes.map((node) => node.id)).toEqual([
+      'group:dimensions',
+      'group:measures',
+    ]);
   });
 });
