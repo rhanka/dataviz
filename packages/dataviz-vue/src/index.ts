@@ -46,3 +46,5 @@ export {
   DEFAULT_RELATIVE_PRESETS,
 } from './lib/RelativeDateFilter.js';
 export type { RelativeDateFilterProps, RelativeDatePreset } from './lib/RelativeDateFilter.js';
+export { RangeSliderFilter, numericDomain, rangeBoundsToSpec } from './lib/RangeSliderFilter.js';
+export type { RangeSliderFilterProps, NumericDomain } from './lib/RangeSliderFilter.js';
