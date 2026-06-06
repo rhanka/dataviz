@@ -115,6 +115,13 @@ export type {
   RoseConfig,
   RoseSector,
   RoseModel,
+  MekkoConfig,
+  MekkoSegment,
+  MekkoColumn,
+  MekkoModel,
+  PackedBubbleConfig,
+  PackedBubble,
+  PackedBubbleModel,
 } from './partOfWhole.js';
 export {
   buildPartWholeModel,
@@ -123,6 +130,8 @@ export {
   buildFlowModel,
   buildRadarModel,
   buildRoseModel,
+  buildMekkoModel,
+  buildPackedBubbleModel,
 } from './partOfWhole.js';
 
 // Distribution / statistics
