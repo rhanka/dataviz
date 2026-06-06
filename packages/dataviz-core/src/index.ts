@@ -137,6 +137,7 @@ export type {
   FilterSpec,
   FilterState,
   SelectionState,
+  DrillState,
   DashboardState,
   DashboardStoreConfig,
   DashboardStore,
@@ -157,4 +158,9 @@ export {
 } from './aggregate.js';
 
 // Serialize
-export { serializeFilters, deserializeFilters } from './serialize.js';
+export {
+  serializeFilters,
+  deserializeFilters,
+  serializeDrill,
+  deserializeDrill,
+} from './serialize.js';

@@ -1,6 +1,6 @@
 /**
  * The dashboard store: an immutable, observable container for the shared
- * inter-view state (filters + selections).
+ * inter-view state (filters + selections + drill paths).
  *
  * Every mutation produces a brand-new frozen {@link DashboardState} (a different
  * object reference) and then notifies subscribers. The state is fully
@@ -33,10 +33,14 @@ export type FilterState = Record<string, FilterSpec>;
 /** Map of viewId -> selected keys. Serialisable. */
 export type SelectionState = Record<string, string[]>;
 
+/** Map of viewId -> current drill dimension path. Serialisable. */
+export type DrillState = Record<string, string[]>;
+
 /** Immutable snapshot of the dashboard's shared state. */
 export interface DashboardState {
   readonly filters: FilterState;
   readonly selections: SelectionState;
+  readonly drill: DrillState;
 }
 
 export interface DashboardStoreConfig {
@@ -66,7 +70,13 @@ export interface DashboardStore {
   toggleSelection(viewId: string, key: string): void;
   /** Clear all selections for a view. No-op if absent. */
   clearSelection(viewId: string): void;
-  /** Reset all filters and selections. */
+  /** Append one dimension to a view's drill path. */
+  drillDown(viewId: string, dimensionId: string): void;
+  /** Remove the latest dimension from a view's drill path. No-op if absent. */
+  drillUp(viewId: string): void;
+  /** Clear all drill state for a view. No-op if absent. */
+  clearDrill(viewId: string): void;
+  /** Reset all filters, selections and drill state. */
   clearAll(): void;
   /** Apply global filters and this store's cross-filter graph for one view. */
   applyCrossfilter(viewId?: string): Row[];
@@ -109,6 +119,7 @@ function emptyState(): DashboardState {
   return Object.freeze({
     filters: Object.freeze({}) as FilterState,
     selections: Object.freeze({}) as SelectionState,
+    drill: Object.freeze({}) as DrillState,
   });
 }
 
@@ -120,7 +131,11 @@ function freezeSpec(spec: FilterSpec): FilterSpec {
   return Object.freeze({ kind: 'range', min: spec.min, max: spec.max }) as FilterSpec;
 }
 
-function freezeState(filters: FilterState, selections: SelectionState): DashboardState {
+function freezeState(
+  filters: FilterState,
+  selections: SelectionState,
+  drill: DrillState,
+): DashboardState {
   const frozenFilters: FilterState = {};
   for (const [id, spec] of Object.entries(filters)) {
     frozenFilters[id] = freezeSpec(spec);
@@ -129,9 +144,14 @@ function freezeState(filters: FilterState, selections: SelectionState): Dashboar
   for (const [id, keys] of Object.entries(selections)) {
     frozenSelections[id] = Object.freeze([...keys]) as string[];
   }
+  const frozenDrill: DrillState = {};
+  for (const [id, path] of Object.entries(drill)) {
+    frozenDrill[id] = Object.freeze([...path]) as string[];
+  }
   return Object.freeze({
     filters: Object.freeze(frozenFilters),
     selections: Object.freeze(frozenSelections),
+    drill: Object.freeze(frozenDrill),
   });
 }
 
@@ -191,7 +211,7 @@ export function createDashboardStore(config: DashboardStoreConfig): DashboardSto
     if (!(dimensionId in state.filters)) return;
     const nextFilters: FilterState = { ...state.filters };
     delete nextFilters[dimensionId];
-    commit(freezeState(nextFilters, state.selections));
+    commit(freezeState(nextFilters, state.selections, state.drill));
   }
 
   return {
@@ -215,7 +235,7 @@ export function createDashboardStore(config: DashboardStoreConfig): DashboardSto
       assertFilterSpec(spec);
       if (specsEqual(state.filters[dimensionId], spec)) return;
       const nextFilters: FilterState = { ...state.filters, [dimensionId]: spec };
-      commit(freezeState(nextFilters, state.selections));
+      commit(freezeState(nextFilters, state.selections, state.drill));
     },
 
     clear(dimensionId: string) {
@@ -236,19 +256,49 @@ export function createDashboardStore(config: DashboardStoreConfig): DashboardSto
       } else {
         nextSelections[viewId] = nextKeys;
       }
-      commit(freezeState(state.filters, nextSelections));
+      commit(freezeState(state.filters, nextSelections, state.drill));
     },
 
     clearSelection(viewId: string) {
       if (!(viewId in state.selections)) return;
       const nextSelections: SelectionState = { ...state.selections };
       delete nextSelections[viewId];
-      commit(freezeState(state.filters, nextSelections));
+      commit(freezeState(state.filters, nextSelections, state.drill));
+    },
+
+    drillDown(viewId: string, dimensionId: string) {
+      assertKnownDimension(dimensionId);
+      const current = state.drill[viewId] ?? [];
+      if (current.includes(dimensionId)) return;
+      const nextDrill: DrillState = { ...state.drill, [viewId]: [...current, dimensionId] };
+      commit(freezeState(state.filters, state.selections, nextDrill));
+    },
+
+    drillUp(viewId: string) {
+      const current = state.drill[viewId];
+      if (!current || current.length === 0) return;
+      const nextDrill: DrillState = { ...state.drill };
+      const nextPath = current.slice(0, -1);
+      if (nextPath.length === 0) {
+        delete nextDrill[viewId];
+      } else {
+        nextDrill[viewId] = nextPath;
+      }
+      commit(freezeState(state.filters, state.selections, nextDrill));
+    },
+
+    clearDrill(viewId: string) {
+      if (!(viewId in state.drill)) return;
+      const nextDrill: DrillState = { ...state.drill };
+      delete nextDrill[viewId];
+      commit(freezeState(state.filters, state.selections, nextDrill));
     },
 
     clearAll() {
       const hasState =
-        Object.keys(state.filters).length > 0 || Object.keys(state.selections).length > 0;
+        Object.keys(state.filters).length > 0 ||
+        Object.keys(state.selections).length > 0 ||
+        Object.keys(state.drill).length > 0;
       if (!hasState) return;
       commit(emptyState());
     },

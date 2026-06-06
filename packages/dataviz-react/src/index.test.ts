@@ -11,7 +11,7 @@ describe('useDashboard', () => {
   it('returns the current state snapshot', () => {
     const store = createDashboardStore({ model, data: [] });
     const { result } = renderHook(() => useDashboard(store));
-    expect(result.current).toEqual({ filters: {}, selections: {} });
+    expect(result.current).toEqual({ filters: {}, selections: {}, drill: {} });
   });
 
   it('re-renders with the new state on mutation', () => {
@@ -23,6 +23,7 @@ describe('useDashboard', () => {
     expect(result.current).toEqual({
       filters: { country: { kind: 'include', values: ['FR'] } },
       selections: {},
+      drill: {},
     });
   });
 
@@ -63,7 +64,7 @@ describe('useDashboard', () => {
       store.setFilter('country', { kind: 'include', values: ['US'] });
     });
     // result.current is frozen at last render before unmount
-    expect(result.current).toEqual({ filters: {}, selections: {} });
+    expect(result.current).toEqual({ filters: {}, selections: {}, drill: {} });
   });
 });
 
