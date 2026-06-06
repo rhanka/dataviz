@@ -28,3 +28,7 @@ export { KpiCardGroup } from './lib/KpiCardGroup.js';
 export type { KpiCardGroupProps } from './lib/KpiCardGroup.js';
 export { RecordsTable } from './lib/RecordsTable.js';
 export type { RecordsTableProps } from './lib/RecordsTable.js';
+export { DrillBarChart } from './lib/DrillBarChart.js';
+export type { DrillBarChartProps } from './lib/DrillBarChart.js';
+export { DrillBreadcrumb } from './lib/DrillBreadcrumb.js';
+export type { DrillBreadcrumbProps } from './lib/DrillBreadcrumb.js';
