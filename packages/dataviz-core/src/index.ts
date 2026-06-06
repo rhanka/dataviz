@@ -47,6 +47,9 @@ export {
   fieldToPill,
 } from './fields.js';
 
+// Descriptions
+export { describeFilterSpec } from './describe.js';
+
 // Store
 export type {
   FilterSpec,
