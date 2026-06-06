@@ -30,7 +30,7 @@ function makeStore() {
 describe('initial state', () => {
   it('starts empty', () => {
     const store = makeStore();
-    expect(store.getState()).toEqual({ filters: {}, selections: {} });
+    expect(store.getState()).toEqual({ filters: {}, selections: {}, drill: {} });
   });
   it('exposes model and a frozen data copy', () => {
     const store = makeStore();
@@ -65,6 +65,7 @@ describe('immutability', () => {
     expect(Object.isFrozen(snap)).toBe(true);
     expect(Object.isFrozen(snap.filters)).toBe(true);
     expect(Object.isFrozen(snap.selections)).toBe(true);
+    expect(Object.isFrozen(snap.drill)).toBe(true);
   });
   it('each mutation yields a new state reference', () => {
     const store = makeStore();
@@ -142,6 +143,14 @@ describe('subscribe / notify / unsubscribe', () => {
     const fn = vi.fn();
     store.subscribe(fn);
     store.clearSelection('ghost');
+    expect(fn).not.toHaveBeenCalled();
+  });
+  it('does not notify on no-op drillUp / clearDrill', () => {
+    const store = makeStore();
+    const fn = vi.fn();
+    store.subscribe(fn);
+    store.drillUp('chart');
+    store.clearDrill('chart');
     expect(fn).not.toHaveBeenCalled();
   });
   it('does not notify on no-op clearAll', () => {
@@ -224,13 +233,70 @@ describe('toggleSelection / clearSelection', () => {
   });
 });
 
+describe('drill state', () => {
+  it('drills down by appending dimensions for a view', () => {
+    const store = makeStore();
+    store.drillDown('chart', 'country');
+    store.drillDown('chart', 'age');
+    expect(store.getState().drill.chart).toEqual(['country', 'age']);
+  });
+
+  it('drills up and prunes an empty path', () => {
+    const store = makeStore();
+    store.drillDown('chart', 'country');
+    store.drillDown('chart', 'age');
+    store.drillUp('chart');
+    expect(store.getState().drill.chart).toEqual(['country']);
+    store.drillUp('chart');
+    expect(store.getState().drill).toEqual({});
+  });
+
+  it('clears one view drill path', () => {
+    const store = makeStore();
+    store.drillDown('a', 'country');
+    store.drillDown('b', 'age');
+    store.clearDrill('a');
+    expect(store.getState().drill).toEqual({ b: ['age'] });
+  });
+
+  it('does not notify when drilling down to an already active dimension', () => {
+    const store = makeStore();
+    const fn = vi.fn();
+    store.drillDown('chart', 'country');
+    store.subscribe(fn);
+    store.drillDown('chart', 'country');
+    expect(store.getState().drill.chart).toEqual(['country']);
+    expect(fn).not.toHaveBeenCalled();
+  });
+
+  it('rejects unknown drill dimensions without changing state', () => {
+    const store = makeStore();
+    const fn = vi.fn();
+    store.subscribe(fn);
+    expect(() => store.drillDown('chart', 'ghost')).toThrow(/Unknown dimension/);
+    expect(store.getState().drill).toEqual({});
+    expect(fn).not.toHaveBeenCalled();
+  });
+
+  it('freezes drill paths in snapshots', () => {
+    const store = makeStore();
+    store.drillDown('chart', 'country');
+    const path = store.getState().drill.chart!;
+    expect(Object.isFrozen(path)).toBe(true);
+    expect(() => {
+      path.push('age');
+    }).toThrow(TypeError);
+  });
+});
+
 describe('clearAll', () => {
-  it('resets filters and selections', () => {
+  it('resets filters, selections and drill', () => {
     const store = makeStore();
     store.setFilter('country', { kind: 'include', values: ['FR'] });
     store.toggleSelection('chart', 'FR');
+    store.drillDown('chart', 'country');
     store.clearAll();
-    expect(store.getState()).toEqual({ filters: {}, selections: {} });
+    expect(store.getState()).toEqual({ filters: {}, selections: {}, drill: {} });
   });
 });
 
@@ -261,10 +327,12 @@ describe('serialisability', () => {
     const store = makeStore();
     store.setFilter('country', { kind: 'include', values: ['FR'] });
     store.toggleSelection('chart', 'FR');
+    store.drillDown('chart', 'country');
     const json = JSON.stringify(store.getState());
     expect(JSON.parse(json)).toEqual({
       filters: { country: { kind: 'include', values: ['FR'] } },
       selections: { chart: ['FR'] },
+      drill: { chart: ['country'] },
     });
   });
 });

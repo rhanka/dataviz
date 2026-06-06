@@ -20,7 +20,7 @@ describe('toSvelteStore', () => {
     const run = vi.fn();
     readable.subscribe(run);
     expect(run).toHaveBeenCalledTimes(1);
-    expect(run).toHaveBeenLastCalledWith({ filters: {}, selections: {} });
+    expect(run).toHaveBeenLastCalledWith({ filters: {}, selections: {}, drill: {} });
   });
 
   it('calls run again on each mutation with a new snapshot', () => {
@@ -32,6 +32,7 @@ describe('toSvelteStore', () => {
     expect(run).toHaveBeenLastCalledWith({
       filters: { country: { kind: 'include', values: ['FR'] } },
       selections: {},
+      drill: {},
     });
   });
 
@@ -51,7 +52,11 @@ describe('createDashboard', () => {
     const run = vi.fn();
     state.subscribe(run);
     store.toggleSelection('chart', 'FR');
-    expect(run).toHaveBeenLastCalledWith({ filters: {}, selections: { chart: ['FR'] } });
+    expect(run).toHaveBeenLastCalledWith({
+      filters: {},
+      selections: { chart: ['FR'] },
+      drill: {},
+    });
   });
 });
 

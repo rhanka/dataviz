@@ -20,11 +20,12 @@ describe('useDashboard', () => {
     const store = createDashboardStore({ model, data: [] });
     const scope = effectScope();
     const state = scope.run(() => useDashboard(store))!;
-    expect(state.value).toEqual({ filters: {}, selections: {} });
+    expect(state.value).toEqual({ filters: {}, selections: {}, drill: {} });
     store.setFilter('country', { kind: 'include', values: ['FR'] });
     expect(state.value).toEqual({
       filters: { country: { kind: 'include', values: ['FR'] } },
       selections: {},
+      drill: {},
     });
     scope.stop();
   });
@@ -46,7 +47,7 @@ describe('useDashboard', () => {
     scope.stop();
     store.setFilter('country', { kind: 'include', values: ['US'] });
     // After scope stop, onScopeDispose ran -> no more updates.
-    expect(state.value).toEqual({ filters: {}, selections: {} });
+    expect(state.value).toEqual({ filters: {}, selections: {}, drill: {} });
   });
 });
 

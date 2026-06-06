@@ -5,6 +5,8 @@ import {
   isFilterSpec,
   serializeFilters,
   deserializeFilters,
+  serializeDrill,
+  deserializeDrill,
 } from './index.js';
 
 const model: DataModel = {
@@ -136,5 +138,46 @@ describe('deserialize robustness', () => {
   it('drops non-finite numeric bounds from malicious JSON', () => {
     const payload = encodeURIComponent('{"age":{"kind":"range","min":1e309}}');
     expect(deserializeFilters(payload, model)).toEqual({});
+  });
+});
+
+describe('serialize / deserialize drill state', () => {
+  it('round-trips drill paths', () => {
+    const drill = { chart: ['country', 'age'] };
+    expect(deserializeDrill(serializeDrill({ drill }), model)).toEqual(drill);
+  });
+
+  it('round-trips empty drill state', () => {
+    expect(deserializeDrill(serializeDrill({ drill: {} }), model)).toEqual({});
+  });
+
+  it('is deterministic regardless of view insertion order', () => {
+    const a = serializeDrill({ drill: { b: ['age'], a: ['country'] } });
+    const b = serializeDrill({ drill: { a: ['country'], b: ['age'] } });
+    expect(a).toBe(b);
+  });
+
+  it('throws rather than serialising malformed drill paths lossily', () => {
+    expect(() =>
+      serializeDrill({ drill: { chart: ['country', 1] as unknown as string[] } }),
+    ).toThrow(/Cannot serialize malformed drill path/);
+  });
+
+  it('drops unknown dimensions and malformed paths on deserialize', () => {
+    const payload = encodeURIComponent(
+      JSON.stringify({
+        ok: ['country'],
+        ghost: ['missing'],
+        bad: 'country',
+        empty: [],
+      }),
+    );
+    expect(deserializeDrill(payload, model)).toEqual({ ok: ['country'] });
+  });
+
+  it('returns {} for invalid drill payloads', () => {
+    expect(deserializeDrill('', model)).toEqual({});
+    expect(deserializeDrill('%%%not-json%%%', model)).toEqual({});
+    expect(deserializeDrill(encodeURIComponent('[1,2,3]'), model)).toEqual({});
   });
 });

@@ -13,7 +13,7 @@
 
 import type { DataModel } from './model.js';
 import { findDimension } from './model.js';
-import type { FilterSpec, FilterState } from './store.js';
+import type { DrillState, FilterSpec, FilterState } from './store.js';
 import { isFilterSpec } from './store.js';
 
 /** Normalise a spec into a minimal, stable object for serialisation. */
@@ -64,6 +64,55 @@ export function deserializeFilters(encoded: string, model: DataModel): FilterSta
     if (!findDimension(model, dimensionId)) continue; // unknown dimension
     if (!isFilterSpec(spec)) continue; // malformed spec
     result[dimensionId] = normaliseSpec(spec);
+  }
+  return result;
+}
+
+function isDrillPath(value: unknown): value is string[] {
+  return Array.isArray(value) && value.length > 0 && value.every((item) => typeof item === 'string');
+}
+
+function normaliseDrillPath(path: readonly string[]): string[] {
+  return [...path];
+}
+
+/**
+ * Serialise the drill portion of a state to a URL-safe string.
+ * Filters keep their existing bookmark channel; drill is separate so callers
+ * can opt in when bookmark semantics include drill navigation.
+ */
+export function serializeDrill(state: { drill: DrillState }): string {
+  const normalised: DrillState = {};
+  for (const key of Object.keys(state.drill).sort()) {
+    const path = state.drill[key]!;
+    if (!isDrillPath(path)) {
+      throw new TypeError(`Cannot serialize malformed drill path for view ${key}`);
+    }
+    normalised[key] = normaliseDrillPath(path);
+  }
+  return encodeURIComponent(JSON.stringify(normalised));
+}
+
+/**
+ * Parse a serialised drill string back to a {@link DrillState}, validating
+ * dimensions against the model. Unknown dimensions and malformed paths are
+ * dropped. Any parse error yields an empty state.
+ */
+export function deserializeDrill(encoded: string, model: DataModel): DrillState {
+  if (!encoded) return {};
+  let raw: unknown;
+  try {
+    raw = JSON.parse(decodeURIComponent(encoded));
+  } catch {
+    return {};
+  }
+  if (typeof raw !== 'object' || raw === null || Array.isArray(raw)) return {};
+
+  const result: DrillState = {};
+  for (const [viewId, path] of Object.entries(raw as Record<string, unknown>)) {
+    if (!isDrillPath(path)) continue;
+    if (!path.every((dimensionId) => findDimension(model, dimensionId))) continue;
+    result[viewId] = normaliseDrillPath(path);
   }
   return result;
 }
