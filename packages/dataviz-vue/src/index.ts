@@ -34,3 +34,5 @@ export { DrillBreadcrumb } from './lib/DrillBreadcrumb.js';
 export type { DrillBreadcrumbProps } from './lib/DrillBreadcrumb.js';
 export { TopNFilter } from './lib/TopNFilter.js';
 export type { TopNFilterProps } from './lib/TopNFilter.js';
+export { ValueSlicer } from './lib/ValueSlicer.js';
+export type { ValueSlicerProps } from './lib/ValueSlicer.js';
