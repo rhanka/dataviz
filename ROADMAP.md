@@ -39,7 +39,7 @@ Source de vérité : `~/src/sent-tech-design-system/docs/bi-study/INVENTORY.md` 
 
 ## Vague 2 — Consommateurs d'état & multiplicateur  *(claude:dataviz)*
 - [x] Cross-filter / cross-highlight (callbacks charts, highlight, scoping) — **complet à parité 3 fw** : DashboardFilterBar, SelectionLegend, CrossfilteredBarChart (sortie via `applyCrossfilter` + brushing-clic via DS BarChart `selectedKeys`/`onSelect` → `toggleSelection`, échelle partagée `domain`, opt-out `selectable`)
-- [ ] Drill & exploration (down/up/expand, through/by, show records, back+historique)
+- [x] Drill & exploration (down/up/expand, through/by, show records, back+historique) — **complet à parité 3 fw** : `DrillBarChart` (clic = setFilter valeur + `drillDown` ; sélection à la feuille), `DrillBreadcrumb` (DS Breadcrumb + bouton « Remonter » = `drillUp` + clear filtre), `RecordsTable` (show records via DS DataTable) ; consomme `state.drill`/`drillDown`/`drillUp`/`clearDrill` du core
 - [ ] Small multiples / faceting (trellis via `Grid`, échelle partagée)
 
 ## Vague 3 — Moteur de viz  *(codex:dataviz)*
