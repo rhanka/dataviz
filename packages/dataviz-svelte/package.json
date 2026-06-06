@@ -25,7 +25,7 @@
     "**/*.css"
   ],
   "scripts": {
-    "build": "svelte-package",
+    "build": "svelte-package --input src && rm -f dist/*.test.* dist/lib/*.test.*",
     "check": "svelte-check --tsconfig ./tsconfig.json",
     "test": "vitest run src"
   },
