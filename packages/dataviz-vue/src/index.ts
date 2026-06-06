@@ -32,3 +32,5 @@ export { DrillBarChart } from './lib/DrillBarChart.js';
 export type { DrillBarChartProps } from './lib/DrillBarChart.js';
 export { DrillBreadcrumb } from './lib/DrillBreadcrumb.js';
 export type { DrillBreadcrumbProps } from './lib/DrillBreadcrumb.js';
+export { TopNFilter } from './lib/TopNFilter.js';
+export type { TopNFilterProps } from './lib/TopNFilter.js';
