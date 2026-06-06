@@ -2,7 +2,8 @@
  * Geographic data contracts.
  *
  * These builders compute rendering-neutral inputs for pins, choropleths,
- * geo-flows/arcs, hexbins and point clusters. Map rendering belongs to the DS.
+ * geo-flows/arcs, hexbins, point clusters, density grids and GeoJSON layers.
+ * Map rendering belongs to the DS.
  */
 
 import { aggregate } from './aggregate.js';
@@ -112,6 +113,69 @@ export interface GeoClusterModel {
   clusters: GeoCluster[];
 }
 
+export interface GeoDensityConfig {
+  latitude: string;
+  longitude: string;
+  value?: string;
+  cellSize?: number;
+}
+
+export interface GeoBounds {
+  south: number;
+  west: number;
+  north: number;
+  east: number;
+}
+
+export interface GeoDensityCell {
+  id: string;
+  x: number;
+  y: number;
+  bounds: GeoBounds;
+  center: GeoCoordinate;
+  count: number;
+  value: number;
+  density: number;
+}
+
+export interface GeoDensityModel {
+  cellSize: number;
+  cells: GeoDensityCell[];
+}
+
+export type GeoJsonGeometryType =
+  | 'Point'
+  | 'MultiPoint'
+  | 'LineString'
+  | 'MultiLineString'
+  | 'Polygon'
+  | 'MultiPolygon';
+
+export interface GeoJsonGeometry {
+  type: GeoJsonGeometryType;
+  coordinates: unknown[];
+}
+
+export interface GeoJsonLayerConfig {
+  geometry: string;
+  id?: string;
+  label?: string;
+  value?: string;
+}
+
+export interface GeoJsonFeature {
+  id: string;
+  label?: string;
+  value?: number;
+  geometry: GeoJsonGeometry;
+  properties: Record<string, string | number>;
+}
+
+export interface GeoJsonLayerModel {
+  geometryId: string;
+  features: GeoJsonFeature[];
+}
+
 interface GeoInputPoint extends GeoCoordinate {
   id: string;
   label?: string;
@@ -185,6 +249,20 @@ function groupRows(rows: readonly Row[], field: string): Map<string, Row[]> {
 function valueFor(row: Row, valueField: string | undefined, fallback = 1): number {
   if (valueField === undefined) return fallback;
   return toFiniteNumber(row[valueField]) ?? 0;
+}
+
+function isGeoJsonGeometry(value: unknown): value is GeoJsonGeometry {
+  if (typeof value !== 'object' || value === null) return false;
+  const geometry = value as { type?: unknown; coordinates?: unknown };
+  return (
+    (geometry.type === 'Point' ||
+      geometry.type === 'MultiPoint' ||
+      geometry.type === 'LineString' ||
+      geometry.type === 'MultiLineString' ||
+      geometry.type === 'Polygon' ||
+      geometry.type === 'MultiPolygon') &&
+    Array.isArray(geometry.coordinates)
+  );
 }
 
 function collectPoints(model: DataModel, data: readonly Row[], config: GeoPointConfig): GeoInputPoint[] {
@@ -365,4 +443,84 @@ export function buildGeoClusterModel(
   }
 
   return { radius, clusters };
+}
+
+export function buildGeoDensityModel(
+  model: DataModel,
+  data: readonly Row[],
+  config: GeoDensityConfig,
+): GeoDensityModel {
+  const cellSize = config.cellSize ?? 1;
+  assertPositiveFinite(cellSize, 'Geo density cellSize must be a positive finite number');
+  const points = collectPoints(model, data, {
+    latitude: config.latitude,
+    longitude: config.longitude,
+    value: config.value,
+  });
+  const area = cellSize * cellSize;
+  const cells = new Map<string, GeoDensityCell>();
+
+  for (const point of points) {
+    const x = Math.floor((point.longitude + 180) / cellSize);
+    const y = Math.floor((point.latitude + 90) / cellSize);
+    const id = `${x}:${y}`;
+    const cell = cells.get(id);
+    if (cell) {
+      cell.count += 1;
+      cell.value += point.value;
+      cell.density = cell.value / area;
+      continue;
+    }
+
+    const west = x * cellSize - 180;
+    const south = y * cellSize - 90;
+    cells.set(id, {
+      id,
+      x,
+      y,
+      bounds: { south, west, north: south + cellSize, east: west + cellSize },
+      center: { latitude: south + cellSize / 2, longitude: west + cellSize / 2 },
+      count: 1,
+      value: point.value,
+      density: point.value / area,
+    });
+  }
+
+  return { cellSize, cells: [...cells.values()] };
+}
+
+export function buildGeoJsonLayerModel(
+  model: DataModel,
+  data: readonly Row[],
+  config: GeoJsonLayerConfig,
+): GeoJsonLayerModel {
+  assertField(model, config.geometry, 'GeoJSON geometry');
+  if (config.id !== undefined) assertField(model, config.id, 'GeoJSON id');
+  if (config.label !== undefined) assertField(model, config.label, 'GeoJSON label');
+  if (config.value !== undefined) assertField(model, config.value, 'GeoJSON value');
+
+  const features: GeoJsonFeature[] = [];
+  data.forEach((row, index) => {
+    const geometry = row[config.geometry];
+    if (!isGeoJsonGeometry(geometry)) return;
+
+    const id = config.id === undefined ? String(index) : cellKey(row[config.id]);
+    const properties: Record<string, string | number> = { id };
+    const feature: GeoJsonFeature = { id, geometry, properties };
+
+    if (config.label !== undefined) {
+      const label = cellKey(row[config.label]);
+      feature.label = label;
+      properties.label = label;
+    }
+    if (config.value !== undefined) {
+      const value = valueFor(row, config.value);
+      feature.value = value;
+      properties.value = value;
+    }
+
+    features.push(feature);
+  });
+
+  return { geometryId: config.geometry, features };
 }

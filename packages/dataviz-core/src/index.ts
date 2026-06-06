@@ -187,6 +187,15 @@ export type {
   GeoClusterConfig,
   GeoCluster,
   GeoClusterModel,
+  GeoDensityConfig,
+  GeoBounds,
+  GeoDensityCell,
+  GeoDensityModel,
+  GeoJsonGeometryType,
+  GeoJsonGeometry,
+  GeoJsonLayerConfig,
+  GeoJsonFeature,
+  GeoJsonLayerModel,
 } from './geo.js';
 export {
   buildGeoPointModel,
@@ -194,6 +203,8 @@ export {
   buildGeoFlowModel,
   buildGeoHexbinModel,
   buildGeoClusterModel,
+  buildGeoDensityModel,
+  buildGeoJsonLayerModel,
 } from './geo.js';
 
 // Store
