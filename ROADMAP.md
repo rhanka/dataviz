@@ -33,7 +33,7 @@ Source de vérité : `~/src/sent-tech-design-system/docs/bi-study/INVENTORY.md` 
 ---
 
 ## Vague 1 — Contrat de données & gains rapides  *(codex:dataviz)*
-- [x] Field pane + modèle dimension/mesure & discret/continu, hiérarchies/dossiers, pilule de champ — contrats core `fields`
+- [~] Field pane + modèle dimension/mesure & discret/continu, hiérarchies/dossiers, pilule de champ — contrats core `fields` + adapter DS `FieldPane` 3 fw (display/`selectedId`) faits ; reste événement `TreeView` React/Vue côté DS pour authoring par clic
 - [x] Pivot / matrice agrégé (réutilise `DataTable`) — contrat core `buildPivotTable` + adapters DS `PivotDataTable` 3 fw
 - [x] KPI / cartes data (display, delta-vs-période, goal/progress, KPI+sparkline, multi-card) — contrat core `buildKpiCards` + adapters DS `KpiCardGroup` 3 fw
 
