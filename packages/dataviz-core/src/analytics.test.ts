@@ -2,7 +2,9 @@ import { describe, it, expect } from 'vitest';
 import {
   type DataModel,
   type Row,
+  buildAnalyticsClusterModel,
   buildErrorBarsModel,
+  buildForecastModel,
   buildPercentileBandModel,
   buildReferenceLineModel,
   buildTrendLineModel,
@@ -115,6 +117,53 @@ describe('analytic overlay builders', () => {
     });
   });
 
+  it('builds a linear forecast from the trend model', () => {
+    const rows: Row[] = [
+      { x: 1, revenue: 2 },
+      { x: 2, revenue: 4 },
+      { x: 3, revenue: 6 },
+    ];
+
+    expect(buildForecastModel(model, rows, { x: 'x', y: 'revenue', periods: 2, step: 1 })).toEqual({
+      xId: 'x',
+      yId: 'revenue',
+      method: 'linear',
+      slope: 2,
+      intercept: 0,
+      points: [
+        { x: 4, y: 8 },
+        { x: 5, y: 10 },
+      ],
+    });
+  });
+
+  it('builds deterministic k-means clusters over numeric fields', () => {
+    const rows: Row[] = [
+      { x: 1, revenue: 1 },
+      { x: 2, revenue: 2 },
+      { x: 10, revenue: 10 },
+      { x: 11, revenue: 11 },
+    ];
+
+    expect(buildAnalyticsClusterModel(model, rows, { fields: ['x', 'revenue'], k: 2 })).toEqual({
+      fields: ['x', 'revenue'],
+      clusters: [
+        {
+          id: 'cluster:0',
+          centroid: { x: 1.5, revenue: 1.5 },
+          count: 2,
+          rowIndices: [0, 1],
+        },
+        {
+          id: 'cluster:1',
+          centroid: { x: 10.5, revenue: 10.5 },
+          count: 2,
+          rowIndices: [2, 3],
+        },
+      ],
+    });
+  });
+
   it('validates fields and analytic options', () => {
     expect(() => buildReferenceLineModel(model, [], {})).toThrow(
       /Reference line requires either value or measure/,
@@ -138,5 +187,14 @@ describe('analytic overlay builders', () => {
         interval: 'mad' as unknown as 'stdev',
       }),
     ).toThrow(/Error bars interval must be stdev or stderr/);
+    expect(() =>
+      buildForecastModel(model, [], { x: 'x', y: 'revenue', periods: 0 }),
+    ).toThrow(/Forecast periods must be a positive integer/);
+    expect(() =>
+      buildAnalyticsClusterModel(model, [], { fields: ['ghost'], k: 2 }),
+    ).toThrow(/Unknown analytics cluster field: ghost/);
+    expect(() =>
+      buildAnalyticsClusterModel(model, [], { fields: ['x'], k: 0 }),
+    ).toThrow(/Analytics cluster k must be a positive integer/);
   });
 });

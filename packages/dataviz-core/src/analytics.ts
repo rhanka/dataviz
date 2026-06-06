@@ -58,6 +58,22 @@ export interface TrendLineModel {
   points: TrendPoint[];
 }
 
+export interface ForecastConfig {
+  x: string;
+  y: string;
+  periods: number;
+  step?: number;
+}
+
+export interface ForecastModel {
+  xId: string;
+  yId: string;
+  method: 'linear';
+  slope: number;
+  intercept: number;
+  points: TrendPoint[];
+}
+
 export interface ErrorBarsConfig {
   category: string;
   value: string;
@@ -79,6 +95,24 @@ export interface ErrorBarsModel {
   valueId: string;
   interval: 'stdev' | 'stderr';
   items: ErrorBarItem[];
+}
+
+export interface AnalyticsClusterConfig {
+  fields: string[];
+  k: number;
+  maxIterations?: number;
+}
+
+export interface AnalyticsCluster {
+  id: string;
+  centroid: Record<string, number>;
+  count: number;
+  rowIndices: number[];
+}
+
+export interface AnalyticsClusterModel {
+  fields: string[];
+  clusters: AnalyticsCluster[];
 }
 
 function cellKey(value: unknown): string {
@@ -157,6 +191,22 @@ function sampleStdev(values: readonly number[], avg: number): number {
   return Math.sqrt(variance);
 }
 
+function assertPositiveInteger(value: number, message: string): void {
+  if (!Number.isInteger(value) || value <= 0) {
+    throw new Error(message);
+  }
+}
+
+function numericPairs(data: readonly Row[], xField: string, yField: string): TrendPoint[] {
+  return data
+    .map((row) => {
+      const x = toFiniteNumber(row[xField]);
+      const y = toFiniteNumber(row[yField]);
+      return x === undefined || y === undefined ? undefined : { x, y };
+    })
+    .filter((point): point is TrendPoint => point !== undefined);
+}
+
 export function buildReferenceLineModel(
   model: DataModel,
   data: readonly Row[],
@@ -220,13 +270,7 @@ export function buildTrendLineModel(
   assertValueField(model, config.x, 'trend x');
   assertValueField(model, config.y, 'trend y');
 
-  const points = data
-    .map((row) => {
-      const x = toFiniteNumber(row[config.x]);
-      const y = toFiniteNumber(row[config.y]);
-      return x === undefined || y === undefined ? undefined : { x, y };
-    })
-    .filter((point): point is TrendPoint => point !== undefined);
+  const points = numericPairs(data, config.x, config.y);
 
   if (points.length < 2) {
     return {
@@ -267,6 +311,48 @@ export function buildTrendLineModel(
   };
 }
 
+export function buildForecastModel(
+  model: DataModel,
+  data: readonly Row[],
+  config: ForecastConfig,
+): ForecastModel {
+  assertPositiveInteger(config.periods, 'Forecast periods must be a positive integer');
+  if (config.step !== undefined && (!Number.isFinite(config.step) || config.step <= 0)) {
+    throw new Error('Forecast step must be a positive finite number');
+  }
+
+  const trend = buildTrendLineModel(model, data, { x: config.x, y: config.y });
+  const points = numericPairs(data, config.x, config.y);
+  if (!Number.isFinite(trend.slope) || points.length === 0) {
+    return {
+      xId: config.x,
+      yId: config.y,
+      method: 'linear',
+      slope: trend.slope,
+      intercept: trend.intercept,
+      points: [],
+    };
+  }
+
+  const sortedX = points.map((point) => point.x).sort((a, b) => a - b);
+  const maxX = sortedX[sortedX.length - 1]!;
+  const inferredStep =
+    sortedX.length <= 1 ? 1 : (sortedX[sortedX.length - 1]! - sortedX[0]!) / (sortedX.length - 1);
+  const step = config.step ?? (inferredStep > 0 ? inferredStep : 1);
+
+  return {
+    xId: config.x,
+    yId: config.y,
+    method: 'linear',
+    slope: trend.slope,
+    intercept: trend.intercept,
+    points: Array.from({ length: config.periods }, (_, index) => {
+      const x = maxX + step * (index + 1);
+      return { x, y: trend.intercept + trend.slope * x };
+    }),
+  };
+}
+
 export function buildErrorBarsModel(
   model: DataModel,
   data: readonly Row[],
@@ -296,6 +382,115 @@ export function buildErrorBarsModel(
         stdev,
         lower: avg - offset,
         upper: avg + offset,
+      };
+    }),
+  };
+}
+
+interface ClusterPoint {
+  rowIndex: number;
+  values: Record<string, number>;
+  vector: number[];
+}
+
+function clusterPoints(data: readonly Row[], fields: readonly string[]): ClusterPoint[] {
+  const points: ClusterPoint[] = [];
+  data.forEach((row, rowIndex) => {
+    const vector: number[] = [];
+    const values: Record<string, number> = {};
+    for (const field of fields) {
+      const value = toFiniteNumber(row[field]);
+      if (value === undefined) return;
+      vector.push(value);
+      values[field] = value;
+    }
+    points.push({ rowIndex, values, vector });
+  });
+  return points;
+}
+
+function squaredDistance(a: readonly number[], b: readonly number[]): number {
+  return a.reduce((sum, value, index) => sum + (value - b[index]!) ** 2, 0);
+}
+
+function nearestCentroid(point: ClusterPoint, centroids: readonly number[][]): number {
+  let bestIndex = 0;
+  let bestDistance = Number.POSITIVE_INFINITY;
+  centroids.forEach((centroid, index) => {
+    const distance = squaredDistance(point.vector, centroid);
+    if (distance < bestDistance) {
+      bestDistance = distance;
+      bestIndex = index;
+    }
+  });
+  return bestIndex;
+}
+
+function centroidObject(fields: readonly string[], vector: readonly number[]): Record<string, number> {
+  const out: Record<string, number> = {};
+  fields.forEach((field, index) => {
+    out[field] = vector[index]!;
+  });
+  return out;
+}
+
+export function buildAnalyticsClusterModel(
+  model: DataModel,
+  data: readonly Row[],
+  config: AnalyticsClusterConfig,
+): AnalyticsClusterModel {
+  if (config.fields.length === 0) {
+    throw new Error('Analytics cluster requires at least one field');
+  }
+  for (const field of config.fields) {
+    assertValueField(model, field, 'analytics cluster');
+  }
+  assertPositiveInteger(config.k, 'Analytics cluster k must be a positive integer');
+  const maxIterations = config.maxIterations ?? 20;
+  assertPositiveInteger(maxIterations, 'Analytics cluster maxIterations must be a positive integer');
+
+  const points = clusterPoints(data, config.fields);
+  if (points.length < config.k) {
+    throw new Error('Analytics cluster k cannot exceed available complete rows');
+  }
+
+  let centroids = points.slice(0, config.k).map((point) => [...point.vector]);
+  let assignments = points.map(() => -1);
+
+  for (let iteration = 0; iteration < maxIterations; iteration += 1) {
+    const nextAssignments = points.map((point) => nearestCentroid(point, centroids));
+    const changed = nextAssignments.some((assignment, index) => assignment !== assignments[index]);
+    assignments = nextAssignments;
+
+    const sums = Array.from({ length: config.k }, () => Array.from({ length: config.fields.length }, () => 0));
+    const counts = Array.from({ length: config.k }, () => 0);
+    points.forEach((point, index) => {
+      const clusterIndex = assignments[index]!;
+      counts[clusterIndex] += 1;
+      point.vector.forEach((value, fieldIndex) => {
+        sums[clusterIndex]![fieldIndex]! += value;
+      });
+    });
+    centroids = centroids.map((centroid, clusterIndex) =>
+      counts[clusterIndex] === 0
+        ? centroid
+        : sums[clusterIndex]!.map((sum) => sum / counts[clusterIndex]!),
+    );
+
+    if (!changed) break;
+  }
+
+  return {
+    fields: [...config.fields],
+    clusters: centroids.map((centroid, clusterIndex) => {
+      const rowIndices = points
+        .filter((_, index) => assignments[index] === clusterIndex)
+        .map((point) => point.rowIndex);
+      return {
+        id: `cluster:${clusterIndex}`,
+        centroid: centroidObject(config.fields, centroid),
+        count: rowIndices.length,
+        rowIndices,
       };
     }),
   };
