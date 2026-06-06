@@ -26,3 +26,5 @@ export { default as PivotDataTable } from './lib/PivotDataTable.svelte';
 export type { PivotDataTableProps } from './lib/PivotDataTable.svelte';
 export { default as KpiCardGroup } from './lib/KpiCardGroup.svelte';
 export type { KpiCardGroupProps } from './lib/KpiCardGroup.svelte';
+export { default as RecordsTable } from './lib/RecordsTable.svelte';
+export type { RecordsTableProps } from './lib/RecordsTable.svelte';

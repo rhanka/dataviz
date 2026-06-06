@@ -26,3 +26,5 @@ export { PivotDataTable } from './lib/PivotDataTable.js';
 export type { PivotDataTableProps } from './lib/PivotDataTable.js';
 export { KpiCardGroup } from './lib/KpiCardGroup.js';
 export type { KpiCardGroupProps } from './lib/KpiCardGroup.js';
+export { RecordsTable } from './lib/RecordsTable.js';
+export type { RecordsTableProps } from './lib/RecordsTable.js';
