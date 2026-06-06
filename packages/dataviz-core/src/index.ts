@@ -107,12 +107,22 @@ export type {
   FlowNode,
   FlowLink,
   FlowModel,
+  RadarConfig,
+  RadarAxis,
+  RadarPoint,
+  RadarSeries,
+  RadarModel,
+  RoseConfig,
+  RoseSector,
+  RoseModel,
 } from './partOfWhole.js';
 export {
   buildPartWholeModel,
   buildPartWholeHierarchy,
   buildWaterfallModel,
   buildFlowModel,
+  buildRadarModel,
+  buildRoseModel,
 } from './partOfWhole.js';
 
 // Distribution / statistics
