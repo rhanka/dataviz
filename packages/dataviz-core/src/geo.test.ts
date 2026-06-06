@@ -4,8 +4,10 @@ import {
   type Row,
   buildChoroplethModel,
   buildGeoClusterModel,
+  buildGeoDensityModel,
   buildGeoFlowModel,
   buildGeoHexbinModel,
+  buildGeoJsonLayerModel,
   buildGeoPointModel,
 } from './index.js';
 
@@ -18,6 +20,7 @@ const model: DataModel = {
     { id: 'lon', label: 'Longitude', type: 'continuous' },
     { id: 'targetLat', label: 'Target latitude', type: 'continuous' },
     { id: 'targetLon', label: 'Target longitude', type: 'continuous' },
+    { id: 'shape', label: 'Shape', type: 'discrete' },
   ],
   measures: [
     { id: 'revenue', label: 'Revenue', aggregation: 'sum' },
@@ -176,6 +179,77 @@ describe('geo model builders', () => {
     });
   });
 
+  it('builds deterministic geo density cells with bounds and density values', () => {
+    expect(
+      buildGeoDensityModel(model, rows, {
+        latitude: 'lat',
+        longitude: 'lon',
+        value: 'revenue',
+        cellSize: 10,
+      }),
+    ).toEqual({
+      cellSize: 10,
+      cells: [
+        {
+          id: '18:13',
+          x: 18,
+          y: 13,
+          bounds: { south: 40, west: 0, north: 50, east: 10 },
+          center: { latitude: 45, longitude: 5 },
+          count: 2,
+          value: 150,
+          density: 1.5,
+        },
+        {
+          id: '10:13',
+          x: 10,
+          y: 13,
+          bounds: { south: 40, west: -80, north: 50, east: -70 },
+          center: { latitude: 45, longitude: -75 },
+          count: 1,
+          value: 200,
+          density: 2,
+        },
+      ],
+    });
+  });
+
+  it('builds GeoJSON layer features and skips invalid geometries', () => {
+    const geometry = {
+      type: 'Polygon',
+      coordinates: [
+        [
+          [2, 48],
+          [3, 48],
+          [3, 49],
+          [2, 48],
+        ],
+      ],
+    } as const;
+
+    expect(
+      buildGeoJsonLayerModel(
+        model,
+        [
+          { id: 'fr-shape', city: 'France', shape: geometry, revenue: 150 },
+          { id: 'bad-shape', city: 'Bad shape', shape: { type: 'Feature' }, revenue: 999 },
+        ],
+        { geometry: 'shape', id: 'id', label: 'city', value: 'revenue' },
+      ),
+    ).toEqual({
+      geometryId: 'shape',
+      features: [
+        {
+          id: 'fr-shape',
+          label: 'France',
+          value: 150,
+          geometry,
+          properties: { id: 'fr-shape', label: 'France', value: 150 },
+        },
+      ],
+    });
+  });
+
   it('validates configured fields and numeric options', () => {
     expect(() => buildGeoPointModel(model, rows, { latitude: 'ghost', longitude: 'lon' })).toThrow(
       /Unknown geo latitude field: ghost/,
@@ -189,5 +263,11 @@ describe('geo model builders', () => {
     expect(() =>
       buildGeoClusterModel(model, rows, { latitude: 'lat', longitude: 'lon', radius: -1 }),
     ).toThrow(/Geo cluster radius must be a positive finite number/);
+    expect(() =>
+      buildGeoDensityModel(model, rows, { latitude: 'lat', longitude: 'lon', cellSize: 0 }),
+    ).toThrow(/Geo density cellSize must be a positive finite number/);
+    expect(() =>
+      buildGeoJsonLayerModel(model, rows, { geometry: 'ghost' }),
+    ).toThrow(/Unknown GeoJSON geometry field: ghost/);
   });
 });

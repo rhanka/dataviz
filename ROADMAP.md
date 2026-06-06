@@ -48,7 +48,7 @@ Source de vérité : `~/src/sent-tech-design-system/docs/bi-study/INVENTORY.md` 
 - [~] Pivot avancé (cross-tab agrégé, sous-totaux, expand/collapse, heat de cellule, sparkline en cellule) — contrat core `buildAdvancedPivotTable` fait ; reste câblage DS
 - [~] Distribution & statistique (box plot, histogramme/bins, distribution, heatmap cat.+calendaire, bullet, gauge) — contrats core histogram/box/heatmap/bullet/gauge faits ; reste câblage DS
 - [~] Couche analytique (réf lines, bandes/percentiles, tendance, prévision, cluster, barres d'erreur, goal line) — contrats core ref/percentile/trend/forecast/cluster/error bars faits ; reste câblage DS
-- [~] Cartographie géo (pin, choroplèthe/filled, densité, GeoJSON/shape, flux/arcs, hexbin, clustering/couches ; 3D hors-DS) — contrats core pin/choropleth/flow/hexbin/cluster faits ; reste densité/GeoJSON couches + câblage DS
+- [~] Cartographie géo (pin, choroplèthe/filled, densité, GeoJSON/shape, flux/arcs, hexbin, clustering/couches ; 3D hors-DS) — contrats core pin/choropleth/densité/GeoJSON/flow/hexbin/cluster faits ; reste câblage DS
 
 ## Vague 4 — Authoring & signets  *(claude:dataviz)*
 - [ ] Filtres BI avancés (range slider 2 poignées, date relative, time range, granularité, filtre et/ou, Top N)
