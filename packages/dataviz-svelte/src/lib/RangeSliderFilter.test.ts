@@ -35,12 +35,11 @@ const model: DataModel = {
 };
 
 describe('RangeSliderFilter', () => {
-  it('renders two labelled sliders and does not filter at the full domain', async () => {
+  it('renders a labelled range slider and does not filter at the full domain', async () => {
     const store = createDashboardStore({ model, data: [{ x: 0, v: 1 }, { x: 10, v: 1 }] as Row[] });
     const { container } = render(RangeSliderFilter, { props: { store, dimension: 'x' } });
     await tick();
-    expect(container.textContent).toContain('Montant (min)');
-    expect(container.textContent).toContain('Montant (max)');
+    expect(container.textContent).toContain('Montant');
     expect(store.getState().filters.x).toBeUndefined();
   });
 });

@@ -34,9 +34,9 @@
   }
 
   /**
-   * Pure: two slider handles → a core `range` {@link FilterSpec} (bounds
-   * normalized so `lo <= hi`), or `null` when they span the whole domain (no
-   * effective constraint).
+   * Pure: the two range-slider handles → a core `range` {@link FilterSpec}
+   * (bounds normalized so `lo <= hi`), or `null` when they span the whole domain
+   * (no effective constraint).
    */
   export function rangeBoundsToSpec(lower: number, upper: number, domain: NumericDomain): FilterSpec | null {
     const lo = Math.min(lower, upper);
@@ -48,7 +48,7 @@
 
 <script lang="ts">
   import { untrack } from 'svelte';
-  import { Slider } from '@sentropic/design-system-svelte';
+  import { RangeSlider } from '@sentropic/design-system-svelte';
   import { findDimension } from '@sentropic/dataviz-core';
 
   let { store, dimension, label, min, max, step = 1 }: RangeSliderFilterProps = $props();
@@ -61,15 +61,21 @@
 
   const resolvedLabel = $derived(label ?? findDimension(store.model, dimension)?.label ?? dimension);
 
-  let lower = $state(domain.min);
-  let upper = $state(domain.max);
+  let value = $state<[number, number]>([domain.min, domain.max]);
 
   $effect(() => {
-    const spec = rangeBoundsToSpec(lower, upper, domain);
+    const spec = rangeBoundsToSpec(value[0], value[1], domain);
     if (spec) store.setFilter(dimension, spec);
     else store.clearFilter(dimension);
   });
 </script>
 
-<Slider label={`${resolvedLabel} (min)`} bind:value={lower} min={domain.min} max={domain.max} {step} />
-<Slider label={`${resolvedLabel} (max)`} bind:value={upper} min={domain.min} max={domain.max} {step} />
+<RangeSlider
+  label={resolvedLabel}
+  {value}
+  min={domain.min}
+  max={domain.max}
+  {step}
+  showValue
+  onChange={(v) => (value = v)}
+/>

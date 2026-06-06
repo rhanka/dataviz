@@ -51,13 +51,13 @@ Source de vérité : `~/src/sent-tech-design-system/docs/bi-study/INVENTORY.md` 
 - [~] Cartographie géo (pin, choroplèthe/filled, densité, GeoJSON/shape, flux/arcs, hexbin, clustering/couches ; 3D hors-DS) — contrats core pin/choropleth/densité/GeoJSON/flow/hexbin/cluster faits ; reste câblage DS
 
 ## Vague 4 — Authoring & signets  *(claude:dataviz)*
-- [x] Filtres BI avancés (range slider 2 poignées, date relative, time range, granularité, filtre et/ou, Top N) — **faits à parité 3 fw** : `TopNFilter` (Top N par mesure), `ValueSlicer` (filtre OU multi-valeurs, CheckboxGroup), `DateRangeFilter` (DatePicker range → filtre range dates), `RelativeDateFilter` (DS `Select` de presets → filtre `range` fenêtre glissante : tout / 7 / 30 / 90 j / 12 mois, `now` injectable), `RangeSliderFilter` (2 poignées numériques min/max → filtre `range` sur dimension continue ; composé de 2 DS `Slider` car le `Slider` DS est mono-poignée ; helpers purs `numericDomain`/`rangeBoundsToSpec`). FR DS ouverte pour un vrai `RangeSlider` 1 piste/2 poignées (swap interne sans changer l'API)
+- [x] Filtres BI avancés (range slider 2 poignées, date relative, time range, granularité, filtre et/ou, Top N) — **faits à parité 3 fw** : `TopNFilter` (Top N par mesure), `ValueSlicer` (filtre OU multi-valeurs, CheckboxGroup), `DateRangeFilter` (DatePicker range → filtre range dates), `RelativeDateFilter` (DS `Select` de presets → filtre `range` fenêtre glissante : tout / 7 / 30 / 90 j / 12 mois, `now` injectable), `RangeSliderFilter` (2 poignées numériques min/max → filtre `range` sur dimension continue ; bâti sur le **vrai DS `RangeSlider`** 1 piste/2 poignées `value:[number,number]`+onChange/v-model, livré par le DS — svelte 0.27/react+vue 0.23 ; helpers purs `numericDomain`/`rangeBoundsToSpec`)
 - [ ] Signets & actions (bookmarks, navigateur/diaporama, actions filtre/URL/set/aller-à, click behavior)
 - [ ] Panneau format & axes (volet Format, éditeur d'axe plage/log/inversé, légendes éditables, marqueurs/forme)
 - [ ] Éditeur de calcul / expression (champ calculé, formule+autocomplétion, calculs table/visuels, variables, bins, groupes, sets)
 
 ## Vague 5 — Génériques courts  *(claude:dataviz)*
-- [x] Range slider à 2 poignées (utile hors BI) — `RangeSliderFilter` (2 DS `Slider` min/max, helpers purs, parité 3 fw)
+- [x] Range slider à 2 poignées (utile hors BI) — `RangeSliderFilter` sur le DS `RangeSlider` 2 poignées, helpers purs, parité 3 fw
 - [ ] Menu d'export / téléchargement (UI)
 - [ ] Wrapper iframe / page web ; Image data-driven ; Object/layer panel (réutilise `TreeView`)
 
