@@ -40,3 +40,9 @@ export { default as ExportMenu, rowsToCsv } from './lib/ExportMenu.svelte';
 export type { ExportMenuProps } from './lib/ExportMenu.svelte';
 export { default as DateRangeFilter, dateRangeToSpec } from './lib/DateRangeFilter.svelte';
 export type { DateRangeFilterProps } from './lib/DateRangeFilter.svelte';
+export {
+  default as RelativeDateFilter,
+  relativeRangeToSpec,
+  DEFAULT_RELATIVE_PRESETS,
+} from './lib/RelativeDateFilter.svelte';
+export type { RelativeDateFilterProps, RelativeDatePreset } from './lib/RelativeDateFilter.svelte';
