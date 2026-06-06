@@ -81,6 +81,29 @@ export type {
 } from './categorical.js';
 export { buildCategoricalSeries } from './categorical.js';
 
+// Part-of-whole / flow
+export type {
+  PartWholeSort,
+  PartWholeConfig,
+  PartWholeItem,
+  PartWholeModel,
+  PartWholeHierarchyConfig,
+  PartWholeNode,
+  WaterfallConfig,
+  WaterfallStep,
+  WaterfallModel,
+  FlowConfig,
+  FlowNode,
+  FlowLink,
+  FlowModel,
+} from './partOfWhole.js';
+export {
+  buildPartWholeModel,
+  buildPartWholeHierarchy,
+  buildWaterfallModel,
+  buildFlowModel,
+} from './partOfWhole.js';
+
 // Store
 export type {
   FilterSpec,
