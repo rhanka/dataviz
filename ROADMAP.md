@@ -33,9 +33,9 @@ Source de vérité : `~/src/sent-tech-design-system/docs/bi-study/INVENTORY.md` 
 ---
 
 ## Vague 1 — Contrat de données & gains rapides  *(codex:dataviz)*
-- [ ] Field pane + modèle dimension/mesure & discret/continu, hiérarchies/dossiers, pilule de champ
-- [ ] Pivot / matrice agrégé (réutilise `DataTable`)
-- [ ] KPI / cartes data (display, delta-vs-période, goal/progress, KPI+sparkline, multi-card)
+- [x] Field pane + modèle dimension/mesure & discret/continu, hiérarchies/dossiers, pilule de champ — contrats core `fields`
+- [x] Pivot / matrice agrégé (réutilise `DataTable`) — contrat core `buildPivotTable`
+- [x] KPI / cartes data (display, delta-vs-période, goal/progress, KPI+sparkline, multi-card) — contrat core `buildKpiCards`
 
 ## Vague 2 — Consommateurs d'état & multiplicateur  *(claude:dataviz)*
 - [x] Cross-filter / cross-highlight (callbacks charts, highlight, scoping) — **complet à parité 3 fw** : DashboardFilterBar, SelectionLegend, CrossfilteredBarChart (sortie via `applyCrossfilter` + brushing-clic via DS BarChart `selectedKeys`/`onSelect` → `toggleSelection`, échelle partagée `domain`, opt-out `selectable`)
@@ -43,12 +43,12 @@ Source de vérité : `~/src/sent-tech-design-system/docs/bi-study/INVENTORY.md` 
 - [ ] Small multiples / faceting (trellis via `Grid`, échelle partagée)
 
 ## Vague 3 — Moteur de viz  *(codex:dataviz)*
-- [ ] Catégoriels & combo (multi-série lignes/aires, barres groupées & 100 %, combo+2e axe, step, Pareto, lollipop, divergentes) — refactor du socle chart
-- [ ] Flux & part-of-whole (pie plein, funnel, waterfall+variance, treemap, sunburst, sankey, chord, radar, mekko, packed bubbles, rose)
-- [ ] Pivot avancé (cross-tab agrégé, sous-totaux, expand/collapse, heat de cellule, sparkline en cellule)
-- [ ] Distribution & statistique (box plot, histogramme/bins, distribution, heatmap cat.+calendaire, bullet, gauge)
-- [ ] Couche analytique (réf lines, bandes/percentiles, tendance, prévision, cluster, barres d'erreur, goal line)
-- [ ] Cartographie géo (pin, choroplèthe/filled, densité, GeoJSON/shape, flux/arcs, hexbin, clustering/couches ; 3D hors-DS)
+- [~] Catégoriels & combo (multi-série lignes/aires, barres groupées & 100 %, combo+2e axe, step, Pareto, lollipop, divergentes) — contrats core `buildCategoricalSeries` faits ; reste câblage DS / sous-types spécialisés
+- [~] Flux & part-of-whole (pie plein, funnel, waterfall+variance, treemap, sunburst, sankey, chord, radar, mekko, packed bubbles, rose) — contrats core part/hiérarchie/waterfall/flow faits ; reste câblage DS / sous-types spécialisés
+- [~] Pivot avancé (cross-tab agrégé, sous-totaux, expand/collapse, heat de cellule, sparkline en cellule) — contrat core `buildAdvancedPivotTable` fait ; reste câblage DS
+- [~] Distribution & statistique (box plot, histogramme/bins, distribution, heatmap cat.+calendaire, bullet, gauge) — contrats core histogram/box/heatmap faits ; reste bullet/gauge + câblage DS
+- [~] Couche analytique (réf lines, bandes/percentiles, tendance, prévision, cluster, barres d'erreur, goal line) — contrats core ref/percentile/trend/error bars faits ; reste prévision/cluster + câblage DS
+- [~] Cartographie géo (pin, choroplèthe/filled, densité, GeoJSON/shape, flux/arcs, hexbin, clustering/couches ; 3D hors-DS) — contrats core pin/choropleth/flow/hexbin/cluster faits ; reste densité/GeoJSON couches + câblage DS
 
 ## Vague 4 — Authoring & signets  *(claude:dataviz)*
 - [ ] Filtres BI avancés (range slider 2 poignées, date relative, time range, granularité, filtre et/ou, Top N)
