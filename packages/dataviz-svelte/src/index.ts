@@ -28,3 +28,7 @@ export { default as KpiCardGroup } from './lib/KpiCardGroup.svelte';
 export type { KpiCardGroupProps } from './lib/KpiCardGroup.svelte';
 export { default as RecordsTable } from './lib/RecordsTable.svelte';
 export type { RecordsTableProps } from './lib/RecordsTable.svelte';
+export { default as DrillBarChart } from './lib/DrillBarChart.svelte';
+export type { DrillBarChartProps } from './lib/DrillBarChart.svelte';
+export { default as DrillBreadcrumb } from './lib/DrillBreadcrumb.svelte';
+export type { DrillBreadcrumbProps } from './lib/DrillBreadcrumb.svelte';
