@@ -73,16 +73,19 @@ export const SmallMultiples = defineComponent({
             keys.push(k);
           }
         }
+        let min = 0;
         let max = 0;
         panels = keys.map((k) => {
           const facetRows = rows.filter((row) => keyOf(row[props.facetBy]) === k);
           const data = groupAggregate(facetRows, props.dimension, m).map(({ key: barKey, value }) => {
+            if (value < min) min = value;
             if (value > max) max = value;
             return props.tone ? { label: barKey, value, tone: props.tone } : { label: barKey, value };
           });
           return { key: k, data };
         });
-        domain = panels.length ? [0, max] : undefined;
+        // Shared domain anchored at 0 (keeps negatives in view for mixed facets).
+        domain = panels.length ? [min, max] : undefined;
       }
       return h(
         Grid,
