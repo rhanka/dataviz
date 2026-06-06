@@ -46,3 +46,9 @@ export {
   DEFAULT_RELATIVE_PRESETS,
 } from './lib/RelativeDateFilter.svelte';
 export type { RelativeDateFilterProps, RelativeDatePreset } from './lib/RelativeDateFilter.svelte';
+export {
+  default as RangeSliderFilter,
+  numericDomain,
+  rangeBoundsToSpec,
+} from './lib/RangeSliderFilter.svelte';
+export type { RangeSliderFilterProps, NumericDomain } from './lib/RangeSliderFilter.svelte';
