@@ -32,3 +32,5 @@ export { default as DrillBarChart } from './lib/DrillBarChart.svelte';
 export type { DrillBarChartProps } from './lib/DrillBarChart.svelte';
 export { default as DrillBreadcrumb } from './lib/DrillBreadcrumb.svelte';
 export type { DrillBreadcrumbProps } from './lib/DrillBreadcrumb.svelte';
+export { default as TopNFilter } from './lib/TopNFilter.svelte';
+export type { TopNFilterProps } from './lib/TopNFilter.svelte';
