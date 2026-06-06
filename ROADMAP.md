@@ -34,8 +34,8 @@ Source de vérité : `~/src/sent-tech-design-system/docs/bi-study/INVENTORY.md` 
 
 ## Vague 1 — Contrat de données & gains rapides  *(codex:dataviz)*
 - [x] Field pane + modèle dimension/mesure & discret/continu, hiérarchies/dossiers, pilule de champ — contrats core `fields`
-- [x] Pivot / matrice agrégé (réutilise `DataTable`) — contrat core `buildPivotTable`
-- [x] KPI / cartes data (display, delta-vs-période, goal/progress, KPI+sparkline, multi-card) — contrat core `buildKpiCards`
+- [x] Pivot / matrice agrégé (réutilise `DataTable`) — contrat core `buildPivotTable` + adapters DS `PivotDataTable` 3 fw
+- [x] KPI / cartes data (display, delta-vs-période, goal/progress, KPI+sparkline, multi-card) — contrat core `buildKpiCards` + adapters DS `KpiCardGroup` 3 fw
 
 ## Vague 2 — Consommateurs d'état & multiplicateur  *(claude:dataviz)*
 - [x] Cross-filter / cross-highlight (callbacks charts, highlight, scoping) — **complet à parité 3 fw** : DashboardFilterBar, SelectionLegend, CrossfilteredBarChart (sortie via `applyCrossfilter` + brushing-clic via DS BarChart `selectedKeys`/`onSelect` → `toggleSelection`, échelle partagée `domain`, opt-out `selectable`)
