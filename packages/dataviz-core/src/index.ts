@@ -68,6 +68,19 @@ export type {
 } from './kpi.js';
 export { buildKpiCards } from './kpi.js';
 
+// Categorical/combo series
+export type {
+  CategoricalMark,
+  CategoricalAxis,
+  CategoricalMode,
+  CategoricalMeasureInput,
+  CategoricalSeriesConfig,
+  CategoricalMeasure,
+  CategoricalSeries,
+  CategoricalSeriesModel,
+} from './categorical.js';
+export { buildCategoricalSeries } from './categorical.js';
+
 // Store
 export type {
   FilterSpec,
