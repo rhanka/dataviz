@@ -1,6 +1,8 @@
 import { describe, it, expect, vi } from 'vitest';
 import {
+  type CrossfilterGraph,
   type DataModel,
+  type FilterSpec,
   type Row,
   createDashboardStore,
   specToPredicate,
@@ -35,6 +37,18 @@ describe('initial state', () => {
     expect(store.model).toBe(model);
     expect(store.data).toHaveLength(3);
     expect(Object.isFrozen(store.data)).toBe(true);
+  });
+  it('does not alias or expose mutable row objects', () => {
+    const input: Row[] = [{ country: 'FR', age: 30, revenue: 100 }];
+    const store = createDashboardStore({ model, data: input });
+    expect(store.data[0]).not.toBe(input[0]);
+    expect(Object.isFrozen(store.data[0])).toBe(true);
+
+    input[0]!.country = 'US';
+    expect(store.data[0]!.country).toBe('FR');
+    expect(() => {
+      store.data[0]!.country = 'HACKED';
+    }).toThrow(TypeError);
   });
   it('does not alias the input data array', () => {
     const input: Row[] = [{ country: 'FR' }];
@@ -137,6 +151,14 @@ describe('subscribe / notify / unsubscribe', () => {
     store.clearAll();
     expect(fn).not.toHaveBeenCalled();
   });
+  it('does not notify when setting an identical filter', () => {
+    const store = makeStore();
+    const fn = vi.fn();
+    store.subscribe(fn);
+    store.setFilter('country', { kind: 'include', values: ['FR'] });
+    store.setFilter('country', { kind: 'include', values: ['FR'] });
+    expect(fn).toHaveBeenCalledTimes(1);
+  });
 });
 
 describe('setFilter / clearFilter', () => {
@@ -151,6 +173,26 @@ describe('setFilter / clearFilter', () => {
     const store = makeStore();
     store.setFilter('country', { kind: 'include', values: ['FR'] });
     store.clearFilter('country');
+    expect(store.getState().filters).toEqual({});
+  });
+  it('rejects unknown dimensions without changing state', () => {
+    const store = makeStore();
+    const fn = vi.fn();
+    store.subscribe(fn);
+    expect(() => {
+      store.setFilter('ghost', { kind: 'include', values: ['x'] });
+    }).toThrow(/Unknown dimension/);
+    expect(store.getState().filters).toEqual({});
+    expect(fn).not.toHaveBeenCalled();
+  });
+  it('rejects malformed runtime specs without changing state', () => {
+    const store = makeStore();
+    expect(() => {
+      store.setFilter('age', { kind: 'range', min: Number.NaN } as unknown as FilterSpec);
+    }).toThrow(/Invalid filter spec/);
+    expect(() => {
+      store.setFilter('country', (() => true) as unknown as FilterSpec);
+    }).toThrow(/Invalid filter spec/);
     expect(store.getState().filters).toEqual({});
   });
 });
@@ -189,6 +231,28 @@ describe('clearAll', () => {
     store.toggleSelection('chart', 'FR');
     store.clearAll();
     expect(store.getState()).toEqual({ filters: {}, selections: {} });
+  });
+});
+
+describe('store API contract', () => {
+  it('exposes clear as a filter clear alias', () => {
+    const store = makeStore();
+    store.setFilter('country', { kind: 'include', values: ['FR'] });
+    store.clear('country');
+    expect(store.getState().filters).toEqual({});
+  });
+  it('exposes applyCrossfilter over its own state, data and graph', () => {
+    const graph: CrossfilterGraph = {
+      views: {
+        countryChart: { field: 'country' },
+        ageChart: { field: 'age' },
+      },
+    };
+    const store = createDashboardStore({ model, data, crossfilter: graph });
+    store.toggleSelection('countryChart', 'FR');
+    const out = store.applyCrossfilter('ageChart');
+    expect(out).toHaveLength(2);
+    expect(out[0]).not.toBe(store.data[0]);
   });
 });
 
@@ -233,6 +297,11 @@ describe('specToPredicate', () => {
     expect(p('abc' as unknown as number)).toBe(false);
     expect(p(null)).toBe(false);
   });
+  it('range rejects boolean cells', () => {
+    const p = specToPredicate({ kind: 'range', min: 0, max: 1 });
+    expect(p(true)).toBe(false);
+    expect(p(false)).toBe(false);
+  });
   it('include matches null cells via "null"', () => {
     const p = specToPredicate({ kind: 'include', values: ['null'] });
     expect(p(null)).toBe(true);
@@ -255,5 +324,15 @@ describe('applyFilters', () => {
     store.setFilter('age', { kind: 'range', min: 40 });
     const out = applyFilters(store.getState(), store.data);
     expect(out).toEqual([{ country: 'FR', age: 50, revenue: 50 }]);
+  });
+  it('returns frozen row copies rather than source aliases', () => {
+    const store = makeStore();
+    const out = applyFilters(store.getState(), store.data);
+    expect(out[0]).not.toBe(store.data[0]);
+    expect(Object.isFrozen(out[0])).toBe(true);
+    expect(() => {
+      out[0]!.country = 'HACKED';
+    }).toThrow(TypeError);
+    expect(store.data[0]!.country).toBe('FR');
   });
 });

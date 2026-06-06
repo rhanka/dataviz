@@ -9,7 +9,9 @@
  * URL. A runtime predicate is derived from the spec on demand.
  */
 
+import { findDimension } from './model.js';
 import type { Cell, DataModel, Row } from './model.js';
+import { applyCrossfilter as applyCrossfilterRows } from './crossfilter.js';
 import type { CrossfilterGraph } from './crossfilter.js';
 
 /**
@@ -37,9 +39,6 @@ export interface DashboardState {
   readonly selections: SelectionState;
 }
 
-/** Accepted argument to {@link DashboardStore.setFilter}. */
-export type FilterInput = FilterSpec | ((value: Cell, row: Row) => boolean);
-
 export interface DashboardStoreConfig {
   model: DataModel;
   data: Row[];
@@ -59,6 +58,8 @@ export interface DashboardStore {
   subscribe(listener: () => void): () => void;
   /** Set (or replace) the filter on a dimension. */
   setFilter(dimensionId: string, spec: FilterSpec): void;
+  /** Alias for clearing one filter, matching the public store contract. */
+  clear(dimensionId: string): void;
   /** Remove the filter on a dimension. No-op if absent. */
   clearFilter(dimensionId: string): void;
   /** Toggle a single selected key for a view. */
@@ -67,6 +68,40 @@ export interface DashboardStore {
   clearSelection(viewId: string): void;
   /** Reset all filters and selections. */
   clearAll(): void;
+  /** Apply global filters and this store's cross-filter graph for one view. */
+  applyCrossfilter(viewId?: string): Row[];
+}
+
+function isStringArray(value: unknown): value is string[] {
+  return Array.isArray(value) && value.every((v) => typeof v === 'string');
+}
+
+function isFiniteBound(value: unknown): value is number {
+  return typeof value === 'number' && Number.isFinite(value);
+}
+
+/** Validate that an unknown value is a well-formed, serialisable {@link FilterSpec}. */
+export function isFilterSpec(value: unknown): value is FilterSpec {
+  if (typeof value !== 'object' || value === null) return false;
+  const spec = value as Record<string, unknown>;
+  switch (spec.kind) {
+    case 'include':
+    case 'exclude':
+      return isStringArray(spec.values);
+    case 'range':
+      return (
+        (spec.min === undefined || isFiniteBound(spec.min)) &&
+        (spec.max === undefined || isFiniteBound(spec.max))
+      );
+    default:
+      return false;
+  }
+}
+
+function assertFilterSpec(spec: unknown): asserts spec is FilterSpec {
+  if (!isFilterSpec(spec)) {
+    throw new TypeError('Invalid filter spec');
+  }
 }
 
 /** Build the empty initial state, frozen. */
@@ -100,6 +135,27 @@ function freezeState(filters: FilterState, selections: SelectionState): Dashboar
   });
 }
 
+function freezeRow(row: Row): Row {
+  return Object.freeze({ ...row }) as Row;
+}
+
+function cloneResultRows(rows: readonly Row[]): Row[] {
+  return rows.map(freezeRow);
+}
+
+function arrayEqual(a: readonly string[], b: readonly string[]): boolean {
+  return a.length === b.length && a.every((value, index) => value === b[index]);
+}
+
+function specsEqual(a: FilterSpec | undefined, b: FilterSpec): boolean {
+  if (!a || a.kind !== b.kind) return false;
+  if (a.kind === 'include' || a.kind === 'exclude') {
+    return arrayEqual(a.values, (b as typeof a).values);
+  }
+  const range = b as Extract<FilterSpec, { kind: 'range' }>;
+  return a.min === range.min && a.max === range.max;
+}
+
 /**
  * Create an observable, immutable dashboard store.
  *
@@ -112,7 +168,7 @@ export function createDashboardStore(config: DashboardStoreConfig): DashboardSto
   let state = emptyState();
   const listeners = new Set<() => void>();
   // Defensive copy: the store owns its data; callers can't mutate it later.
-  const data: readonly Row[] = Object.freeze([...config.data]);
+  const data: readonly Row[] = Object.freeze(config.data.map(freezeRow));
 
   function notify(): void {
     for (const listener of [...listeners]) {
@@ -123,6 +179,19 @@ export function createDashboardStore(config: DashboardStoreConfig): DashboardSto
   function commit(next: DashboardState): void {
     state = next;
     notify();
+  }
+
+  function assertKnownDimension(dimensionId: string): void {
+    if (!findDimension(config.model, dimensionId)) {
+      throw new Error(`Unknown dimension: ${dimensionId}`);
+    }
+  }
+
+  function clearFilterImpl(dimensionId: string): void {
+    if (!(dimensionId in state.filters)) return;
+    const nextFilters: FilterState = { ...state.filters };
+    delete nextFilters[dimensionId];
+    commit(freezeState(nextFilters, state.selections));
   }
 
   return {
@@ -142,15 +211,19 @@ export function createDashboardStore(config: DashboardStoreConfig): DashboardSto
     },
 
     setFilter(dimensionId: string, spec: FilterSpec) {
+      assertKnownDimension(dimensionId);
+      assertFilterSpec(spec);
+      if (specsEqual(state.filters[dimensionId], spec)) return;
       const nextFilters: FilterState = { ...state.filters, [dimensionId]: spec };
       commit(freezeState(nextFilters, state.selections));
     },
 
+    clear(dimensionId: string) {
+      clearFilterImpl(dimensionId);
+    },
+
     clearFilter(dimensionId: string) {
-      if (!(dimensionId in state.filters)) return;
-      const nextFilters: FilterState = { ...state.filters };
-      delete nextFilters[dimensionId];
-      commit(freezeState(nextFilters, state.selections));
+      clearFilterImpl(dimensionId);
     },
 
     toggleSelection(viewId: string, key: string) {
@@ -179,11 +252,16 @@ export function createDashboardStore(config: DashboardStoreConfig): DashboardSto
       if (!hasState) return;
       commit(emptyState());
     },
+
+    applyCrossfilter(viewId?: string) {
+      return applyCrossfilterRows(state, data, viewId, config.crossfilter);
+    },
   };
 }
 
 /** Compile a {@link FilterSpec} into a runtime predicate over a cell. */
 export function specToPredicate(spec: FilterSpec): (value: Cell) => boolean {
+  assertFilterSpec(spec);
   switch (spec.kind) {
     case 'include': {
       const set = new Set(spec.values);
@@ -196,7 +274,8 @@ export function specToPredicate(spec: FilterSpec): (value: Cell) => boolean {
     case 'range': {
       const { min, max } = spec;
       return (value) => {
-        if (value == null || value === '') return false;
+        if (value == null || typeof value === 'boolean') return false;
+        if (typeof value === 'string' && value.trim() === '') return false;
         const n = typeof value === 'number' ? value : Number(value);
         if (!Number.isFinite(n)) return false;
         if (min !== undefined && n < min) return false;
@@ -213,9 +292,11 @@ export function specToPredicate(spec: FilterSpec): (value: Cell) => boolean {
  */
 export function applyFilters(state: DashboardState, data: readonly Row[]): Row[] {
   const entries = Object.entries(state.filters);
-  if (entries.length === 0) return [...data];
+  if (entries.length === 0) return cloneResultRows(data);
   const predicates = entries.map(
     ([dimensionId, spec]) => [dimensionId, specToPredicate(spec)] as const,
   );
-  return data.filter((row) => predicates.every(([dimId, pred]) => pred(row[dimId] ?? null)));
+  return cloneResultRows(
+    data.filter((row) => predicates.every(([dimId, pred]) => pred(row[dimId] ?? null))),
+  );
 }

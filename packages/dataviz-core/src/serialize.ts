@@ -14,28 +14,7 @@
 import type { DataModel } from './model.js';
 import { findDimension } from './model.js';
 import type { FilterSpec, FilterState } from './store.js';
-
-function isStringArray(value: unknown): value is string[] {
-  return Array.isArray(value) && value.every((v) => typeof v === 'string');
-}
-
-/** Validate that an unknown value is a well-formed {@link FilterSpec}. */
-export function isFilterSpec(value: unknown): value is FilterSpec {
-  if (typeof value !== 'object' || value === null) return false;
-  const spec = value as Record<string, unknown>;
-  switch (spec.kind) {
-    case 'include':
-    case 'exclude':
-      return isStringArray(spec.values);
-    case 'range':
-      return (
-        (spec.min === undefined || typeof spec.min === 'number') &&
-        (spec.max === undefined || typeof spec.max === 'number')
-      );
-    default:
-      return false;
-  }
-}
+import { isFilterSpec } from './store.js';
 
 /** Normalise a spec into a minimal, stable object for serialisation. */
 function normaliseSpec(spec: FilterSpec): FilterSpec {
@@ -56,7 +35,11 @@ function normaliseSpec(spec: FilterSpec): FilterSpec {
 export function serializeFilters(state: { filters: FilterState }): string {
   const normalised: FilterState = {};
   for (const key of Object.keys(state.filters).sort()) {
-    normalised[key] = normaliseSpec(state.filters[key]!);
+    const spec = state.filters[key]!;
+    if (!isFilterSpec(spec)) {
+      throw new TypeError(`Cannot serialize malformed filter spec for dimension ${key}`);
+    }
+    normalised[key] = normaliseSpec(spec);
   }
   return encodeURIComponent(JSON.stringify(normalised));
 }

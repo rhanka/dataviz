@@ -2,8 +2,8 @@
  * Grouping and aggregation primitives.
  *
  * All functions are pure and side-effect free. Aggregations guard against
- * non-finite numbers (NaN, Infinity) and return a sensible neutral value for
- * an empty input.
+ * non-finite numbers (NaN, Infinity). Empty sum/count return 0; empty
+ * avg/min/max return NaN so callers can distinguish "no data" from a real 0.
  */
 
 import type { Aggregation, Measure, Row } from './model.js';
@@ -50,8 +50,8 @@ function toFinite(value: unknown): number | undefined {
  *
  * - `count` counts *rows* (not non-null values) — it returns `rows.length`.
  * - `sum`/`avg`/`min`/`max` ignore non-finite / non-numeric cells.
- * - An empty input (or one with no numeric cells) returns the neutral value:
- *   `0` for sum/avg/count, `0` for min/max with no data.
+ * - An empty input (or one with no numeric cells) returns `0` for sum/count
+ *   and `NaN` for avg/min/max.
  */
 export function aggregate(rows: Row[], measure: Measure): number {
   return aggregateValues(extractNumbers(rows, measure.id), measure.aggregation, rows.length);
@@ -69,11 +69,17 @@ export function aggregateValues(
     case 'sum':
       return values.reduce((acc, v) => acc + v, 0);
     case 'avg':
-      return values.length === 0 ? 0 : values.reduce((acc, v) => acc + v, 0) / values.length;
+      return values.length === 0
+        ? Number.NaN
+        : values.reduce((acc, v) => acc + v, 0) / values.length;
     case 'min':
-      return values.length === 0 ? 0 : values.reduce((acc, v) => (v < acc ? v : acc), values[0]!);
+      return values.length === 0
+        ? Number.NaN
+        : values.reduce((acc, v) => (v < acc ? v : acc), values[0]!);
     case 'max':
-      return values.length === 0 ? 0 : values.reduce((acc, v) => (v > acc ? v : acc), values[0]!);
+      return values.length === 0
+        ? Number.NaN
+        : values.reduce((acc, v) => (v > acc ? v : acc), values[0]!);
     default: {
       // Exhaustiveness guard — unreachable for a valid Aggregation.
       const _never: never = aggregation;

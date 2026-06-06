@@ -65,11 +65,11 @@ describe('aggregate', () => {
 });
 
 describe('aggregate edge cases', () => {
-  it('empty input -> neutral 0 for all aggregations', () => {
+  it('empty input -> 0 for sum/count and NaN for avg/min/max', () => {
     expect(aggregate([], sum)).toBe(0);
-    expect(aggregate([], avg)).toBe(0);
-    expect(aggregate([], min)).toBe(0);
-    expect(aggregate([], max)).toBe(0);
+    expect(aggregate([], avg)).toBeNaN();
+    expect(aggregate([], min)).toBeNaN();
+    expect(aggregate([], max)).toBeNaN();
     expect(aggregate([], count)).toBe(0);
   });
   it('count counts all rows even when value is non-numeric', () => {
@@ -97,11 +97,11 @@ describe('aggregate edge cases', () => {
     const r: Row[] = [{ revenue: true }, { revenue: false }, { revenue: true }];
     expect(aggregate(r, sum)).toBe(2);
   });
-  it('all-non-numeric -> avg/min/max neutral 0', () => {
+  it('all-non-numeric -> avg/min/max NaN', () => {
     const r: Row[] = [{ revenue: 'x' }, { revenue: null }];
-    expect(aggregate(r, avg)).toBe(0);
-    expect(aggregate(r, min)).toBe(0);
-    expect(aggregate(r, max)).toBe(0);
+    expect(aggregate(r, avg)).toBeNaN();
+    expect(aggregate(r, min)).toBeNaN();
+    expect(aggregate(r, max)).toBeNaN();
   });
 });
 

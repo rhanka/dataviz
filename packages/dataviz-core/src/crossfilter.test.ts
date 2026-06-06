@@ -142,4 +142,32 @@ describe('applyCrossfilter', () => {
     store.toggleSelection('countryChart', 'FR'); // toggled off -> empty
     expect(applyCrossfilter(store.getState(), store.data, 'catChart', graph)).toHaveLength(4);
   });
+
+  it('terminates on a cyclic graph and applies each source once', () => {
+    const cyclic: CrossfilterGraph = {
+      views: {
+        countryChart: { field: 'country', affects: ['catChart'] },
+        catChart: { field: 'category', affects: ['countryChart'] },
+      },
+    };
+    const store = createDashboardStore({ model, data, crossfilter: cyclic });
+    store.toggleSelection('countryChart', 'FR');
+    store.toggleSelection('catChart', 'A');
+    expect(applyCrossfilter(store.getState(), store.data, 'countryChart', cyclic)).toEqual([
+      { country: 'FR', category: 'A', revenue: 10 },
+      { country: 'US', category: 'A', revenue: 30 },
+    ]);
+  });
+
+  it('returns frozen row copies rather than source aliases', () => {
+    const store = createDashboardStore({ model, data, crossfilter: graph });
+    store.toggleSelection('countryChart', 'FR');
+    const out = applyCrossfilter(store.getState(), store.data, 'catChart', graph);
+    expect(out[0]).not.toBe(store.data[0]);
+    expect(Object.isFrozen(out[0])).toBe(true);
+    expect(() => {
+      out[0]!.country = 'HACKED';
+    }).toThrow(TypeError);
+    expect(store.data[0]!.country).toBe('FR');
+  });
 });
