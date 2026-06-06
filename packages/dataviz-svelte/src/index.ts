@@ -38,3 +38,5 @@ export { default as ValueSlicer } from './lib/ValueSlicer.svelte';
 export type { ValueSlicerProps } from './lib/ValueSlicer.svelte';
 export { default as ExportMenu, rowsToCsv } from './lib/ExportMenu.svelte';
 export type { ExportMenuProps } from './lib/ExportMenu.svelte';
+export { default as DateRangeFilter, dateRangeToSpec } from './lib/DateRangeFilter.svelte';
+export type { DateRangeFilterProps } from './lib/DateRangeFilter.svelte';
