@@ -24,6 +24,14 @@ export type CrossfilteredBarChartProps = {
   label: string;
   /** Bar colour tone from the design system. */
   tone?: BarChartTone;
+  /**
+   * When true (default) clicking a bar toggles this view's selection (brushing
+   * input → `store.toggleSelection`); selected bars are highlighted. Set false
+   * for an output-only facet.
+   */
+  selectable?: boolean;
+  /** Fixed value-axis domain `[min, max]` for a shared scale across facets. */
+  domain?: [number, number];
   orientation?: 'vertical' | 'horizontal';
   width?: number;
   height?: number;
@@ -32,8 +40,8 @@ export type CrossfilteredBarChartProps = {
 
 /**
  * A design-system `BarChart` whose data is the cross-filtered, aggregated view
- * of the shared store. Output-only for now: bar selection (brushing input)
- * awaits controlled-selection support in the design-system BarChart.
+ * of the shared store. Clicking a bar brushes this view's selection (unless
+ * `selectable` is false), and the chart re-aggregates as the shared state moves.
  */
 export function CrossfilteredBarChart({
   store,
@@ -42,13 +50,14 @@ export function CrossfilteredBarChart({
   measure,
   label,
   tone,
+  selectable = true,
+  domain,
   orientation = 'vertical',
   width,
   height,
   className,
 }: CrossfilteredBarChartProps) {
-  // Subscribe so the chart re-renders (and re-aggregates) on every mutation.
-  useDashboard(store);
+  const state = useDashboard(store);
   const dim = findDimension(store.model, dimension);
   const m = findMeasure(store.model, measure);
   const data: BarChartDatum[] =
@@ -64,7 +73,10 @@ export function CrossfilteredBarChart({
       orientation={orientation}
       width={width}
       height={height}
+      domain={domain}
       className={className}
+      selectedKeys={selectable ? (state.selections[viewId] ?? []) : []}
+      onSelect={selectable ? (key) => store.toggleSelection(viewId, key) : undefined}
     />
   );
 }

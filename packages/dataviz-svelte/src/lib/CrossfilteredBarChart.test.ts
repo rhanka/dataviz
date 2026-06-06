@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/svelte';
+import { render } from '@testing-library/svelte';
 import { tick } from 'svelte';
 import { describe, it, expect } from 'vitest';
 import { createDashboardStore, type DataModel, type Row } from '@sentropic/dataviz-core';
@@ -19,57 +19,54 @@ const data: Row[] = [
 ];
 
 const newStore = () => createDashboardStore({ model, data });
-
-function bars(container: HTMLElement): number {
-  return container.querySelectorAll('.st-barChart__bar').length;
-}
+const bars = (c: HTMLElement) => c.querySelectorAll('.st-barChart__bar').length;
+const baseProps = { viewId: 'byCountry', dimension: 'country', measure: 'sales', label: 'Ventes par pays' };
 
 describe('CrossfilteredBarChart', () => {
   it('exposes the chart with its accessible label', () => {
-    const store = newStore();
-    render(CrossfilteredBarChart, {
-      props: { store, viewId: 'byCountry', dimension: 'country', measure: 'sales', label: 'Ventes par pays' },
-    });
-    expect(screen.getByRole('img', { name: 'Ventes par pays' })).toBeTruthy();
+    const { getByRole } = render(CrossfilteredBarChart, { props: { store: newStore(), ...baseProps } });
+    expect(getByRole('img', { name: 'Ventes par pays' })).toBeTruthy();
   });
 
-  it('aggregates rows into one bar per distinct dimension value', () => {
-    const store = newStore();
-    const { container } = render(CrossfilteredBarChart, {
-      props: { store, viewId: 'byCountry', dimension: 'country', measure: 'sales', label: 'Ventes par pays' },
-    });
-    // FR (10+5=15) and US (20) → two bars.
+  it('aggregates rows into one bar (and one selection chip) per distinct value', () => {
+    const { container, getByRole } = render(CrossfilteredBarChart, { props: { store: newStore(), ...baseProps } });
     expect(bars(container)).toBe(2);
-    expect(screen.getByText('FR')).toBeTruthy();
-    expect(screen.getByText('US')).toBeTruthy();
+    expect(getByRole('button', { name: /^FR:/ })).toBeTruthy();
+    expect(getByRole('button', { name: /^US:/ })).toBeTruthy();
+  });
+
+  it('toggles this view selection when a bar chip is clicked (brushing input)', () => {
+    const store = newStore();
+    const { getByRole } = render(CrossfilteredBarChart, { props: { store, ...baseProps } });
+    getByRole('button', { name: /^FR:/ }).click();
+    expect(store.getState().selections.byCountry).toEqual(['FR']);
   });
 
   it('re-aggregates reactively as the shared filter state narrows the rows', async () => {
     const store = newStore();
-    const { container } = render(CrossfilteredBarChart, {
-      props: { store, viewId: 'byCountry', dimension: 'country', measure: 'sales', label: 'Ventes par pays' },
-    });
+    const { container, queryByRole } = render(CrossfilteredBarChart, { props: { store, ...baseProps } });
     expect(bars(container)).toBe(2);
     store.setFilter('country', { kind: 'include', values: ['FR'] });
     await tick();
     expect(bars(container)).toBe(1);
-    expect(screen.getByText('FR')).toBeTruthy();
-    expect(screen.queryByText('US')).toBeNull();
+    expect(queryByRole('button', { name: /^US:/ })).toBeNull();
   });
 
-  it('renders no bars when the measure is unknown', () => {
-    const store = newStore();
-    const { container } = render(CrossfilteredBarChart, {
-      props: { store, viewId: 'byCountry', dimension: 'country', measure: 'nope', label: 'Vide' },
+  it('is output-only when selectable=false (no selection chips)', () => {
+    const { queryByRole } = render(CrossfilteredBarChart, {
+      props: { store: newStore(), ...baseProps, selectable: false },
     });
-    expect(bars(container)).toBe(0);
+    expect(queryByRole('button', { name: /^FR:/ })).toBeNull();
   });
 
-  it('renders no bars when the dimension is unknown (no "null" bar)', () => {
-    const store = newStore();
-    const { container } = render(CrossfilteredBarChart, {
-      props: { store, viewId: 'byCountry', dimension: 'nope', measure: 'sales', label: 'Vide' },
+  it('renders no bars when the measure or dimension is unknown', () => {
+    const { container: c1 } = render(CrossfilteredBarChart, {
+      props: { store: newStore(), viewId: 'v', dimension: 'country', measure: 'nope', label: 'Vide' },
     });
-    expect(bars(container)).toBe(0);
+    expect(bars(c1)).toBe(0);
+    const { container: c2 } = render(CrossfilteredBarChart, {
+      props: { store: newStore(), viewId: 'v', dimension: 'nope', measure: 'sales', label: 'Vide' },
+    });
+    expect(bars(c2)).toBe(0);
   });
 });

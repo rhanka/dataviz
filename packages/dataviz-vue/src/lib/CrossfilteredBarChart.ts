@@ -25,6 +25,14 @@ export type CrossfilteredBarChartProps = {
   label: string;
   /** Bar colour tone from the design system. */
   tone?: BarChartTone;
+  /**
+   * When true (default) clicking a bar toggles this view's selection (brushing
+   * input → `store.toggleSelection`); selected bars are highlighted. Set false
+   * for an output-only facet.
+   */
+  selectable?: boolean;
+  /** Fixed value-axis domain `[min, max]` for a shared scale across facets. */
+  domain?: [number, number];
   orientation?: 'vertical' | 'horizontal';
   width?: number;
   height?: number;
@@ -33,8 +41,8 @@ export type CrossfilteredBarChartProps = {
 
 /**
  * A design-system `BarChart` whose data is the cross-filtered, aggregated view
- * of the shared store. Output-only for now: bar selection (brushing input)
- * awaits controlled-selection support in the design-system BarChart.
+ * of the shared store. Clicking a bar brushes this view's selection (unless
+ * `selectable` is false), and the chart re-aggregates as the shared state moves.
  */
 export const CrossfilteredBarChart = defineComponent({
   name: 'CrossfilteredBarChart',
@@ -45,6 +53,8 @@ export const CrossfilteredBarChart = defineComponent({
     measure: { type: String, required: true },
     label: { type: String, required: true },
     tone: { type: String as PropType<BarChartTone>, default: undefined },
+    selectable: { type: Boolean, default: true },
+    domain: { type: Array as unknown as PropType<[number, number]>, default: undefined },
     orientation: { type: String as PropType<'vertical' | 'horizontal'>, default: 'vertical' },
     width: { type: Number, default: undefined },
     height: { type: Number, default: undefined },
@@ -53,9 +63,6 @@ export const CrossfilteredBarChart = defineComponent({
   setup(props) {
     const state = useDashboard(props.store);
     return () => {
-      // Reading `state.value` registers the reactive dependency so the chart
-      // re-aggregates on every store mutation.
-      void state.value;
       const dim = findDimension(props.store.model, props.dimension);
       const m = findMeasure(props.store.model, props.measure);
       const data: BarChartDatum[] =
@@ -71,7 +78,12 @@ export const CrossfilteredBarChart = defineComponent({
         orientation: props.orientation,
         width: props.width,
         height: props.height,
+        domain: props.domain,
         class: props.class,
+        selectedKeys: props.selectable ? (state.value.selections[props.viewId] ?? []) : [],
+        onSelect: props.selectable
+          ? (key: string) => props.store.toggleSelection(props.viewId, key)
+          : undefined,
       });
     };
   },
