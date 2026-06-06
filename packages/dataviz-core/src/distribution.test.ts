@@ -1,8 +1,10 @@
 import { describe, it, expect } from 'vitest';
 import {
+  buildBulletChartModel,
   type DataModel,
   type Row,
   buildBoxPlotModel,
+  buildGaugeChartModel,
   buildHeatmapModel,
   buildHistogramModel,
 } from './index.js';
@@ -98,6 +100,70 @@ describe('distribution builders', () => {
     });
   });
 
+  it('builds a DS-ready bullet chart model from aggregate measures', () => {
+    const rows: Row[] = [
+      { segment: 'Enterprise', revenue: 10, target: 30 },
+      { segment: 'Enterprise', revenue: 20, target: 30 },
+      { segment: 'SMB', revenue: 5, target: 10 },
+    ];
+    const bulletModel: DataModel = {
+      dimensions: [{ id: 'segment', label: 'Segment', type: 'discrete' }],
+      measures: [
+        { id: 'revenue', label: 'Revenue', aggregation: 'sum' },
+        { id: 'target', label: 'Target', aggregation: 'max' },
+      ],
+    };
+
+    expect(
+      buildBulletChartModel(bulletModel, rows, {
+        label: 'Revenue vs target',
+        value: 'revenue',
+        target: 'target',
+        category: 'segment',
+        ranges: [10, 25, 40],
+      }),
+    ).toEqual({
+      label: 'Revenue vs target',
+      valueId: 'revenue',
+      targetId: 'target',
+      data: [
+        { key: 'Enterprise', label: 'Enterprise', value: 30, target: 30, ranges: [10, 25, 40] },
+        { key: 'SMB', label: 'SMB', value: 5, target: 10, ranges: [10, 25, 40] },
+      ],
+    });
+  });
+
+  it('builds a DS-ready gauge model with clamped aggregate value and sorted thresholds', () => {
+    const rows: Row[] = [{ revenue: 20 }, { revenue: 40 }, { revenue: 60 }];
+
+    expect(
+      buildGaugeChartModel(model, rows, {
+        label: 'Quota',
+        value: 'revenue',
+        min: 0,
+        max: 100,
+        thresholds: [
+          { value: 80, tone: 'success' },
+          { value: 50, tone: 'warning' },
+        ],
+        unit: '$',
+      }),
+    ).toEqual({
+      label: 'Quota',
+      valueId: 'revenue',
+      value: 120,
+      displayValue: 100,
+      min: 0,
+      max: 100,
+      thresholds: [
+        { value: 50, tone: 'warning' },
+        { value: 80, tone: 'success' },
+      ],
+      format: 'number',
+      unit: '$',
+    });
+  });
+
   it('validates fields before computing distribution models', () => {
     expect(() => buildHistogramModel(model, [], { value: 'ghost' })).toThrow(
       /Unknown histogram value field: ghost/,
@@ -111,5 +177,20 @@ describe('distribution builders', () => {
     expect(() =>
       buildHeatmapModel(model, [], { x: 'day', y: 'ghost', measure: 'revenue' }),
     ).toThrow(/Unknown heatmap y dimension: ghost/);
+    expect(() => buildBulletChartModel(model, [], { value: 'revenue', target: 'ghost' })).toThrow(
+      /Unknown bullet target measure: ghost/,
+    );
+    expect(() => buildGaugeChartModel(model, [], { value: 'ghost' })).toThrow(
+      /Unknown gauge value measure: ghost/,
+    );
+    expect(() => buildGaugeChartModel(model, [], { value: 'revenue', min: 10, max: 0 })).toThrow(
+      /Gauge domain must be finite and ordered/,
+    );
+    expect(() =>
+      buildGaugeChartModel(model, [], {
+        value: 'revenue',
+        thresholds: [{ value: Number.NaN, tone: 'warning' }],
+      }),
+    ).toThrow(/Gauge threshold values must be finite/);
   });
 });

@@ -1,8 +1,8 @@
 /**
  * Distribution and statistical chart data contracts.
  *
- * These builders cover rendering-neutral inputs for histograms, box plots and
- * categorical/calendar heatmaps.
+ * These builders cover rendering-neutral inputs for histograms, box plots,
+ * categorical/calendar heatmaps, bullet charts and gauges.
  */
 
 import { aggregate, extractNumbers } from './aggregate.js';
@@ -68,6 +68,73 @@ export interface HeatmapModel {
   cells: HeatmapCell[];
 }
 
+export interface BulletChartConfig {
+  value: string;
+  target: string;
+  category?: string;
+  label?: string;
+  ranges?: readonly number[];
+}
+
+export interface BulletChartDatum {
+  key: string;
+  label: string;
+  value: number;
+  target: number;
+  ranges?: number[];
+}
+
+export interface BulletChartModel {
+  label: string;
+  valueId: string;
+  targetId: string;
+  data: BulletChartDatum[];
+}
+
+export type GaugeChartTone =
+  | 'neutral'
+  | 'info'
+  | 'success'
+  | 'warning'
+  | 'error'
+  | 'category1'
+  | 'category2'
+  | 'category3'
+  | 'category4'
+  | 'category5'
+  | 'category6'
+  | 'category7'
+  | 'category8';
+
+export type GaugeChartFormat = 'number' | 'percent';
+
+export interface GaugeChartThreshold {
+  value: number;
+  tone: GaugeChartTone;
+}
+
+export interface GaugeChartConfig {
+  value: string;
+  label?: string;
+  min?: number;
+  max?: number;
+  thresholds?: readonly GaugeChartThreshold[];
+  format?: GaugeChartFormat;
+  unit?: string;
+}
+
+export interface GaugeChartModel {
+  label: string;
+  valueId: string;
+  value: number;
+  displayValue: number;
+  min: number;
+  max: number;
+  thresholds?: GaugeChartThreshold[];
+  format: GaugeChartFormat;
+  unit?: string;
+}
+
 function cellKey(value: unknown): string {
   return value == null ? 'null' : String(value);
 }
@@ -90,6 +157,25 @@ function resolveMeasure(model: DataModel, id: string, role: string): Measure {
     throw new Error(`Unknown ${role} measure: ${id}`);
   }
   return measure;
+}
+
+function finiteNumbers(values: readonly number[] | undefined, role: string): number[] | undefined {
+  if (values === undefined) return undefined;
+  const out = [...values];
+  if (out.some((value) => !Number.isFinite(value))) {
+    throw new Error(`${role} must be finite`);
+  }
+  return out;
+}
+
+function assertDomain(min: number, max: number, role: string): void {
+  if (!Number.isFinite(min) || !Number.isFinite(max) || min > max) {
+    throw new Error(`${role} domain must be finite and ordered`);
+  }
+}
+
+function clamp(value: number, min: number, max: number): number {
+  return Math.min(max, Math.max(min, value));
 }
 
 function uniqueKeys(rows: readonly Row[], field: string): string[] {
@@ -249,4 +335,75 @@ export function buildHeatmapModel(
   }
 
   return { xKeys, yKeys, cells };
+}
+
+export function buildBulletChartModel(
+  model: DataModel,
+  data: readonly Row[],
+  config: BulletChartConfig,
+): BulletChartModel {
+  const valueMeasure = resolveMeasure(model, config.value, 'bullet value');
+  const targetMeasure = resolveMeasure(model, config.target, 'bullet target');
+  if (config.category !== undefined) {
+    assertDimension(model, config.category, 'bullet category');
+  }
+  const ranges = finiteNumbers(config.ranges, 'Bullet ranges');
+
+  const groups =
+    config.category === undefined
+      ? new Map<string, Row[]>([['All', [...data]]])
+      : groupRows(data, config.category);
+
+  return {
+    label: config.label ?? valueMeasure.label,
+    valueId: config.value,
+    targetId: config.target,
+    data: Array.from(groups, ([key, rows]) => {
+      const datum: BulletChartDatum = {
+        key,
+        label: key,
+        value: aggregate([...rows], valueMeasure),
+        target: aggregate([...rows], targetMeasure),
+      };
+      if (ranges !== undefined) datum.ranges = ranges;
+      return datum;
+    }),
+  };
+}
+
+export function buildGaugeChartModel(
+  model: DataModel,
+  data: readonly Row[],
+  config: GaugeChartConfig,
+): GaugeChartModel {
+  const valueMeasure = resolveMeasure(model, config.value, 'gauge value');
+  const min = config.min ?? 0;
+  const max = config.max ?? 100;
+  assertDomain(min, max, 'Gauge');
+
+  const thresholds =
+    config.thresholds === undefined
+      ? undefined
+      : [...config.thresholds]
+          .map((threshold) => {
+            if (!Number.isFinite(threshold.value)) {
+              throw new Error('Gauge threshold values must be finite');
+            }
+            return { ...threshold };
+          })
+          .sort((a, b) => a.value - b.value);
+
+  const value = aggregate([...data], valueMeasure);
+  const out: GaugeChartModel = {
+    label: config.label ?? valueMeasure.label,
+    valueId: config.value,
+    value,
+    displayValue: Number.isFinite(value) ? clamp(value, min, max) : value,
+    min,
+    max,
+    format: config.format ?? 'number',
+  };
+  if (thresholds !== undefined) out.thresholds = thresholds;
+  if (config.unit !== undefined) out.unit = config.unit;
+  return out;
 }
