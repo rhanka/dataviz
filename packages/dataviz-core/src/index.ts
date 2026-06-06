@@ -152,6 +152,33 @@ export {
   buildErrorBarsModel,
 } from './analytics.js';
 
+// Geographic models
+export type {
+  GeoCoordinate,
+  GeoPointConfig,
+  GeoPoint,
+  GeoPointModel,
+  ChoroplethConfig,
+  ChoroplethRegion,
+  ChoroplethModel,
+  GeoFlowConfig,
+  GeoFlowLink,
+  GeoFlowModel,
+  GeoHexbinConfig,
+  GeoHexbin,
+  GeoHexbinModel,
+  GeoClusterConfig,
+  GeoCluster,
+  GeoClusterModel,
+} from './geo.js';
+export {
+  buildGeoPointModel,
+  buildChoroplethModel,
+  buildGeoFlowModel,
+  buildGeoHexbinModel,
+  buildGeoClusterModel,
+} from './geo.js';
+
 // Store
 export type {
   FilterSpec,
