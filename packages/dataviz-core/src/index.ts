@@ -115,11 +115,21 @@ export type {
   HeatmapConfig,
   HeatmapCell,
   HeatmapModel,
+  BulletChartConfig,
+  BulletChartDatum,
+  BulletChartModel,
+  GaugeChartTone,
+  GaugeChartFormat,
+  GaugeChartThreshold,
+  GaugeChartConfig,
+  GaugeChartModel,
 } from './distribution.js';
 export {
   buildHistogramModel,
   buildBoxPlotModel,
   buildHeatmapModel,
+  buildBulletChartModel,
+  buildGaugeChartModel,
 } from './distribution.js';
 
 // Advanced pivot / matrix
