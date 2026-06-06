@@ -61,16 +61,20 @@
         keys.push(k);
       }
     }
+    let min = 0;
     let max = 0;
     const panels = keys.map((k) => {
       const facetRows = rows.filter((row) => key(row[facetBy]) === k);
       const data = groupAggregate(facetRows, dimension, m).map(({ key: barKey, value }) => {
+        if (value < min) min = value;
         if (value > max) max = value;
         return tone ? { label: barKey, value, tone } : { label: barKey, value };
       });
       return { key: k, data };
     });
-    return { panels, domain: panels.length ? [0, max] : undefined };
+    // Shared domain anchored at 0 so positive-only facets get [0, max] and mixed
+    // facets keep negatives in view.
+    return { panels, domain: panels.length ? [min, max] : undefined };
   });
 </script>
 

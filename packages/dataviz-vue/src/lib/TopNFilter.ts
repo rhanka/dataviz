@@ -42,7 +42,10 @@ export const TopNFilter = defineComponent({
         .map((r) => r.key);
       props.store.setFilter(props.dimension, { kind: 'include', values: ranked });
     };
-    watch(n, apply, { immediate: true });
+    // Re-apply when N or any data-defining prop changes (parity with React/Svelte).
+    watch([n, () => props.store, () => props.dimension, () => props.measure], apply, {
+      immediate: true,
+    });
     // NumberInput is cast to the generic Vue `Component` type: its highly
     // generic DefineComponent signature otherwise trips `h()`'s overload
     // resolution on the `modelValue`/`update:modelValue` (v-model) props.
