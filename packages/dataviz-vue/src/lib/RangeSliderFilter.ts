@@ -58,6 +58,7 @@ export const RangeSliderFilter = defineComponent({
     min: { type: Number, default: undefined },
     max: { type: Number, default: undefined },
     step: { type: Number, default: 1 },
+    class: { type: String, default: undefined },
   },
   setup(props) {
     const d = numericDomain(props.store.data, props.dimension);
@@ -82,6 +83,7 @@ export const RangeSliderFilter = defineComponent({
         max: domain.max,
         step: props.step,
         showValue: true,
+        class: props.class,
         'onUpdate:modelValue': (v: [number, number]) => {
           value.value = v;
         },

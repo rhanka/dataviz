@@ -14,6 +14,7 @@
     /** Upper bound of the track; defaults to the data maximum. */
     max?: number;
     step?: number;
+    class?: string;
   };
 
   /**
@@ -51,7 +52,7 @@
   import { RangeSlider } from '@sentropic/design-system-svelte';
   import { findDimension } from '@sentropic/dataviz-core';
 
-  let { store, dimension, label, min, max, step = 1 }: RangeSliderFilterProps = $props();
+  let { store, dimension, label, min, max, step = 1, class: className }: RangeSliderFilterProps = $props();
 
   // The track domain is resolved once (props override the data extent).
   const domain = untrack((): NumericDomain => {
@@ -77,5 +78,6 @@
   max={domain.max}
   {step}
   showValue
+  class={className}
   onChange={(v) => (value = v)}
 />
