@@ -50,6 +50,15 @@ export {
 // Descriptions
 export { describeFilterSpec } from './describe.js';
 
+// Pivot / matrix
+export type {
+  PivotConfig,
+  PivotTableColumn,
+  PivotTableRow,
+  PivotTable,
+} from './pivot.js';
+export { buildPivotTable } from './pivot.js';
+
 // Store
 export type {
   FilterSpec,
