@@ -34,3 +34,5 @@ export { default as DrillBreadcrumb } from './lib/DrillBreadcrumb.svelte';
 export type { DrillBreadcrumbProps } from './lib/DrillBreadcrumb.svelte';
 export { default as TopNFilter } from './lib/TopNFilter.svelte';
 export type { TopNFilterProps } from './lib/TopNFilter.svelte';
+export { default as ValueSlicer } from './lib/ValueSlicer.svelte';
+export type { ValueSlicerProps } from './lib/ValueSlicer.svelte';
