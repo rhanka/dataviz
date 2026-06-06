@@ -59,6 +59,15 @@ export type {
 } from './pivot.js';
 export { buildPivotTable } from './pivot.js';
 
+// KPI cards
+export type {
+  KpiCardConfig,
+  KpiBuildOptions,
+  KpiSparklinePoint,
+  KpiCard,
+} from './kpi.js';
+export { buildKpiCards } from './kpi.js';
+
 // Store
 export type {
   FilterSpec,
