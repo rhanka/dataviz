@@ -18,6 +18,8 @@ export { SelectionLegend } from './lib/SelectionLegend.js';
 export type { SelectionLegendProps } from './lib/SelectionLegend.js';
 export { CrossfilteredBarChart } from './lib/CrossfilteredBarChart.js';
 export type { CrossfilteredBarChartProps } from './lib/CrossfilteredBarChart.js';
+export { FieldPane } from './lib/FieldPane.js';
+export type { FieldPaneProps } from './lib/FieldPane.js';
 export { PivotDataTable } from './lib/PivotDataTable.js';
 export type { PivotDataTableProps } from './lib/PivotDataTable.js';
 export { KpiCardGroup } from './lib/KpiCardGroup.js';

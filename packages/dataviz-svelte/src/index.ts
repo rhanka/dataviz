@@ -18,6 +18,8 @@ export { default as SelectionLegend } from './lib/SelectionLegend.svelte';
 export type { SelectionLegendProps } from './lib/SelectionLegend.svelte';
 export { default as CrossfilteredBarChart } from './lib/CrossfilteredBarChart.svelte';
 export type { CrossfilteredBarChartProps } from './lib/CrossfilteredBarChart.svelte';
+export { default as FieldPane } from './lib/FieldPane.svelte';
+export type { FieldPaneProps } from './lib/FieldPane.svelte';
 export { default as PivotDataTable } from './lib/PivotDataTable.svelte';
 export type { PivotDataTableProps } from './lib/PivotDataTable.svelte';
 export { default as KpiCardGroup } from './lib/KpiCardGroup.svelte';
