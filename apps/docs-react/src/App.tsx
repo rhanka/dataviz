@@ -10,9 +10,11 @@ import {
   RecordsTable,
   TopNFilter,
   ValueSlicer,
+  RelativeDateFilter,
+  RangeSliderFilter,
   ExportMenu,
 } from '@sentropic/dataviz-react';
-import { model, data, crossfilter } from './data.js';
+import { model, data, crossfilter, DEMO_NOW } from './data.js';
 import './app.css';
 
 const legendLabels = { byCountry: 'Pays', byProduct: 'Produit' };
@@ -40,6 +42,8 @@ export function App() {
       <section className="controls">
         <ValueSlicer store={store} dimension="country" orientation="horizontal" />
         <TopNFilter store={store} dimension="product" measure="sales" defaultN={2} label="Top N produits" />
+        <RelativeDateFilter store={store} dimension="date" now={DEMO_NOW} label="Période" />
+        <RangeSliderFilter store={store} dimension="price" step={1} />
       </section>
 
       <section className="charts">
