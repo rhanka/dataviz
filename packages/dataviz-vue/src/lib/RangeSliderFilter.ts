@@ -1,5 +1,5 @@
 import { defineComponent, h, ref, watch, type Component, type PropType } from 'vue';
-import { Slider } from '@sentropic/design-system-vue';
+import { RangeSlider } from '@sentropic/design-system-vue';
 import { findDimension, type DashboardStore, type FilterSpec, type Row } from '@sentropic/dataviz-core';
 
 export type NumericDomain = { min: number; max: number };
@@ -35,8 +35,8 @@ export function numericDomain(data: readonly Row[], dimension: string): NumericD
 }
 
 /**
- * Pure: two slider handles → a core `range` FilterSpec (bounds normalized so
- * `lo <= hi`), or `null` when they span the whole domain (no constraint).
+ * Pure: the two range-slider handles → a core `range` FilterSpec (bounds
+ * normalized so `lo <= hi`), or `null` when they span the whole domain.
  */
 export function rangeBoundsToSpec(lower: number, upper: number, domain: NumericDomain): FilterSpec | null {
   const lo = Math.min(lower, upper);
@@ -46,8 +46,8 @@ export function rangeBoundsToSpec(lower: number, upper: number, domain: NumericD
 }
 
 /**
- * A two-handle numeric range filter composed from two design-system Sliders
- * (min + max) bound to a core `range` filter on a continuous dimension.
+ * A two-handle numeric range filter built on the design-system RangeSlider,
+ * bound to a core `range` filter on a continuous dimension.
  */
 export const RangeSliderFilter = defineComponent({
   name: 'RangeSliderFilter',
@@ -63,39 +63,28 @@ export const RangeSliderFilter = defineComponent({
     const d = numericDomain(props.store.data, props.dimension);
     const domain: NumericDomain = { min: props.min ?? d.min, max: props.max ?? d.max };
     const resolvedLabel = props.label ?? findDimension(props.store.model, props.dimension)?.label ?? props.dimension;
-    const lower = ref(domain.min);
-    const upper = ref(domain.max);
+    const value = ref<[number, number]>([domain.min, domain.max]);
 
     const apply = () => {
-      const spec = rangeBoundsToSpec(lower.value, upper.value, domain);
+      const spec = rangeBoundsToSpec(value.value[0], value.value[1], domain);
       if (spec) props.store.setFilter(props.dimension, spec);
       else props.store.clearFilter(props.dimension);
     };
-    watch([lower, upper], apply, { immediate: true });
+    watch(value, apply, { immediate: true, deep: true });
 
-    return () => [
-      // Slider cast to Component: its generic DefineComponent signature trips
-      // h()'s overload resolution on the v-model props.
-      h(Slider as Component, {
-        label: `${resolvedLabel} (min)`,
-        modelValue: lower.value,
+    return () =>
+      // RangeSlider cast to Component: its generic DefineComponent signature
+      // trips h()'s overload resolution on the v-model props.
+      h(RangeSlider as Component, {
+        label: resolvedLabel,
+        modelValue: value.value,
         min: domain.min,
         max: domain.max,
         step: props.step,
-        'onUpdate:modelValue': (v: number) => {
-          lower.value = v;
+        showValue: true,
+        'onUpdate:modelValue': (v: [number, number]) => {
+          value.value = v;
         },
-      }),
-      h(Slider as Component, {
-        label: `${resolvedLabel} (max)`,
-        modelValue: upper.value,
-        min: domain.min,
-        max: domain.max,
-        step: props.step,
-        'onUpdate:modelValue': (v: number) => {
-          upper.value = v;
-        },
-      }),
-    ];
+      });
   },
 });

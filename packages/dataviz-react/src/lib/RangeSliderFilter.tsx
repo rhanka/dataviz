@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Slider } from '@sentropic/design-system-react';
+import { RangeSlider } from '@sentropic/design-system-react';
 import { findDimension, type DashboardStore, type FilterSpec, type Row } from '@sentropic/dataviz-core';
 
 export type NumericDomain = { min: number; max: number };
@@ -35,8 +35,8 @@ export function numericDomain(data: readonly Row[], dimension: string): NumericD
 }
 
 /**
- * Pure: two slider handles → a core `range` FilterSpec (bounds normalized so
- * `lo <= hi`), or `null` when they span the whole domain (no constraint).
+ * Pure: the two range-slider handles → a core `range` FilterSpec (bounds
+ * normalized so `lo <= hi`), or `null` when they span the whole domain.
  */
 export function rangeBoundsToSpec(lower: number, upper: number, domain: NumericDomain): FilterSpec | null {
   const lo = Math.min(lower, upper);
@@ -46,8 +46,8 @@ export function rangeBoundsToSpec(lower: number, upper: number, domain: NumericD
 }
 
 /**
- * A two-handle numeric range filter composed from two design-system Sliders
- * (min + max) bound to a core `range` filter on a continuous dimension.
+ * A two-handle numeric range filter built on the design-system RangeSlider,
+ * bound to a core `range` filter on a continuous dimension.
  */
 export function RangeSliderFilter({ store, dimension, label, min, max, step = 1 }: RangeSliderFilterProps) {
   const [domain] = useState<NumericDomain>(() => {
@@ -55,33 +55,23 @@ export function RangeSliderFilter({ store, dimension, label, min, max, step = 1 
     return { min: min ?? d.min, max: max ?? d.max };
   });
   const resolvedLabel = label ?? findDimension(store.model, dimension)?.label ?? dimension;
-  const [lower, setLower] = useState(domain.min);
-  const [upper, setUpper] = useState(domain.max);
+  const [value, setValue] = useState<[number, number]>([domain.min, domain.max]);
 
   useEffect(() => {
-    const spec = rangeBoundsToSpec(lower, upper, domain);
+    const spec = rangeBoundsToSpec(value[0], value[1], domain);
     if (spec) store.setFilter(dimension, spec);
     else store.clearFilter(dimension);
-  }, [store, dimension, lower, upper, domain]);
+  }, [store, dimension, value, domain]);
 
   return (
-    <>
-      <Slider
-        label={`${resolvedLabel} (min)`}
-        value={lower}
-        min={domain.min}
-        max={domain.max}
-        step={step}
-        onChange={(e) => setLower(e.target.valueAsNumber)}
-      />
-      <Slider
-        label={`${resolvedLabel} (max)`}
-        value={upper}
-        min={domain.min}
-        max={domain.max}
-        step={step}
-        onChange={(e) => setUpper(e.target.valueAsNumber)}
-      />
-    </>
+    <RangeSlider
+      label={resolvedLabel}
+      value={value}
+      min={domain.min}
+      max={domain.max}
+      step={step}
+      showValue
+      onChange={setValue}
+    />
   );
 }

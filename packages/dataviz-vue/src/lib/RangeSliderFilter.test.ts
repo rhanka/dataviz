@@ -34,11 +34,10 @@ const model: DataModel = {
 };
 
 describe('RangeSliderFilter (vue)', () => {
-  it('renders two labelled sliders and does not filter at the full domain', () => {
+  it('renders a labelled range slider and does not filter at the full domain', () => {
     const store = createDashboardStore({ model, data: [{ x: 0, v: 1 }, { x: 10, v: 1 }] as Row[] });
     const w = mount(RangeSliderFilter, { props: { store, dimension: 'x' } });
-    expect(w.text()).toContain('Montant (min)');
-    expect(w.text()).toContain('Montant (max)');
+    expect(w.text()).toContain('Montant');
     expect(store.getState().filters.x).toBeUndefined();
   });
 });
