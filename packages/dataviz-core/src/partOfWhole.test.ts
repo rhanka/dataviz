@@ -5,6 +5,8 @@ import {
   buildFlowModel,
   buildPartWholeHierarchy,
   buildPartWholeModel,
+  buildRadarModel,
+  buildRoseModel,
   buildWaterfallModel,
 } from './index.js';
 
@@ -142,6 +144,57 @@ describe('part-of-whole builders', () => {
     });
   });
 
+  it('builds radar series from aggregate measure axes', () => {
+    const radarModel: DataModel = {
+      dimensions: [{ id: 'segment', label: 'Segment', type: 'discrete' }],
+      measures: [
+        { id: 'revenue', label: 'Revenue', aggregation: 'sum' },
+        { id: 'margin', label: 'Margin', aggregation: 'avg' },
+      ],
+    };
+    const rows: Row[] = [
+      { segment: 'Enterprise', revenue: 100, margin: 0.4 },
+      { segment: 'Enterprise', revenue: 50, margin: 0.2 },
+      { segment: 'SMB', revenue: 25, margin: 0.1 },
+    ];
+
+    expect(buildRadarModel(radarModel, rows, { series: 'segment', axes: ['revenue', 'margin'] })).toEqual({
+      axes: [
+        { id: 'revenue', label: 'Revenue' },
+        { id: 'margin', label: 'Margin' },
+      ],
+      series: [
+        {
+          key: 'Enterprise',
+          label: 'Enterprise',
+          points: [
+            { axisId: 'revenue', label: 'Revenue', value: 150 },
+            { axisId: 'margin', label: 'Margin', value: 0.30000000000000004 },
+          ],
+        },
+        {
+          key: 'SMB',
+          label: 'SMB',
+          points: [
+            { axisId: 'revenue', label: 'Revenue', value: 25 },
+            { axisId: 'margin', label: 'Margin', value: 0.1 },
+          ],
+        },
+      ],
+    });
+  });
+
+  it('builds rose sectors with deterministic angles and percentages', () => {
+    expect(buildRoseModel(model, partData, { category: 'region', measure: 'revenue' })).toEqual({
+      total: 300,
+      sectors: [
+        { key: 'EU', label: 'EU', value: 150, percent: 0.5, startAngle: 0, endAngle: 180 },
+        { key: 'NA', label: 'NA', value: 50, percent: 1 / 6, startAngle: 180, endAngle: 240 },
+        { key: 'APAC', label: 'APAC', value: 100, percent: 1 / 3, startAngle: 240, endAngle: 360 },
+      ],
+    });
+  });
+
   it('validates dimensions and measures before building models', () => {
     expect(() =>
       buildPartWholeModel(model, partData, { category: 'ghost', measure: 'revenue' }),
@@ -155,5 +208,14 @@ describe('part-of-whole builders', () => {
     expect(() =>
       buildFlowModel(model, partData, { source: 'source', target: 'ghost', measure: 'revenue' }),
     ).toThrow(/Unknown flow target dimension: ghost/);
+    expect(() => buildRadarModel(model, partData, { axes: [] })).toThrow(
+      /Radar requires at least one measure axis/,
+    );
+    expect(() => buildRadarModel(model, partData, { axes: ['ghost'] })).toThrow(
+      /Unknown radar axis measure: ghost/,
+    );
+    expect(() =>
+      buildRoseModel(model, partData, { category: 'ghost', measure: 'revenue' }),
+    ).toThrow(/Unknown rose category dimension: ghost/);
   });
 });

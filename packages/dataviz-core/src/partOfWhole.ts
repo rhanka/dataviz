@@ -2,7 +2,8 @@
  * Part-of-whole, waterfall and flow data contracts.
  *
  * These builders stay rendering-agnostic while covering the data shapes needed
- * by pie/donut/funnel, treemap/sunburst, waterfall and sankey/chord renderers.
+ * by pie/donut/funnel, treemap/sunburst, waterfall, sankey/chord, radar and
+ * rose renderers.
  */
 
 import { aggregate } from './aggregate.js';
@@ -84,6 +85,52 @@ export interface FlowLink {
 export interface FlowModel {
   nodes: FlowNode[];
   links: FlowLink[];
+}
+
+export interface RadarConfig {
+  axes: string[];
+  series?: string;
+}
+
+export interface RadarAxis {
+  id: string;
+  label: string;
+}
+
+export interface RadarPoint {
+  axisId: string;
+  label: string;
+  value: number;
+}
+
+export interface RadarSeries {
+  key: string;
+  label: string;
+  points: RadarPoint[];
+}
+
+export interface RadarModel {
+  axes: RadarAxis[];
+  series: RadarSeries[];
+}
+
+export interface RoseConfig {
+  category: string;
+  measure: string;
+}
+
+export interface RoseSector {
+  key: string;
+  label: string;
+  value: number;
+  percent: number;
+  startAngle: number;
+  endAngle: number;
+}
+
+export interface RoseModel {
+  total: number;
+  sectors: RoseSector[];
 }
 
 function cellKey(value: unknown): string {
@@ -275,4 +322,59 @@ export function buildFlowModel(
       value: aggregate(link.rows, measure),
     })),
   };
+}
+
+export function buildRadarModel(
+  model: DataModel,
+  data: readonly Row[],
+  config: RadarConfig,
+): RadarModel {
+  if (config.axes.length === 0) {
+    throw new Error('Radar requires at least one measure axis');
+  }
+  if (config.series !== undefined) {
+    assertDimension(model, config.series, 'radar series');
+  }
+  const measures = config.axes.map((axis) => resolveMeasure(model, axis, 'radar axis'));
+  const groups =
+    config.series === undefined
+      ? new Map<string, Row[]>([['All', [...data]]])
+      : groupRows(data, config.series);
+
+  return {
+    axes: measures.map((measure) => ({ id: measure.id, label: measure.label })),
+    series: Array.from(groups, ([key, rows]) => ({
+      key,
+      label: key,
+      points: measures.map((measure) => ({
+        axisId: measure.id,
+        label: measure.label,
+        value: aggregate(rows, measure),
+      })),
+    })),
+  };
+}
+
+export function buildRoseModel(
+  model: DataModel,
+  data: readonly Row[],
+  config: RoseConfig,
+): RoseModel {
+  assertDimension(model, config.category, 'rose category');
+  const measure = resolveMeasure(model, config.measure, 'rose');
+  const rawSectors = Array.from(groupRows(data, config.category), ([key, rows]) => ({
+    key,
+    label: key,
+    value: aggregate(rows, measure),
+  }));
+  const total = rawSectors.reduce((sum, sector) => sum + sector.value, 0);
+  let angle = 0;
+  const sectors = rawSectors.map((sector) => {
+    const percent = total === 0 ? Number.NaN : sector.value / total;
+    const startAngle = angle;
+    angle += total === 0 ? 0 : percent * 360;
+    return { ...sector, percent, startAngle, endAngle: angle };
+  });
+
+  return { total, sectors };
 }
