@@ -36,3 +36,5 @@ export { TopNFilter } from './lib/TopNFilter.js';
 export type { TopNFilterProps } from './lib/TopNFilter.js';
 export { ValueSlicer } from './lib/ValueSlicer.js';
 export type { ValueSlicerProps } from './lib/ValueSlicer.js';
+export { ExportMenu, rowsToCsv } from './lib/ExportMenu.js';
+export type { ExportMenuProps } from './lib/ExportMenu.js';

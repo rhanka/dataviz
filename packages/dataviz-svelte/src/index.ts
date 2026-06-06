@@ -36,3 +36,5 @@ export { default as TopNFilter } from './lib/TopNFilter.svelte';
 export type { TopNFilterProps } from './lib/TopNFilter.svelte';
 export { default as ValueSlicer } from './lib/ValueSlicer.svelte';
 export type { ValueSlicerProps } from './lib/ValueSlicer.svelte';
+export { default as ExportMenu, rowsToCsv } from './lib/ExportMenu.svelte';
+export type { ExportMenuProps } from './lib/ExportMenu.svelte';
