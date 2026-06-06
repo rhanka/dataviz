@@ -122,6 +122,16 @@ export {
   buildHeatmapModel,
 } from './distribution.js';
 
+// Advanced pivot / matrix
+export type {
+  AdvancedPivotConfig,
+  AdvancedPivotSparklinePoint,
+  AdvancedPivotCell,
+  AdvancedPivotRow,
+  AdvancedPivotTable,
+} from './pivotAdvanced.js';
+export { buildAdvancedPivotTable } from './pivotAdvanced.js';
+
 // Store
 export type {
   FilterSpec,
