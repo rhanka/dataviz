@@ -141,15 +141,22 @@ export type {
   TrendLineConfig,
   TrendPoint,
   TrendLineModel,
+  ForecastConfig,
+  ForecastModel,
   ErrorBarsConfig,
   ErrorBarItem,
   ErrorBarsModel,
+  AnalyticsClusterConfig,
+  AnalyticsCluster,
+  AnalyticsClusterModel,
 } from './analytics.js';
 export {
   buildReferenceLineModel,
   buildPercentileBandModel,
   buildTrendLineModel,
+  buildForecastModel,
   buildErrorBarsModel,
+  buildAnalyticsClusterModel,
 } from './analytics.js';
 
 // Geographic models
