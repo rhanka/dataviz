@@ -3,8 +3,10 @@ import {
   type DataModel,
   type Row,
   buildFlowModel,
+  buildMekkoModel,
   buildPartWholeHierarchy,
   buildPartWholeModel,
+  buildPackedBubbleModel,
   buildRadarModel,
   buildRoseModel,
   buildWaterfallModel,
@@ -195,6 +197,71 @@ describe('part-of-whole builders', () => {
     });
   });
 
+  it('builds Mekko columns with column widths and in-column segment percentages', () => {
+    expect(
+      buildMekkoModel(model, partData, {
+        category: 'region',
+        series: 'segment',
+        measure: 'revenue',
+      }),
+    ).toEqual({
+      total: 300,
+      columns: [
+        {
+          key: 'EU',
+          label: 'EU',
+          value: 150,
+          width: 0.5,
+          start: 0,
+          end: 0.5,
+          segments: [
+            { key: 'Enterprise', label: 'Enterprise', value: 100, percent: 100 / 150 },
+            { key: 'SMB', label: 'SMB', value: 50, percent: 50 / 150 },
+          ],
+        },
+        {
+          key: 'NA',
+          label: 'NA',
+          value: 50,
+          width: 1 / 6,
+          start: 0.5,
+          end: 0.5 + 1 / 6,
+          segments: [
+            { key: 'Enterprise', label: 'Enterprise', value: 50, percent: 1 },
+          ],
+        },
+        {
+          key: 'APAC',
+          label: 'APAC',
+          value: 100,
+          width: 1 / 3,
+          start: 0.5 + 1 / 6,
+          end: 1,
+          segments: [
+            { key: 'SMB', label: 'SMB', value: 100, percent: 1 },
+          ],
+        },
+      ],
+    });
+  });
+
+  it('builds packed bubble values with deterministic radii', () => {
+    expect(
+      buildPackedBubbleModel(model, partData, {
+        category: 'region',
+        measure: 'revenue',
+        sort: 'value-desc',
+      }),
+    ).toEqual({
+      total: 300,
+      bubbles: [
+        { key: 'EU', label: 'EU', value: 150, percent: 0.5, radius: Math.sqrt(150 / Math.PI) },
+        { key: 'APAC', label: 'APAC', value: 100, percent: 1 / 3, radius: Math.sqrt(100 / Math.PI) },
+        { key: 'NA', label: 'NA', value: 50, percent: 1 / 6, radius: Math.sqrt(50 / Math.PI) },
+      ],
+    });
+  });
+
   it('validates dimensions and measures before building models', () => {
     expect(() =>
       buildPartWholeModel(model, partData, { category: 'ghost', measure: 'revenue' }),
@@ -217,5 +284,11 @@ describe('part-of-whole builders', () => {
     expect(() =>
       buildRoseModel(model, partData, { category: 'ghost', measure: 'revenue' }),
     ).toThrow(/Unknown rose category dimension: ghost/);
+    expect(() =>
+      buildMekkoModel(model, partData, { category: 'region', series: 'ghost', measure: 'revenue' }),
+    ).toThrow(/Unknown Mekko series dimension: ghost/);
+    expect(() =>
+      buildPackedBubbleModel(model, partData, { category: 'region', measure: 'ghost' }),
+    ).toThrow(/Unknown packed bubble measure: ghost/);
   });
 });

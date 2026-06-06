@@ -3,7 +3,7 @@
  *
  * These builders stay rendering-agnostic while covering the data shapes needed
  * by pie/donut/funnel, treemap/sunburst, waterfall, sankey/chord, radar and
- * rose renderers.
+ * rose, Mekko and packed bubble renderers.
  */
 
 import { aggregate } from './aggregate.js';
@@ -131,6 +131,53 @@ export interface RoseSector {
 export interface RoseModel {
   total: number;
   sectors: RoseSector[];
+}
+
+export interface MekkoConfig {
+  category: string;
+  series: string;
+  measure: string;
+}
+
+export interface MekkoSegment {
+  key: string;
+  label: string;
+  value: number;
+  percent: number;
+}
+
+export interface MekkoColumn {
+  key: string;
+  label: string;
+  value: number;
+  width: number;
+  start: number;
+  end: number;
+  segments: MekkoSegment[];
+}
+
+export interface MekkoModel {
+  total: number;
+  columns: MekkoColumn[];
+}
+
+export interface PackedBubbleConfig {
+  category: string;
+  measure: string;
+  sort?: PartWholeSort;
+}
+
+export interface PackedBubble {
+  key: string;
+  label: string;
+  value: number;
+  percent: number;
+  radius: number;
+}
+
+export interface PackedBubbleModel {
+  total: number;
+  bubbles: PackedBubble[];
 }
 
 function cellKey(value: unknown): string {
@@ -377,4 +424,83 @@ export function buildRoseModel(
   });
 
   return { total, sectors };
+}
+
+export function buildMekkoModel(
+  model: DataModel,
+  data: readonly Row[],
+  config: MekkoConfig,
+): MekkoModel {
+  assertDimension(model, config.category, 'Mekko category');
+  assertDimension(model, config.series, 'Mekko series');
+  const measure = resolveMeasure(model, config.measure, 'Mekko');
+  const categoryGroups = groupRows(data, config.category);
+  const rawColumns = Array.from(categoryGroups, ([key, rows]) => {
+    const value = aggregate(rows, measure);
+    return {
+      key,
+      label: key,
+      value,
+      rows,
+    };
+  });
+  const total = rawColumns.reduce((sum, column) => sum + column.value, 0);
+  let offset = 0;
+
+  const columns = rawColumns.map((column) => {
+    const width = total === 0 ? 0 : column.value / total;
+    const start = offset;
+    offset += width;
+    const segments = Array.from(groupRows(column.rows, config.series), ([key, rows]) => {
+      const value = aggregate(rows, measure);
+      return {
+        key,
+        label: key,
+        value,
+        percent: column.value === 0 ? Number.NaN : value / column.value,
+      };
+    });
+
+    return {
+      key: column.key,
+      label: column.label,
+      value: column.value,
+      width,
+      start,
+      end: offset,
+      segments,
+    };
+  });
+
+  return { total, columns };
+}
+
+export function buildPackedBubbleModel(
+  model: DataModel,
+  data: readonly Row[],
+  config: PackedBubbleConfig,
+): PackedBubbleModel {
+  assertDimension(model, config.category, 'packed bubble category');
+  const measure = resolveMeasure(model, config.measure, 'packed bubble');
+  const items = Array.from(groupRows(data, config.category), ([key, rows]) => ({
+    key,
+    label: key,
+    value: aggregate(rows, measure),
+    percent: 0,
+    cumulativeValue: 0,
+    cumulativePercent: 0,
+  }));
+  const total = items.reduce((sum, item) => sum + item.value, 0);
+  const sorted = sortItems(items, config.sort ?? 'input');
+
+  return {
+    total,
+    bubbles: sorted.map((item) => ({
+      key: item.key,
+      label: item.label,
+      value: item.value,
+      percent: total === 0 ? Number.NaN : item.value / total,
+      radius: Math.sqrt(Math.max(0, item.value) / Math.PI),
+    })),
+  };
 }
