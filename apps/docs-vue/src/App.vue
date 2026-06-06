@@ -10,9 +10,11 @@ import {
   RecordsTable,
   TopNFilter,
   ValueSlicer,
+  RelativeDateFilter,
+  RangeSliderFilter,
   ExportMenu,
 } from '@sentropic/dataviz-vue';
-import { model, data, crossfilter } from './data';
+import { model, data, crossfilter, DEMO_NOW } from './data';
 
 const store = createDashboardStore({ model, data, crossfilter });
 const legendLabels = { byCountry: 'Pays', byProduct: 'Produit' };
@@ -40,6 +42,8 @@ const drillHierarchy = ['country', 'city'];
     <section class="controls">
       <ValueSlicer :store="store" dimension="country" orientation="horizontal" />
       <TopNFilter :store="store" dimension="product" measure="sales" :default-n="2" label="Top N produits" />
+      <RelativeDateFilter :store="store" dimension="date" :now="DEMO_NOW" label="Période" />
+      <RangeSliderFilter :store="store" dimension="price" :step="1" />
     </section>
 
     <section class="charts">

@@ -10,9 +10,11 @@
     RecordsTable,
     TopNFilter,
     ValueSlicer,
+    RelativeDateFilter,
+    RangeSliderFilter,
     ExportMenu,
   } from '@sentropic/dataviz-svelte';
-  import { model, data, crossfilter } from './data.js';
+  import { model, data, crossfilter, DEMO_NOW } from './data.js';
 
   const store = createDashboardStore({ model, data, crossfilter });
 
@@ -39,6 +41,8 @@
   <section class="controls">
     <ValueSlicer {store} dimension="country" orientation="horizontal" />
     <TopNFilter {store} dimension="product" measure="sales" defaultN={2} label="Top N produits" />
+    <RelativeDateFilter {store} dimension="date" now={DEMO_NOW} label="Période" />
+    <RangeSliderFilter {store} dimension="price" step={1} />
   </section>
 
   <section class="charts">

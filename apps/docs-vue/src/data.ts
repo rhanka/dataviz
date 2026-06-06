@@ -6,6 +6,8 @@ export const model: DataModel = {
     { id: 'product', label: 'Produit', type: 'discrete' },
     { id: 'city', label: 'Ville', type: 'discrete' },
     { id: 'month', label: 'Mois', type: 'discrete' },
+    { id: 'date', label: 'Date', type: 'continuous' },
+    { id: 'price', label: 'Prix unitaire (€)', type: 'continuous' },
   ],
   measures: [
     { id: 'sales', label: 'Ventes (€)', aggregation: 'sum' },
@@ -20,6 +22,10 @@ const countries: Record<string, string[]> = {
 };
 const products = ['Alpha', 'Beta', 'Gamma'];
 const months = ['Jan', 'Fév', 'Mar'];
+
+/** Fixed reference "now" for the relative-date demo (keeps the build deterministic). */
+export const DEMO_NOW = new Date('2024-04-01T00:00:00Z');
+const DAY_MS = 24 * 60 * 60 * 1000;
 
 export const data: Row[] = (() => {
   const rows: Row[] = [];
@@ -37,6 +43,9 @@ export const data: Row[] = (() => {
             city,
             product,
             month,
+            // Spread across the ~120 days before DEMO_NOW so relative-date presets bite.
+            date: DEMO_NOW.getTime() - Math.floor(next() * 120) * DAY_MS,
+            price: Math.round(5 + next() * 45),
             sales: Math.round(50 + next() * 950),
             units: Math.round(1 + next() * 99),
           });
