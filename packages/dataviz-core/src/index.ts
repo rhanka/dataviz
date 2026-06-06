@@ -132,6 +132,26 @@ export type {
 } from './pivotAdvanced.js';
 export { buildAdvancedPivotTable } from './pivotAdvanced.js';
 
+// Analytic overlays
+export type {
+  ReferenceLineConfig,
+  ReferenceLineModel,
+  PercentileBandConfig,
+  PercentileBandModel,
+  TrendLineConfig,
+  TrendPoint,
+  TrendLineModel,
+  ErrorBarsConfig,
+  ErrorBarItem,
+  ErrorBarsModel,
+} from './analytics.js';
+export {
+  buildReferenceLineModel,
+  buildPercentileBandModel,
+  buildTrendLineModel,
+  buildErrorBarsModel,
+} from './analytics.js';
+
 // Store
 export type {
   FilterSpec,
