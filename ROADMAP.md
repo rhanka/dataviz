@@ -38,7 +38,7 @@ Source de vérité : `~/src/sent-tech-design-system/docs/bi-study/INVENTORY.md` 
 - [ ] KPI / cartes data (display, delta-vs-période, goal/progress, KPI+sparkline, multi-card)
 
 ## Vague 2 — Consommateurs d'état & multiplicateur  *(claude:dataviz)*
-- [ ] Cross-filter / cross-highlight (callbacks charts, highlight, scoping)
+- [~] Cross-filter / cross-highlight (callbacks charts, highlight, scoping) — **sortie + highlight + scoping faits à parité 3 fw** (DashboardFilterBar, SelectionLegend, CrossfilteredBarChart) ; reste le *brushing-clic* (callback chart→filtre) en attente de la FR DS « sélection contrôlée sur BarChart »
 - [ ] Drill & exploration (down/up/expand, through/by, show records, back+historique)
 - [ ] Small multiples / faceting (trellis via `Grid`, échelle partagée)
 
