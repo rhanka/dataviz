@@ -1,7 +1,7 @@
 {
   "name": "@sentropic/dataviz-svelte",
   "version": "0.1.1",
-  "description": "Svelte 5 adapter for @sentropic/dataviz-core, built on @sentropic/design-system-svelte.",
+  "description": "Svelte 5 adapter + dashboard components for @sentropic/dataviz-core, built on @sentropic/design-system-svelte.",
   "type": "module",
   "license": "MIT",
   "repository": {
@@ -12,18 +12,21 @@
   "files": [
     "dist"
   ],
+  "svelte": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": {
+      "svelte": "./dist/index.js",
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
     }
   },
-  "types": "./dist/index.d.ts",
-  "main": "./dist/index.js",
-  "sideEffects": false,
+  "sideEffects": [
+    "**/*.css"
+  ],
   "scripts": {
-    "build": "tsc -p tsconfig.json",
-    "check": "tsc -p tsconfig.json --noEmit",
+    "build": "svelte-package",
+    "check": "svelte-check --tsconfig ./tsconfig.json",
     "test": "vitest run src"
   },
   "dependencies": {
@@ -33,6 +36,15 @@
   },
   "peerDependencies": {
     "svelte": "^5"
+  },
+  "devDependencies": {
+    "@sveltejs/package": "^2.5.8",
+    "@sveltejs/vite-plugin-svelte": "^7.1.2",
+    "@testing-library/svelte": "^5.3.1",
+    "svelte": "^5.56.2",
+    "svelte-check": "^4.0.0",
+    "vite": "^8.0.16",
+    "vitest": "^4.1.5"
   },
   "publishConfig": {
     "access": "public"
