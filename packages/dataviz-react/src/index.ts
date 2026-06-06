@@ -1,46 +1,20 @@
 /**
  * @sentropic/dataviz-react
  *
- * React adapter for the framework-agnostic dataviz-core store. Exposes
- * `useDashboard`, which subscribes a component to the store via React's
- * `useSyncExternalStore` (concurrent-safe, SSR-safe). All presentation comes
- * from `@sentropic/design-system-react`; this package only wires state.
+ * React adapter + dashboard components for @sentropic/dataviz-core, built on
+ * @sentropic/design-system-react. The adapter wires the core's observable store
+ * onto React (`useSyncExternalStore`); the components compose design-system
+ * presentational pieces and bind them to the shared dashboard state. No
+ * presentation is authored here — it all comes from the design system.
  */
 
-import { useSyncExternalStore } from 'react';
-import {
-  type DashboardState,
-  type DashboardStore,
-} from '@sentropic/dataviz-core';
+// Adapter + full core surface re-export (incl. the core's `describeFilterSpec`).
+export * from './adapter.js';
 
-// Re-export the full core surface so consumers need a single import.
-export * from '@sentropic/dataviz-core';
-
-// Prove design-system resolution: re-export real types from the DS.
-export type { ButtonProps } from '@sentropic/design-system-react';
-export type { TenantTheme } from '@sentropic/design-system-themes';
-
-/**
- * Subscribe a React component to a dashboard store.
- *
- * Without a selector it returns the whole {@link DashboardState} snapshot.
- * With a `selector` it returns a derived value; the component re-renders only
- * when that derived value changes by `Object.is` (the standard
- * `useSyncExternalStore` semantics). Because the core hands out a new frozen
- * state object on every mutation, identity comparison is reliable.
- *
- * The same `subscribe` reference is used for the server snapshot, so this is
- * SSR/hydration safe.
- */
-export function useDashboard(store: DashboardStore): DashboardState;
-export function useDashboard<T>(store: DashboardStore, selector: (state: DashboardState) => T): T;
-export function useDashboard<T>(
-  store: DashboardStore,
-  selector?: (state: DashboardState) => T,
-): DashboardState | T {
-  const getSnapshot = () => {
-    const state = store.getState();
-    return selector ? selector(state) : state;
-  };
-  return useSyncExternalStore(store.subscribe, getSnapshot, getSnapshot);
-}
+// Dashboard components (state consumers built on the design system).
+export { DashboardFilterBar } from './lib/DashboardFilterBar.js';
+export type { DashboardFilterBarProps } from './lib/DashboardFilterBar.js';
+export { SelectionLegend } from './lib/SelectionLegend.js';
+export type { SelectionLegendProps } from './lib/SelectionLegend.js';
+export { CrossfilteredBarChart } from './lib/CrossfilteredBarChart.js';
+export type { CrossfilteredBarChartProps } from './lib/CrossfilteredBarChart.js';
