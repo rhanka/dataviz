@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@sentropic/dataviz — démos cross-filter</title>
+    <style>
+      :root { color-scheme: light dark; }
+      body {
+        margin: 0;
+        font-family: system-ui, -apple-system, sans-serif;
+        line-height: 1.55;
+        color: #0f172a;
+        background: #f8fafc;
+      }
+      main { margin: 0 auto; max-width: 720px; padding: 3rem 1.5rem; }
+      h1 { font-size: 1.75rem; margin: 0 0 0.5rem; }
+      p { color: #475569; }
+      .grid { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); margin: 2rem 0; }
+      a.card {
+        display: block; padding: 1.25rem; border: 1px solid #e2e8f0; border-radius: 0.5rem;
+        background: #fff; text-decoration: none; color: inherit; transition: border-color .12s, transform .12s;
+      }
+      a.card:hover { border-color: #2563eb; transform: translateY(-2px); }
+      a.card strong { display: block; font-size: 1.1rem; }
+      a.card span { color: #475569; font-size: .875rem; }
+      code { background: #eef2ff; padding: 0.1rem 0.35rem; border-radius: 0.25rem; font-size: .875rem; }
+      footer { margin-top: 2rem; color: #64748b; font-size: .8125rem; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>@sentropic/dataviz</h1>
+      <p>
+        Couche BI / dashboard (cross-filter, drill, small-multiples, slicers…) bâtie nativement sur
+        le design system Sent Tech. Le même état partagé (<code>@sentropic/dataviz-core</code>)
+        pilote trois adaptateurs à parité stricte.
+      </p>
+      <div class="grid">
+        <a class="card" href="./svelte/"><strong>Svelte</strong><span>démo cross-filter</span></a>
+        <a class="card" href="./react/"><strong>React</strong><span>démo cross-filter</span></a>
+        <a class="card" href="./vue/"><strong>Vue</strong><span>démo cross-filter</span></a>
+      </div>
+      <p>
+        Packages npm : <code>@sentropic/dataviz-core</code>, <code>-svelte</code>,
+        <code>-react</code>, <code>-vue</code>.
+      </p>
+      <footer>Généré depuis <code>rhanka/dataviz</code> · démos identiques sur les 3 frameworks.</footer>
+    </main>
+  </body>
+</html>
