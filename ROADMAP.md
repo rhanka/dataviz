@@ -62,8 +62,8 @@ Source de vérité : `~/src/sent-tech-design-system/docs/bi-study/INVENTORY.md` 
 - [ ] Wrapper iframe / page web ; Image data-driven ; Object/layer panel (réutilise `TreeView`)
 
 ## Démo & revue  *(claude:dataviz)*
-- [ ] `apps/docs` — dashboard de démo cross-filter sur les 3 frameworks
-- [ ] Déploiement GitHub Pages
+- [x] `apps/docs` — dashboard de démo cross-filter sur les 3 frameworks — démos Svelte (`apps/docs`), React (`apps/docs-react`), Vue (`apps/docs-vue`), même dashboard (FilterBar, SelectionLegend, CrossfilteredBarChart ×2 liés, SmallMultiples, Drill, RecordsTable, TopNFilter, ValueSlicer, ExportMenu) ; `vite build` vert (alias workspace)
+- [~] Déploiement GitHub Pages — workflow `.github/workflows/pages.yml` (build des 3 démos + landing, deploy-pages) ; reste à activer Pages côté réglages du dépôt (source = GitHub Actions)
 - [ ] Revue intégrale « en tant que design system » (tokens/contraste/a11y/parité)
 
 ## Hors couverture (assumé)
