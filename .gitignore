@@ -10,3 +10,5 @@ coverage/
 .env.*
 !.env.example
 .remote/
+.claude/settings.local.json
+.claude/scheduled_tasks.lock
