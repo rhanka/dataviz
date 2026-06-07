@@ -30,7 +30,7 @@ const data: Row[] = [
 const newStore = () => createDashboardStore({ model, data });
 
 describe('analytics charts (svelte)', () => {
-  it('renders analytic models as accessible SVG fallbacks', () => {
+  it('renders analytic models through DS charts where available', () => {
     const store = newStore();
     const reference = render(ReferenceLineChart, {
       props: { store, viewId: 'ref', value: 30, referenceLabel: 'Goal', label: 'Goal line' },
@@ -55,13 +55,18 @@ describe('analytics charts (svelte)', () => {
     expect(forecast.getByRole('img', { name: 'Forecast' })).toBeTruthy();
     expect(errors.getByRole('img', { name: 'Errors' })).toBeTruthy();
     expect(clusters.getByRole('img', { name: 'Clusters' })).toBeTruthy();
-    expect(reference.container.querySelectorAll('.st-referenceLineChart__line')).toHaveLength(1);
-    expect(band.container.querySelectorAll('.st-percentileBandChart__band')).toHaveLength(1);
-    expect(trend.container.querySelectorAll('.st-trendLineChart__line')).toHaveLength(1);
+    expect(reference.container.querySelectorAll('.st-lineChart__refLine')).toHaveLength(1);
+    expect(reference.container.querySelectorAll('.st-referenceLineChart__line')).toHaveLength(0);
+    expect(band.container.querySelectorAll('.st-lineChart__band')).toHaveLength(1);
+    expect(band.container.querySelectorAll('.st-lineChart__refLine')).toHaveLength(1);
+    expect(band.container.querySelectorAll('.st-percentileBandChart__band')).toHaveLength(0);
+    expect(trend.container.querySelectorAll('.st-lineChart__trend')).toHaveLength(1);
+    expect(trend.container.querySelectorAll('.st-trendLineChart__line')).toHaveLength(0);
     expect(forecast.container.querySelectorAll('.st-forecastLineChart__point')).toHaveLength(2);
-    expect(errors.container.querySelectorAll('.st-errorBarsChart__bar')).toHaveLength(2);
+    expect(errors.container.querySelectorAll('.st-barChart__errorBar')).toHaveLength(2);
+    expect(errors.container.querySelectorAll('.st-errorBarsChart__bar')).toHaveLength(0);
     expect(clusters.container.querySelectorAll('.st-analyticsClusterPlot__centroid')).toHaveLength(2);
-    expect(reference.container.textContent).toContain('Goal: 30');
-    expect(errors.container.textContent).toContain('A: mean');
+    expect(reference.container.textContent).toContain('Goal');
+    expect(errors.container.querySelectorAll('.st-barChart__bar')).toHaveLength(2);
   });
 });

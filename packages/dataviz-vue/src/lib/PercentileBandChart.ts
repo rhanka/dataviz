@@ -1,5 +1,6 @@
 import { defineComponent, h, type PropType } from 'vue';
 import { buildPercentileBandModel, type DashboardStore } from '@sentropic/dataviz-core';
+import { LineChart, type LineChartDatum } from '@sentropic/design-system-vue';
 import { useDashboard } from '../adapter.js';
 
 export type PercentileBandChartProps = {
@@ -13,10 +14,6 @@ export type PercentileBandChartProps = {
   label: string;
   class?: string;
 };
-
-function scale(value: number, min: number, max: number, start: number, end: number): number {
-  return max === min ? (start + end) / 2 : start + ((value - min) / (max - min)) * (end - start);
-}
 
 export const PercentileBandChart = defineComponent({
   name: 'PercentileBandChart',
@@ -40,56 +37,21 @@ export const PercentileBandChart = defineComponent({
         lower: props.lower,
         upper: props.upper,
       });
-      const min = Math.min(0, model.lowerValue, model.median, model.upperValue);
-      const max = Math.max(1, model.lowerValue, model.median, model.upperValue);
-      const x1 = scale(model.lowerValue, min, max, 28, props.width - 28);
-      const x2 = scale(model.upperValue, min, max, 28, props.width - 28);
-      const medianX = scale(model.median, min, max, 28, props.width - 28);
+      const data: LineChartDatum[] = [
+        { x: `${Math.round(props.lower * 100)}%`, y: model.lowerValue },
+        { x: 'median', y: model.median },
+        { x: `${Math.round(props.upper * 100)}%`, y: model.upperValue },
+      ];
 
-      return h(
-        'svg',
-        {
-          role: 'img',
-          'aria-label': props.label,
-          class: ['st-percentileBandChart', props.class],
-          width: props.width,
-          height: props.height,
-          viewBox: `0 0 ${props.width} ${props.height}`,
-        },
-        [
-          h('title', props.label),
-          h('line', {
-            x1: 28,
-            y1: props.height / 2,
-            x2: props.width - 28,
-            y2: props.height / 2,
-            stroke: 'currentColor',
-            'stroke-opacity': '0.2',
-          }),
-          h(
-            'rect',
-            {
-              class: 'st-percentileBandChart__band',
-              x: x1,
-              y: props.height / 2 - 14,
-              width: Math.max(0, x2 - x1),
-              height: 28,
-              fill: '#16a34a',
-              'fill-opacity': '0.28',
-            },
-            [h('title', `${model.lowerValue}..${model.upperValue}`)],
-          ),
-          h('line', {
-            class: 'st-percentileBandChart__median',
-            x1: medianX,
-            y1: 24,
-            x2: medianX,
-            y2: props.height - 24,
-            stroke: '#16a34a',
-            'stroke-width': 2,
-          }),
-        ],
-      );
+      return h(LineChart, {
+        data,
+        width: props.width,
+        height: props.height,
+        label: props.label,
+        bands: [{ from: model.lowerValue, to: model.upperValue, label: 'Percentiles', tone: 'success' }],
+        referenceLines: [{ value: model.median, label: 'Median', tone: 'success' }],
+        class: ['st-percentileBandChart', props.class].filter(Boolean).join(' '),
+      });
     };
   },
 });
