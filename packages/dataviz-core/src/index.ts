@@ -268,4 +268,6 @@ export {
   deserializeFilters,
   serializeDrill,
   deserializeDrill,
+  serializeState,
+  deserializeState,
 } from './serialize.js';

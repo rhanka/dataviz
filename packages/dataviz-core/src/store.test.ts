@@ -300,6 +300,104 @@ describe('clearAll', () => {
   });
 });
 
+describe('restore', () => {
+  it('restores filters, selections and drill in one atomic mutation', () => {
+    const store = makeStore();
+    const fn = vi.fn();
+    store.subscribe(fn);
+
+    store.restore({
+      filters: { country: { kind: 'include', values: ['FR'] } },
+      selections: { chart: ['FR'] },
+      drill: { chart: ['country'] },
+    });
+
+    expect(store.getState()).toEqual({
+      filters: { country: { kind: 'include', values: ['FR'] } },
+      selections: { chart: ['FR'] },
+      drill: { chart: ['country'] },
+    });
+    expect(fn).toHaveBeenCalledTimes(1);
+  });
+
+  it('accepts a partial state and defaults missing sections to empty maps', () => {
+    const store = makeStore();
+    store.setFilter('country', { kind: 'include', values: ['FR'] });
+    store.toggleSelection('chart', 'FR');
+    store.drillDown('chart', 'country');
+
+    store.restore({ filters: { age: { kind: 'range', min: 40 } } });
+
+    expect(store.getState()).toEqual({
+      filters: { age: { kind: 'range', min: 40 } },
+      selections: {},
+      drill: {},
+    });
+  });
+
+  it('does not alias the restored state and keeps snapshots frozen', () => {
+    const store = makeStore();
+    const restored = {
+      filters: { country: { kind: 'include', values: ['FR'] } },
+      selections: { chart: ['FR'] },
+      drill: { chart: ['country'] },
+    };
+
+    store.restore(restored);
+    restored.filters.country.values.push('US');
+    restored.selections.chart.push('US');
+    restored.drill.chart.push('age');
+
+    const snapshot = store.getState();
+    expect(snapshot).toEqual({
+      filters: { country: { kind: 'include', values: ['FR'] } },
+      selections: { chart: ['FR'] },
+      drill: { chart: ['country'] },
+    });
+    expect(Object.isFrozen(snapshot)).toBe(true);
+    expect(Object.isFrozen(snapshot.filters.country!.values)).toBe(true);
+    expect(Object.isFrozen(snapshot.selections.chart)).toBe(true);
+    expect(Object.isFrozen(snapshot.drill.chart)).toBe(true);
+  });
+
+  it('rejects unknown dimensions and malformed restored state without notifying', () => {
+    const store = makeStore();
+    const fn = vi.fn();
+    store.subscribe(fn);
+
+    expect(() =>
+      store.restore({ filters: { ghost: { kind: 'include', values: ['x'] } } }),
+    ).toThrow(/Unknown dimension/);
+    expect(() =>
+      store.restore({ selections: { chart: [1] as unknown as string[] } }),
+    ).toThrow(/Invalid selection state/);
+    expect(() =>
+      store.restore({ drill: { chart: ['ghost'] } }),
+    ).toThrow(/Unknown dimension/);
+    expect(store.getState()).toEqual({ filters: {}, selections: {}, drill: {} });
+    expect(fn).not.toHaveBeenCalled();
+  });
+
+  it('does not notify when restoring an identical state', () => {
+    const store = makeStore();
+    store.restore({
+      filters: { country: { kind: 'include', values: ['FR'] } },
+      selections: { chart: ['FR'] },
+      drill: { chart: ['country'] },
+    });
+    const fn = vi.fn();
+    store.subscribe(fn);
+
+    store.restore({
+      filters: { country: { kind: 'include', values: ['FR'] } },
+      selections: { chart: ['FR'] },
+      drill: { chart: ['country'] },
+    });
+
+    expect(fn).not.toHaveBeenCalled();
+  });
+});
+
 describe('store API contract', () => {
   it('exposes clear as a filter clear alias', () => {
     const store = makeStore();
