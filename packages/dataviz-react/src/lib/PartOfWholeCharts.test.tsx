@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { createDashboardStore, type DataModel, type Row } from '@sentropic/dataviz-core';
 import { DonutChart } from './DonutChart.js';
 import { FunnelChart } from './FunnelChart.js';
+import { MekkoChart } from './MekkoChart.js';
 import { RadarChart } from './RadarChart.js';
 import { SankeyChart } from './SankeyChart.js';
 import { SunburstChart } from './SunburstChart.js';
@@ -84,6 +85,26 @@ describe('part-of-whole charts (react)', () => {
     expect(container.querySelectorAll('.st-radarChart__polygon')).toHaveLength(2);
     expect(screen.getByText(/Lead -> Qualified: 70/)).toBeTruthy();
     expect(screen.getByText(/Enterprise, Revenue: 70/)).toBeTruthy();
+  });
+
+  it('renders a Mekko chart from category and segment part-whole aggregates', () => {
+    const store = newStore();
+    const { container } = render(
+      <MekkoChart
+        store={store}
+        viewId="mekko"
+        category="region"
+        series="segment"
+        measure="revenue"
+        label="Revenue mekko"
+      />,
+    );
+
+    expect(screen.getByRole('img', { name: 'Revenue mekko' })).toBeTruthy();
+    expect(container.querySelectorAll('.st-marimekkoChart__cell')).toHaveLength(4);
+    expect(container.querySelector('.st-marimekkoChart')?.textContent).toContain('North');
+    expect(container.querySelector('.st-marimekkoChart')?.textContent).toContain('South');
+    expect(container.querySelector('.st-marimekkoChart')?.textContent).toContain('North, Enterprise');
   });
 
   it('rebuilds part-whole aggregates from this view cross-filter scope', () => {

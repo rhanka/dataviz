@@ -50,6 +50,8 @@ export { default as FunnelChart } from './lib/FunnelChart.svelte';
 export type { FunnelChartProps } from './lib/FunnelChart.svelte';
 export { default as WaterfallChart } from './lib/WaterfallChart.svelte';
 export type { WaterfallChartProps } from './lib/WaterfallChart.svelte';
+export { default as MekkoChart } from './lib/MekkoChart.svelte';
+export type { MekkoChartProps } from './lib/MekkoChart.svelte';
 export { default as TreemapChart } from './lib/TreemapChart.svelte';
 export type { TreemapChartProps } from './lib/TreemapChart.svelte';
 export { default as SunburstChart } from './lib/SunburstChart.svelte';
