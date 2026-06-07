@@ -48,13 +48,13 @@ const rows: Row[] = [
 const newStore = () => createDashboardStore({ model, data: rows });
 
 describe('geo charts (svelte)', () => {
-  it('renders geo core models as accessible SVG map fallbacks', () => {
+  it('renders geo core models through DS GeoMap layers', () => {
     const store = newStore();
     const points = render(GeoPointMap, {
       props: { store, viewId: 'points', latitude: 'lat', longitude: 'lon', id: 'id', labelField: 'city', value: 'revenue', label: 'Points' },
     });
     const regions = render(ChoroplethMap, {
-      props: { store, viewId: 'regions', region: 'region', measure: 'revenue', label: 'Regions' },
+      props: { store, viewId: 'regions', region: 'region', measure: 'revenue', geometry: 'shape', label: 'Regions' },
     });
     const flows = render(GeoFlowMap, {
       props: { store, viewId: 'flows', sourceLatitude: 'lat', sourceLongitude: 'lon', targetLatitude: 'targetLat', targetLongitude: 'targetLon', value: 'revenue', label: 'Flows' },
@@ -79,13 +79,27 @@ describe('geo charts (svelte)', () => {
     expect(clusters.getByRole('img', { name: 'Clusters' })).toBeTruthy();
     expect(density.getByRole('img', { name: 'Density' })).toBeTruthy();
     expect(shapes.getByRole('img', { name: 'Shapes' })).toBeTruthy();
-    expect(points.container.querySelectorAll('.st-geoPointMap__point')).toHaveLength(3);
-    expect(regions.container.querySelectorAll('.st-choroplethMap__region')).toHaveLength(3);
-    expect(flows.container.querySelectorAll('.st-geoFlowMap__link')).toHaveLength(3);
-    expect(hex.container.querySelectorAll('.st-geoHexbinMap__bin')).toHaveLength(2);
-    expect(clusters.container.querySelectorAll('.st-geoClusterMap__cluster')).toHaveLength(2);
-    expect(density.container.querySelectorAll('.st-geoDensityMap__cell')).toHaveLength(2);
-    expect(shapes.container.querySelectorAll('.st-geoJsonMap__feature')).toHaveLength(1);
+    expect(points.container.querySelectorAll('.st-geoPointMap.st-geoMap')).toHaveLength(1);
+    expect(regions.container.querySelectorAll('.st-choroplethMap.st-geoMap')).toHaveLength(1);
+    expect(flows.container.querySelectorAll('.st-geoFlowMap.st-geoMap')).toHaveLength(1);
+    expect(hex.container.querySelectorAll('.st-geoHexbinMap.st-geoMap')).toHaveLength(1);
+    expect(clusters.container.querySelectorAll('.st-geoClusterMap.st-geoMap')).toHaveLength(1);
+    expect(density.container.querySelectorAll('.st-geoDensityMap.st-geoMap')).toHaveLength(1);
+    expect(shapes.container.querySelectorAll('.st-geoJsonMap.st-geoMap')).toHaveLength(1);
+    expect(points.container.querySelectorAll('.st-geoMap__point')).toHaveLength(3);
+    expect(regions.container.querySelectorAll('.st-geoMap__region')).toHaveLength(1);
+    expect(flows.container.querySelectorAll('.st-geoMap__flow')).toHaveLength(3);
+    expect(hex.container.querySelectorAll('.st-geoMap__hexbin')).toHaveLength(2);
+    expect(clusters.container.querySelectorAll('.st-geoMap__cluster')).toHaveLength(2);
+    expect(density.container.querySelectorAll('.st-geoMap__density')).toHaveLength(3);
+    expect(shapes.container.querySelectorAll('.st-geoMap__feature')).toHaveLength(1);
+    expect(points.container.querySelectorAll('.st-geoPointMap__point')).toHaveLength(0);
+    expect(regions.container.querySelectorAll('.st-choroplethMap__region')).toHaveLength(0);
+    expect(flows.container.querySelectorAll('.st-geoFlowMap__link')).toHaveLength(0);
+    expect(hex.container.querySelectorAll('.st-geoHexbinMap__bin')).toHaveLength(0);
+    expect(clusters.container.querySelectorAll('.st-geoClusterMap__cluster')).toHaveLength(0);
+    expect(density.container.querySelectorAll('.st-geoDensityMap__cell')).toHaveLength(0);
+    expect(shapes.container.querySelectorAll('.st-geoJsonMap__feature')).toHaveLength(0);
     expect(points.container.textContent).toContain('Paris: 100');
     expect(regions.container.textContent).toContain('FR: 150');
   });

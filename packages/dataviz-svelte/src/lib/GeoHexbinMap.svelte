@@ -16,9 +16,9 @@
 </script>
 
 <script lang="ts">
-  import { buildGeoHexbinModel } from '@sentropic/dataviz-core';
+  import { GeoMap as DsGeoMap } from '@sentropic/design-system-svelte';
   import { useDashboard } from '../adapter.js';
-  import { GEO_TONES, hexagonPoints, projectCoordinate, scaleNumber } from './geoMapLayout.js';
+  import { hexbinLayer, mapClass } from './geoMapLayers.js';
 
   let {
     store,
@@ -34,35 +34,12 @@
   }: GeoHexbinMapProps = $props();
 
   const dash = $derived(useDashboard(store));
-  const model = $derived.by(() => {
+  const layer = $derived.by(() => {
     void $dash;
-    return buildGeoHexbinModel(store.model, store.applyCrossfilter(viewId), { latitude, longitude, value, cellSize });
+    return hexbinLayer(store, viewId, { latitude, longitude, value, cellSize, labelText: label });
   });
-  const bins = $derived.by(() => {
-    const max = Math.max(1, ...model.bins.map((bin) => bin.value));
-    return model.bins.map((bin, index) => {
-      const point = projectCoordinate(bin.center, width, height);
-      return {
-        bin,
-        points: hexagonPoints(point.x, point.y, scaleNumber(bin.value, 0, max, 10, 22)),
-        fill: GEO_TONES[index % GEO_TONES.length],
-      };
-    });
-  });
+  const layers = $derived([layer]);
+  const classes = $derived(mapClass('st-geoHexbinMap', className));
 </script>
 
-<svg
-  role="img"
-  aria-label={label}
-  class={['st-geoHexbinMap', className].filter(Boolean).join(' ')}
-  {width}
-  {height}
-  viewBox="0 0 {width} {height}"
->
-  <title>{label}</title>
-  {#each bins as item (item.bin.id)}
-    <polygon class="st-geoHexbinMap__bin" points={item.points} fill={item.fill} fill-opacity="0.72">
-      <title>{item.bin.id}: {item.bin.value}</title>
-    </polygon>
-  {/each}
-</svg>
+<DsGeoMap {layers} {width} {height} {label} class={classes} />

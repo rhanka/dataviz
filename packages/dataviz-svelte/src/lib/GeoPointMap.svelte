@@ -17,9 +17,9 @@
 </script>
 
 <script lang="ts">
-  import { buildGeoPointModel } from '@sentropic/dataviz-core';
+  import { GeoMap as DsGeoMap } from '@sentropic/design-system-svelte';
   import { useDashboard } from '../adapter.js';
-  import { GEO_TONES, projectCoordinate, scaleNumber } from './geoMapLayout.js';
+  import { mapClass, pointsLayer } from './geoMapLayers.js';
 
   let {
     store,
@@ -36,59 +36,19 @@
   }: GeoPointMapProps = $props();
 
   const dash = $derived(useDashboard(store));
-  const model = $derived.by(() => {
+  const layer = $derived.by(() => {
     void $dash;
-    return buildGeoPointModel(store.model, store.applyCrossfilter(viewId), {
+    return pointsLayer(store, viewId, {
       latitude,
       longitude,
       id,
       label: labelField,
       value,
+      labelText: label,
     });
   });
-  const points = $derived.by(() => {
-    const values = model.points.map((point) => point.value ?? 1);
-    const min = Math.min(0, ...values);
-    const max = Math.max(1, ...values);
-    return model.points.map((point, index) => {
-      const projected = projectCoordinate(point, width, height);
-      const radius = scaleNumber(point.value ?? 1, min, max, 5, 14);
-      return {
-        point,
-        x: projected.x,
-        y: projected.y,
-        radius,
-        fill: GEO_TONES[index % GEO_TONES.length],
-        text: `${point.label ?? point.id}${point.value === undefined ? '' : `: ${point.value}`}`,
-      };
-    });
-  });
+  const layers = $derived([layer]);
+  const classes = $derived(mapClass('st-geoPointMap', className));
 </script>
 
-<svg
-  role="img"
-  aria-label={label}
-  class={['st-geoPointMap', className].filter(Boolean).join(' ')}
-  {width}
-  {height}
-  viewBox="0 0 {width} {height}"
->
-  <title>{label}</title>
-  {#each points as item (item.point.id)}
-    <g>
-      <circle
-        class="st-geoPointMap__point"
-        cx={item.x}
-        cy={item.y}
-        r={item.radius}
-        fill={item.fill}
-        fill-opacity="0.82"
-      >
-        <title>{item.text}</title>
-      </circle>
-      <text x={item.x + item.radius + 4} y={item.y + 4} font-size="12" fill="currentColor">
-        {item.text}
-      </text>
-    </g>
-  {/each}
-</svg>
+<DsGeoMap {layers} {width} {height} {label} class={classes} />

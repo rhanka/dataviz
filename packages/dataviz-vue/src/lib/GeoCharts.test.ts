@@ -48,13 +48,13 @@ const rows: Row[] = [
 const newStore = () => createDashboardStore({ model, data: rows });
 
 describe('geo charts (vue)', () => {
-  it('renders geo core models as accessible SVG map fallbacks', () => {
+  it('renders geo core models through DS GeoMap layers', () => {
     const store = newStore();
     const points = mount(GeoPointMap, {
       props: { store, viewId: 'points', latitude: 'lat', longitude: 'lon', id: 'id', labelField: 'city', value: 'revenue', label: 'Points' },
     });
     const regions = mount(ChoroplethMap, {
-      props: { store, viewId: 'regions', region: 'region', measure: 'revenue', label: 'Regions' },
+      props: { store, viewId: 'regions', region: 'region', measure: 'revenue', geometry: 'shape', label: 'Regions' },
     });
     const flows = mount(GeoFlowMap, {
       props: { store, viewId: 'flows', sourceLatitude: 'lat', sourceLongitude: 'lon', targetLatitude: 'targetLat', targetLongitude: 'targetLon', value: 'revenue', label: 'Flows' },
@@ -79,13 +79,27 @@ describe('geo charts (vue)', () => {
     expect(clusters.find('[role="img"]').attributes('aria-label')).toBe('Clusters');
     expect(density.find('[role="img"]').attributes('aria-label')).toBe('Density');
     expect(shapes.find('[role="img"]').attributes('aria-label')).toBe('Shapes');
-    expect(points.findAll('.st-geoPointMap__point')).toHaveLength(3);
-    expect(regions.findAll('.st-choroplethMap__region')).toHaveLength(3);
-    expect(flows.findAll('.st-geoFlowMap__link')).toHaveLength(3);
-    expect(hex.findAll('.st-geoHexbinMap__bin')).toHaveLength(2);
-    expect(clusters.findAll('.st-geoClusterMap__cluster')).toHaveLength(2);
-    expect(density.findAll('.st-geoDensityMap__cell')).toHaveLength(2);
-    expect(shapes.findAll('.st-geoJsonMap__feature')).toHaveLength(1);
+    expect(points.findAll('.st-geoPointMap.st-geoMap')).toHaveLength(1);
+    expect(regions.findAll('.st-choroplethMap.st-geoMap')).toHaveLength(1);
+    expect(flows.findAll('.st-geoFlowMap.st-geoMap')).toHaveLength(1);
+    expect(hex.findAll('.st-geoHexbinMap.st-geoMap')).toHaveLength(1);
+    expect(clusters.findAll('.st-geoClusterMap.st-geoMap')).toHaveLength(1);
+    expect(density.findAll('.st-geoDensityMap.st-geoMap')).toHaveLength(1);
+    expect(shapes.findAll('.st-geoJsonMap.st-geoMap')).toHaveLength(1);
+    expect(points.findAll('.st-geoMap__point')).toHaveLength(3);
+    expect(regions.findAll('.st-geoMap__region')).toHaveLength(1);
+    expect(flows.findAll('.st-geoMap__flow')).toHaveLength(3);
+    expect(hex.findAll('.st-geoMap__hexbin')).toHaveLength(2);
+    expect(clusters.findAll('.st-geoMap__cluster')).toHaveLength(2);
+    expect(density.findAll('.st-geoMap__density')).toHaveLength(3);
+    expect(shapes.findAll('.st-geoMap__feature')).toHaveLength(1);
+    expect(points.findAll('.st-geoPointMap__point')).toHaveLength(0);
+    expect(regions.findAll('.st-choroplethMap__region')).toHaveLength(0);
+    expect(flows.findAll('.st-geoFlowMap__link')).toHaveLength(0);
+    expect(hex.findAll('.st-geoHexbinMap__bin')).toHaveLength(0);
+    expect(clusters.findAll('.st-geoClusterMap__cluster')).toHaveLength(0);
+    expect(density.findAll('.st-geoDensityMap__cell')).toHaveLength(0);
+    expect(shapes.findAll('.st-geoJsonMap__feature')).toHaveLength(0);
     expect(points.text()).toContain('Paris: 100');
     expect(regions.text()).toContain('FR: 150');
   });

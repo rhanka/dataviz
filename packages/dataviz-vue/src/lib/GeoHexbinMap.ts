@@ -1,7 +1,8 @@
 import { defineComponent, h, type PropType } from 'vue';
-import { buildGeoHexbinModel, type DashboardStore } from '@sentropic/dataviz-core';
+import type { DashboardStore } from '@sentropic/dataviz-core';
+import { GeoMap } from '@sentropic/design-system-vue';
 import { useDashboard } from '../adapter.js';
-import { GEO_TONES, hexagonPoints, projectCoordinate, scaleNumber } from './geoMapLayout.js';
+import { hexbinLayer, mapClass } from './geoMapLayers.js';
 
 export type GeoHexbinMapProps = {
   store: DashboardStore;
@@ -34,42 +35,21 @@ export const GeoHexbinMap = defineComponent({
     const state = useDashboard(props.store);
     return () => {
       void state.value;
-      const model = buildGeoHexbinModel(props.store.model, props.store.applyCrossfilter(props.viewId), {
+      const layer = hexbinLayer(props.store, props.viewId, {
         latitude: props.latitude,
         longitude: props.longitude,
         value: props.value,
         cellSize: props.cellSize,
+        labelText: props.label,
       });
-      const max = Math.max(1, ...model.bins.map((bin) => bin.value));
 
-      return h(
-        'svg',
-        {
-          role: 'img',
-          'aria-label': props.label,
-          class: ['st-geoHexbinMap', props.class],
-          width: props.width,
-          height: props.height,
-          viewBox: `0 0 ${props.width} ${props.height}`,
-        },
-        [
-          h('title', props.label),
-          ...model.bins.map((bin, index) => {
-            const point = projectCoordinate(bin.center, props.width, props.height);
-            return h(
-              'polygon',
-              {
-                key: bin.id,
-                class: 'st-geoHexbinMap__bin',
-                points: hexagonPoints(point.x, point.y, scaleNumber(bin.value, 0, max, 10, 22)),
-                fill: GEO_TONES[index % GEO_TONES.length],
-                'fill-opacity': '0.72',
-              },
-              [h('title', `${bin.id}: ${bin.value}`)],
-            );
-          }),
-        ],
-      );
+      return h(GeoMap, {
+        layers: [layer],
+        width: props.width,
+        height: props.height,
+        label: props.label,
+        class: mapClass('st-geoHexbinMap', props.class),
+      });
     };
   },
 });

@@ -48,12 +48,12 @@ const rows: Row[] = [
 const newStore = () => createDashboardStore({ model, data: rows });
 
 describe('geo charts (react)', () => {
-  it('renders geo core models as accessible SVG map fallbacks', () => {
+  it('renders geo core models through DS GeoMap layers', () => {
     const store = newStore();
     const { container } = render(
       <>
         <GeoPointMap store={store} viewId="points" latitude="lat" longitude="lon" id="id" labelField="city" value="revenue" label="Points" />
-        <ChoroplethMap store={store} viewId="regions" region="region" measure="revenue" label="Regions" />
+        <ChoroplethMap store={store} viewId="regions" region="region" measure="revenue" geometry="shape" label="Regions" />
         <GeoFlowMap store={store} viewId="flows" sourceLatitude="lat" sourceLongitude="lon" targetLatitude="targetLat" targetLongitude="targetLon" value="revenue" label="Flows" />
         <GeoHexbinMap store={store} viewId="hex" latitude="lat" longitude="lon" value="revenue" cellSize={10} label="Hexbins" />
         <GeoClusterMap store={store} viewId="clusters" latitude="lat" longitude="lon" id="id" value="revenue" radius={4} label="Clusters" />
@@ -69,13 +69,27 @@ describe('geo charts (react)', () => {
     expect(screen.getByRole('img', { name: 'Clusters' })).toBeTruthy();
     expect(screen.getByRole('img', { name: 'Density' })).toBeTruthy();
     expect(screen.getByRole('img', { name: 'Shapes' })).toBeTruthy();
-    expect(container.querySelectorAll('.st-geoPointMap__point')).toHaveLength(3);
-    expect(container.querySelectorAll('.st-choroplethMap__region')).toHaveLength(3);
-    expect(container.querySelectorAll('.st-geoFlowMap__link')).toHaveLength(3);
-    expect(container.querySelectorAll('.st-geoHexbinMap__bin')).toHaveLength(2);
-    expect(container.querySelectorAll('.st-geoClusterMap__cluster')).toHaveLength(2);
-    expect(container.querySelectorAll('.st-geoDensityMap__cell')).toHaveLength(2);
-    expect(container.querySelectorAll('.st-geoJsonMap__feature')).toHaveLength(1);
+    expect(container.querySelectorAll('.st-geoPointMap.st-geoMap')).toHaveLength(1);
+    expect(container.querySelectorAll('.st-choroplethMap.st-geoMap')).toHaveLength(1);
+    expect(container.querySelectorAll('.st-geoFlowMap.st-geoMap')).toHaveLength(1);
+    expect(container.querySelectorAll('.st-geoHexbinMap.st-geoMap')).toHaveLength(1);
+    expect(container.querySelectorAll('.st-geoClusterMap.st-geoMap')).toHaveLength(1);
+    expect(container.querySelectorAll('.st-geoDensityMap.st-geoMap')).toHaveLength(1);
+    expect(container.querySelectorAll('.st-geoJsonMap.st-geoMap')).toHaveLength(1);
+    expect(container.querySelectorAll('.st-geoPointMap .st-geoMap__point')).toHaveLength(3);
+    expect(container.querySelectorAll('.st-choroplethMap .st-geoMap__region')).toHaveLength(1);
+    expect(container.querySelectorAll('.st-geoFlowMap .st-geoMap__flow')).toHaveLength(3);
+    expect(container.querySelectorAll('.st-geoHexbinMap .st-geoMap__hexbin')).toHaveLength(2);
+    expect(container.querySelectorAll('.st-geoClusterMap .st-geoMap__cluster')).toHaveLength(2);
+    expect(container.querySelectorAll('.st-geoDensityMap .st-geoMap__density')).toHaveLength(3);
+    expect(container.querySelectorAll('.st-geoJsonMap .st-geoMap__feature')).toHaveLength(1);
+    expect(container.querySelectorAll('.st-geoPointMap__point')).toHaveLength(0);
+    expect(container.querySelectorAll('.st-choroplethMap__region')).toHaveLength(0);
+    expect(container.querySelectorAll('.st-geoFlowMap__link')).toHaveLength(0);
+    expect(container.querySelectorAll('.st-geoHexbinMap__bin')).toHaveLength(0);
+    expect(container.querySelectorAll('.st-geoClusterMap__cluster')).toHaveLength(0);
+    expect(container.querySelectorAll('.st-geoDensityMap__cell')).toHaveLength(0);
+    expect(container.querySelectorAll('.st-geoJsonMap__feature')).toHaveLength(0);
     expect(container.querySelector('.st-geoPointMap')?.textContent).toContain('Paris: 100');
     expect(container.querySelector('.st-choroplethMap')?.textContent).toContain('FR: 150');
   });
