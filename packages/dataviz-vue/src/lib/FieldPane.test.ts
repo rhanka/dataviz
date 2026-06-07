@@ -1,5 +1,5 @@
 import { mount } from '@vue/test-utils';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { type DataModel } from '@sentropic/dataviz-core';
 import { FieldPane } from './FieldPane.js';
 
@@ -37,5 +37,16 @@ describe('FieldPane (vue)', () => {
 
     expect(selected.exists()).toBe(true);
     expect(selected.text()).toContain('Revenu');
+  });
+
+  it('calls onSelect with the clicked field id for authoring', async () => {
+    const onSelect = vi.fn();
+    const wrapper = mount(FieldPane, { props: { model, onSelect } });
+    const countryRow = wrapper.findAll('.st-treeView__row').find((row) => row.text().includes('Pays'));
+
+    expect(countryRow).toBeTruthy();
+    await countryRow!.trigger('click');
+
+    expect(onSelect).toHaveBeenCalledWith('dimension:country');
   });
 });
