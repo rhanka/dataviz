@@ -65,7 +65,7 @@ Source de vérité : `~/src/sent-tech-design-system/docs/bi-study/INVENTORY.md` 
   `ExportMenu` consomme un `Button` DS, exporte les rows cross-filtrées en CSV
   via `store.applyCrossfilter(viewId)`, supporte colonnes/filename/label et
   expose `rowsToCsv` testé.
-- [ ] Wrapper iframe / page web ; Image data-driven ; Object/layer panel (réutilise `TreeView`)
+- [x] Wrapper iframe / page web ; Image data-driven ; Object/layer panel (réutilise `TreeView`) — core `objects` livré : résolution iframe avec sandbox/referrer/loading, image data-driven par champ/template/fallback, état de panel de calques immutable et arbre compatible `TreeView` ; wrappers `WebFrame`, `DataImage`, `ObjectLayerPanel` livrés en Svelte/React/Vue
 
 ## Démo & revue  *(claude:dataviz)*
 - [x] `apps/docs` — dashboard de démo cross-filter sur les 3 frameworks — démos Svelte (`apps/docs`), React (`apps/docs-react`), Vue (`apps/docs-vue`), même dashboard (FilterBar, SelectionLegend, CrossfilteredBarChart ×2 liés, SmallMultiples, Drill, RecordsTable, TopNFilter, ValueSlicer, RelativeDateFilter, RangeSliderFilter, ExportMenu ; modèle démo enrichi de dimensions continues `date`/`price`) ; `vite build` vert (alias workspace)
