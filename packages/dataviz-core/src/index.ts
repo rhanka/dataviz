@@ -249,6 +249,18 @@ export type {
 } from './store.js';
 export { createDashboardStore, specToPredicate, applyFilters, isFilterSpec } from './store.js';
 
+// Bookmarks / actions
+export type {
+  DashboardActionRuntime,
+  DashboardBookmark,
+  DashboardAction,
+} from './actions.js';
+export {
+  resolveDashboardBookmarkState,
+  applyDashboardBookmark,
+  runDashboardAction,
+} from './actions.js';
+
 // Crossfilter
 export type { CrossfilterView, CrossfilterGraph } from './crossfilter.js';
 export { sourcesFor, applyCrossfilter } from './crossfilter.js';
