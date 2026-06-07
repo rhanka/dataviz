@@ -7,6 +7,7 @@
     includeMeasures?: boolean;
     selectedId?: FieldId | string;
     defaultExpandedIds?: string[];
+    onSelect?: (id: FieldId | string) => void;
     label?: string;
     class?: string;
   };
@@ -22,6 +23,7 @@
     includeMeasures,
     selectedId,
     defaultExpandedIds,
+    onSelect,
     label = 'Fields',
     class: className,
   }: FieldPaneProps = $props();
@@ -33,6 +35,7 @@
   nodes={tree.nodes}
   selected={selectedId}
   defaultExpanded={defaultExpandedIds ?? tree.defaultExpandedIds}
+  onselect={onSelect}
   {label}
   class={className}
 />

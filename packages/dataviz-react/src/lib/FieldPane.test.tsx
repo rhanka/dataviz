@@ -1,5 +1,5 @@
-import { render, screen } from '@testing-library/react';
-import { describe, expect, it } from 'vitest';
+import { fireEvent, render, screen } from '@testing-library/react';
+import { describe, expect, it, vi } from 'vitest';
 import { type DataModel } from '@sentropic/dataviz-core';
 import { FieldPane } from './FieldPane.js';
 
@@ -40,5 +40,14 @@ describe('FieldPane (react)', () => {
         .closest('.st-treeView__row')
         ?.classList.contains('st-treeView__row--selected'),
     ).toBe(true);
+  });
+
+  it('calls onSelect with the clicked field id for authoring', () => {
+    const onSelect = vi.fn();
+    render(<FieldPane model={model} onSelect={onSelect} />);
+
+    fireEvent.click(screen.getByText('Pays'));
+
+    expect(onSelect).toHaveBeenCalledWith('dimension:country');
   });
 });

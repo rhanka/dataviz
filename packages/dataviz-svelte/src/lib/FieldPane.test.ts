@@ -1,5 +1,5 @@
-import { render } from '@testing-library/svelte';
-import { describe, expect, it } from 'vitest';
+import { fireEvent, render } from '@testing-library/svelte';
+import { describe, expect, it, vi } from 'vitest';
 import { type DataModel } from '@sentropic/dataviz-core';
 import FieldPane from './FieldPane.svelte';
 
@@ -41,5 +41,14 @@ describe('FieldPane (svelte)', () => {
         .closest('.st-treeView__row')
         ?.classList.contains('st-treeView__row--selected'),
     ).toBe(true);
+  });
+
+  it('calls onSelect with the clicked field id for authoring', async () => {
+    const onSelect = vi.fn();
+    const { getByText } = render(FieldPane, { props: { model, onSelect } });
+
+    await fireEvent.click(getByText('Pays'));
+
+    expect(onSelect).toHaveBeenCalledWith('dimension:country');
   });
 });
