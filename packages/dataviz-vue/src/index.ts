@@ -52,6 +52,8 @@ export { FieldPane } from './lib/FieldPane.js';
 export type { FieldPaneProps } from './lib/FieldPane.js';
 export { PivotDataTable } from './lib/PivotDataTable.js';
 export type { PivotDataTableProps } from './lib/PivotDataTable.js';
+export { AdvancedPivotDataTable } from './lib/AdvancedPivotDataTable.js';
+export type { AdvancedPivotDataTableProps } from './lib/AdvancedPivotDataTable.js';
 export { KpiCardGroup } from './lib/KpiCardGroup.js';
 export type { KpiCardGroupProps } from './lib/KpiCardGroup.js';
 export { RecordsTable } from './lib/RecordsTable.js';

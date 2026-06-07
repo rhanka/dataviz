@@ -52,6 +52,8 @@ export { default as FieldPane } from './lib/FieldPane.svelte';
 export type { FieldPaneProps } from './lib/FieldPane.svelte';
 export { default as PivotDataTable } from './lib/PivotDataTable.svelte';
 export type { PivotDataTableProps } from './lib/PivotDataTable.svelte';
+export { default as AdvancedPivotDataTable } from './lib/AdvancedPivotDataTable.svelte';
+export type { AdvancedPivotDataTableProps } from './lib/AdvancedPivotDataTable.svelte';
 export { default as KpiCardGroup } from './lib/KpiCardGroup.svelte';
 export type { KpiCardGroupProps } from './lib/KpiCardGroup.svelte';
 export { default as RecordsTable } from './lib/RecordsTable.svelte';
