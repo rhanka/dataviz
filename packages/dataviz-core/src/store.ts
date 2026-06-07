@@ -76,6 +76,8 @@ export interface DashboardStore {
   drillUp(viewId: string): void;
   /** Clear all drill state for a view. No-op if absent. */
   clearDrill(viewId: string): void;
+  /** Replace filters, selections and drill state atomically. */
+  restore(state: Partial<DashboardState>): void;
   /** Reset all filters, selections and drill state. */
   clearAll(): void;
   /** Apply global filters and this store's cross-filter graph for one view. */
@@ -84,6 +86,10 @@ export interface DashboardStore {
 
 function isStringArray(value: unknown): value is string[] {
   return Array.isArray(value) && value.every((v) => typeof v === 'string');
+}
+
+function isPlainRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
 
 function isFiniteBound(value: unknown): value is number {
@@ -174,6 +180,91 @@ function specsEqual(a: FilterSpec | undefined, b: FilterSpec): boolean {
   }
   const range = b as Extract<FilterSpec, { kind: 'range' }>;
   return a.min === range.min && a.max === range.max;
+}
+
+function recordKeysEqual(a: Record<string, unknown>, b: Record<string, unknown>): boolean {
+  const aKeys = Object.keys(a);
+  const bKeys = Object.keys(b);
+  if (aKeys.length !== bKeys.length) return false;
+  return aKeys.every((key) => key in b);
+}
+
+function filterStatesEqual(a: FilterState, b: FilterState): boolean {
+  if (!recordKeysEqual(a, b)) return false;
+  return Object.keys(a).every((key) => specsEqual(a[key], b[key]!));
+}
+
+function stringArrayStatesEqual(
+  a: Record<string, readonly string[]>,
+  b: Record<string, readonly string[]>,
+): boolean {
+  if (!recordKeysEqual(a, b)) return false;
+  return Object.keys(a).every((key) => arrayEqual(a[key]!, b[key]!));
+}
+
+function statesEqual(a: DashboardState, b: DashboardState): boolean {
+  return (
+    filterStatesEqual(a.filters, b.filters) &&
+    stringArrayStatesEqual(a.selections, b.selections) &&
+    stringArrayStatesEqual(a.drill, b.drill)
+  );
+}
+
+function normaliseFilterState(
+  filters: Partial<DashboardState>['filters'],
+  assertKnownDimension: (dimensionId: string) => void,
+): FilterState {
+  if (filters === undefined) return {};
+  if (!isPlainRecord(filters)) {
+    throw new TypeError('Invalid filter state');
+  }
+  const next: FilterState = {};
+  for (const [dimensionId, spec] of Object.entries(filters)) {
+    assertKnownDimension(dimensionId);
+    assertFilterSpec(spec);
+    next[dimensionId] = spec;
+  }
+  return next;
+}
+
+function normaliseSelectionState(selections: Partial<DashboardState>['selections']): SelectionState {
+  if (selections === undefined) return {};
+  if (!isPlainRecord(selections)) {
+    throw new TypeError('Invalid selection state');
+  }
+  const next: SelectionState = {};
+  for (const [viewId, keys] of Object.entries(selections)) {
+    if (!isStringArray(keys)) {
+      throw new TypeError('Invalid selection state');
+    }
+    if (keys.length > 0) {
+      next[viewId] = keys;
+    }
+  }
+  return next;
+}
+
+function normaliseDrillState(
+  drill: Partial<DashboardState>['drill'],
+  assertKnownDimension: (dimensionId: string) => void,
+): DrillState {
+  if (drill === undefined) return {};
+  if (!isPlainRecord(drill)) {
+    throw new TypeError('Invalid drill state');
+  }
+  const next: DrillState = {};
+  for (const [viewId, path] of Object.entries(drill)) {
+    if (!isStringArray(path)) {
+      throw new TypeError('Invalid drill state');
+    }
+    for (const dimensionId of path) {
+      assertKnownDimension(dimensionId);
+    }
+    if (path.length > 0) {
+      next[viewId] = path;
+    }
+  }
+  return next;
 }
 
 /**
@@ -292,6 +383,19 @@ export function createDashboardStore(config: DashboardStoreConfig): DashboardSto
       const nextDrill: DrillState = { ...state.drill };
       delete nextDrill[viewId];
       commit(freezeState(state.filters, state.selections, nextDrill));
+    },
+
+    restore(nextState: Partial<DashboardState>) {
+      if (!isPlainRecord(nextState)) {
+        throw new TypeError('Invalid dashboard state');
+      }
+      const next = freezeState(
+        normaliseFilterState(nextState.filters, assertKnownDimension),
+        normaliseSelectionState(nextState.selections),
+        normaliseDrillState(nextState.drill, assertKnownDimension),
+      );
+      if (statesEqual(state, next)) return;
+      commit(next);
     },
 
     clearAll() {

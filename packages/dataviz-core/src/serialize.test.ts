@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import {
+  type DashboardState,
   type DataModel,
   type FilterState,
   isFilterSpec,
@@ -7,6 +8,8 @@ import {
   deserializeFilters,
   serializeDrill,
   deserializeDrill,
+  serializeState,
+  deserializeState,
 } from './index.js';
 
 const model: DataModel = {
@@ -179,5 +182,105 @@ describe('serialize / deserialize drill state', () => {
     expect(deserializeDrill('', model)).toEqual({});
     expect(deserializeDrill('%%%not-json%%%', model)).toEqual({});
     expect(deserializeDrill(encodeURIComponent('[1,2,3]'), model)).toEqual({});
+  });
+});
+
+describe('serialize / deserialize dashboard state', () => {
+  it('round-trips filters, selections and drill together', () => {
+    const state: DashboardState = {
+      filters: {
+        country: { kind: 'include', values: ['FR', 'US'] },
+        age: { kind: 'range', min: 21, max: 65 },
+      },
+      selections: { countryChart: ['FR'], ageChart: ['21-65'] },
+      drill: { countryChart: ['country', 'age'] },
+    };
+
+    expect(deserializeState(serializeState(state), model)).toEqual(state);
+  });
+
+  it('defaults missing state sections to empty maps', () => {
+    const payload = encodeURIComponent(
+      JSON.stringify({
+        filters: { country: { kind: 'exclude', values: ['XX'] } },
+      }),
+    );
+
+    expect(deserializeState(payload, model)).toEqual({
+      filters: { country: { kind: 'exclude', values: ['XX'] } },
+      selections: {},
+      drill: {},
+    });
+  });
+
+  it('throws for invalid dashboard state JSON', () => {
+    expect(() => deserializeState('%%%not-json%%%')).toThrow(
+      /Invalid serialized dashboard state/,
+    );
+    expect(() => deserializeState(encodeURIComponent('[1,2,3]'))).toThrow(
+      /Invalid serialized dashboard state/,
+    );
+  });
+
+  it('drops malformed sections while keeping valid bookmark data', () => {
+    const payload = encodeURIComponent(
+      JSON.stringify({
+        filters: {
+          country: { kind: 'include', values: ['FR'] },
+          ghost: { kind: 'include', values: ['XX'] },
+          age: { kind: 'range', min: 1e309 },
+        },
+        selections: {
+          chart: ['FR'],
+          broken: [1],
+        },
+        drill: {
+          ok: ['country'],
+          missing: ['ghost'],
+          bad: [],
+        },
+      }),
+    );
+
+    expect(deserializeState(payload, model)).toEqual({
+      filters: { country: { kind: 'include', values: ['FR'] } },
+      selections: { chart: ['FR'] },
+      drill: { ok: ['country'] },
+    });
+  });
+
+  it('does not alias serialized state arrays', () => {
+    const state: DashboardState = {
+      filters: { country: { kind: 'include', values: ['FR'] } },
+      selections: { chart: ['FR'] },
+      drill: { chart: ['country'] },
+    };
+
+    const decoded = deserializeState(serializeState(state), model);
+    expect(decoded.filters.country).not.toBe(state.filters.country);
+    expect(decoded.filters.country!.values).not.toBe(state.filters.country!.values);
+    expect(decoded.selections.chart).not.toBe(state.selections.chart);
+    expect(decoded.drill.chart).not.toBe(state.drill.chart);
+  });
+
+  it('is deterministic regardless of key insertion order', () => {
+    const a = serializeState({
+      filters: {
+        age: { kind: 'range', min: 1 },
+        country: { kind: 'include', values: ['FR'] },
+      },
+      selections: { b: ['2'], a: ['1'] },
+      drill: { z: ['age'], a: ['country'] },
+    });
+    const b = serializeState({
+      filters: {
+        country: { kind: 'include', values: ['FR'] },
+        age: { kind: 'range', min: 1 },
+      },
+      selections: { a: ['1'], b: ['2'] },
+      drill: { a: ['country'], z: ['age'] },
+    });
+
+    expect(a).toBe(b);
   });
 });
