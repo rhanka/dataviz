@@ -1,5 +1,6 @@
 import { defineComponent, h, type PropType } from 'vue';
 import { buildReferenceLineModel, type DashboardStore } from '@sentropic/dataviz-core';
+import { LineChart, type LineChartDatum } from '@sentropic/design-system-vue';
 import { useDashboard } from '../adapter.js';
 
 export type ReferenceLineChartProps = {
@@ -17,8 +18,10 @@ export type ReferenceLineChartProps = {
   class?: string;
 };
 
-function scale(value: number, min: number, max: number, start: number, end: number): number {
-  return max === min ? (start + end) / 2 : start + ((value - min) / (max - min)) * (end - start);
+function xDomain(value: number, domainMin: number | undefined, domainMax: number | undefined): [number, number] {
+  const min = domainMin ?? Math.min(0, value);
+  const max = domainMax ?? Math.max(1, value);
+  return min < max ? [min, max] : [min, min + 1];
 }
 
 export const ReferenceLineChart = defineComponent({
@@ -47,50 +50,20 @@ export const ReferenceLineChart = defineComponent({
         value: props.value,
         measure: props.measure,
       });
-      const min = props.domainMin ?? Math.min(0, model.value);
-      const max = props.domainMax ?? Math.max(1, model.value);
-      const x = scale(model.value, min, max, 28, props.width - 28);
+      const [min, max] = xDomain(model.value, props.domainMin, props.domainMax);
+      const data: LineChartDatum[] = [
+        { x: min, y: 0 },
+        { x: max, y: 0 },
+      ];
 
-      return h(
-        'svg',
-        {
-          role: 'img',
-          'aria-label': props.label,
-          class: ['st-referenceLineChart', props.class],
-          width: props.width,
-          height: props.height,
-          viewBox: `0 0 ${props.width} ${props.height}`,
-        },
-        [
-          h('title', props.label),
-          h('line', {
-            x1: 28,
-            y1: props.height - 30,
-            x2: props.width - 28,
-            y2: props.height - 30,
-            stroke: 'currentColor',
-            'stroke-opacity': '0.25',
-          }),
-          h(
-            'line',
-            {
-              class: 'st-referenceLineChart__line',
-              x1: x,
-              y1: 18,
-              x2: x,
-              y2: props.height - 24,
-              stroke: '#2563eb',
-              'stroke-width': 3,
-            },
-            [h('title', `${model.label}: ${model.value}`)],
-          ),
-          h(
-            'text',
-            { x, y: 14, 'text-anchor': 'middle', 'font-size': 12, fill: 'currentColor' },
-            `${model.label}: ${model.value}`,
-          ),
-        ],
-      );
+      return h(LineChart, {
+        data,
+        width: props.width,
+        height: props.height,
+        label: props.label,
+        referenceLines: [{ axis: 'x', value: model.value, label: model.label, tone: 'info' }],
+        class: ['st-referenceLineChart', props.class].filter(Boolean).join(' '),
+      });
     };
   },
 });

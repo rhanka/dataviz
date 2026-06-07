@@ -15,14 +15,11 @@
     label: string;
     class?: string;
   };
-
-  function scale(value: number, min: number, max: number, start: number, end: number): number {
-    return max === min ? (start + end) / 2 : start + ((value - min) / (max - min)) * (end - start);
-  }
 </script>
 
 <script lang="ts">
   import { buildReferenceLineModel } from '@sentropic/dataviz-core';
+  import { LineChart as DsLineChart, type LineChartDatum } from '@sentropic/design-system-svelte';
   import { useDashboard } from '../adapter.js';
 
   let {
@@ -50,33 +47,19 @@
       measure,
     });
   });
-  const min = $derived(domainMin ?? Math.min(0, model.value));
-  const max = $derived(domainMax ?? Math.max(1, model.value));
-  const x = $derived(scale(model.value, min, max, 28, width - 28));
+  const xDomain = $derived.by((): [number, number] => {
+    const min = domainMin ?? Math.min(0, model.value);
+    const max = domainMax ?? Math.max(1, model.value);
+    return min < max ? [min, max] : [min, min + 1];
+  });
+  const data = $derived.by(
+    (): LineChartDatum[] => [
+      { x: xDomain[0], y: 0 },
+      { x: xDomain[1], y: 0 },
+    ],
+  );
+  const referenceLines = $derived([{ axis: 'x' as const, value: model.value, label: model.label, tone: 'info' as const }]);
+  const classes = $derived(['st-referenceLineChart', className].filter(Boolean).join(' '));
 </script>
 
-<svg
-  role="img"
-  aria-label={label}
-  class={['st-referenceLineChart', className].filter(Boolean).join(' ')}
-  {width}
-  {height}
-  viewBox="0 0 {width} {height}"
->
-  <title>{label}</title>
-  <line x1="28" y1={height - 30} x2={width - 28} y2={height - 30} stroke="currentColor" stroke-opacity="0.25" />
-  <line
-    class="st-referenceLineChart__line"
-    x1={x}
-    y1="18"
-    x2={x}
-    y2={height - 24}
-    stroke="#2563eb"
-    stroke-width="3"
-  >
-    <title>{model.label}: {model.value}</title>
-  </line>
-  <text x={x} y="14" text-anchor="middle" font-size="12" fill="currentColor">
-    {model.label}: {model.value}
-  </text>
-</svg>
+<DsLineChart {data} {width} {height} {label} {referenceLines} class={classes} />

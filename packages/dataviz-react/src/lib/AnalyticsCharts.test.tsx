@@ -30,7 +30,7 @@ const data: Row[] = [
 const newStore = () => createDashboardStore({ model, data });
 
 describe('analytics charts (react)', () => {
-  it('renders analytic models as accessible SVG fallbacks', () => {
+  it('renders analytic models through DS charts where available', () => {
     const store = newStore();
     const { container } = render(
       <>
@@ -49,13 +49,18 @@ describe('analytics charts (react)', () => {
     expect(screen.getByRole('img', { name: 'Forecast' })).toBeTruthy();
     expect(screen.getByRole('img', { name: 'Errors' })).toBeTruthy();
     expect(screen.getByRole('img', { name: 'Clusters' })).toBeTruthy();
-    expect(container.querySelectorAll('.st-referenceLineChart__line')).toHaveLength(1);
-    expect(container.querySelectorAll('.st-percentileBandChart__band')).toHaveLength(1);
-    expect(container.querySelectorAll('.st-trendLineChart__line')).toHaveLength(1);
+    expect(container.querySelectorAll('.st-referenceLineChart .st-lineChart__refLine')).toHaveLength(1);
+    expect(container.querySelectorAll('.st-referenceLineChart__line')).toHaveLength(0);
+    expect(container.querySelectorAll('.st-percentileBandChart .st-lineChart__band')).toHaveLength(1);
+    expect(container.querySelectorAll('.st-percentileBandChart .st-lineChart__refLine')).toHaveLength(1);
+    expect(container.querySelectorAll('.st-percentileBandChart__band')).toHaveLength(0);
+    expect(container.querySelectorAll('.st-trendLineChart .st-lineChart__trend')).toHaveLength(1);
+    expect(container.querySelectorAll('.st-trendLineChart__line')).toHaveLength(0);
     expect(container.querySelectorAll('.st-forecastLineChart__point')).toHaveLength(2);
-    expect(container.querySelectorAll('.st-errorBarsChart__bar')).toHaveLength(2);
+    expect(container.querySelectorAll('.st-errorBarsChart .st-barChart__errorBar')).toHaveLength(2);
+    expect(container.querySelectorAll('.st-errorBarsChart__bar')).toHaveLength(0);
     expect(container.querySelectorAll('.st-analyticsClusterPlot__centroid')).toHaveLength(2);
-    expect(container.querySelector('.st-referenceLineChart')?.textContent).toContain('Goal: 30');
-    expect(container.querySelector('.st-errorBarsChart')?.textContent).toContain('A: mean');
+    expect(container.querySelector('.st-lineChart')?.textContent).toContain('Goal');
+    expect(container.querySelectorAll('.st-errorBarsChart .st-barChart__bar')).toHaveLength(2);
   });
 });

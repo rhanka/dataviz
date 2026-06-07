@@ -30,7 +30,7 @@ const data: Row[] = [
 const newStore = () => createDashboardStore({ model, data });
 
 describe('analytics charts (vue)', () => {
-  it('renders analytic models as accessible SVG fallbacks', () => {
+  it('renders analytic models through DS charts where available', () => {
     const store = newStore();
     const reference = mount(ReferenceLineChart, {
       props: { store, viewId: 'ref', value: 30, referenceLabel: 'Goal', label: 'Goal line' },
@@ -55,13 +55,18 @@ describe('analytics charts (vue)', () => {
     expect(forecast.find('[role="img"]').attributes('aria-label')).toBe('Forecast');
     expect(errors.find('[role="img"]').attributes('aria-label')).toBe('Errors');
     expect(clusters.find('[role="img"]').attributes('aria-label')).toBe('Clusters');
-    expect(reference.findAll('.st-referenceLineChart__line')).toHaveLength(1);
-    expect(band.findAll('.st-percentileBandChart__band')).toHaveLength(1);
-    expect(trend.findAll('.st-trendLineChart__line')).toHaveLength(1);
+    expect(reference.findAll('.st-lineChart__refLine')).toHaveLength(1);
+    expect(reference.findAll('.st-referenceLineChart__line')).toHaveLength(0);
+    expect(band.findAll('.st-lineChart__band')).toHaveLength(1);
+    expect(band.findAll('.st-lineChart__refLine')).toHaveLength(1);
+    expect(band.findAll('.st-percentileBandChart__band')).toHaveLength(0);
+    expect(trend.findAll('.st-lineChart__trend')).toHaveLength(1);
+    expect(trend.findAll('.st-trendLineChart__line')).toHaveLength(0);
     expect(forecast.findAll('.st-forecastLineChart__point')).toHaveLength(2);
-    expect(errors.findAll('.st-errorBarsChart__bar')).toHaveLength(2);
+    expect(errors.findAll('.st-barChart__errorBar')).toHaveLength(2);
+    expect(errors.findAll('.st-errorBarsChart__bar')).toHaveLength(0);
     expect(clusters.findAll('.st-analyticsClusterPlot__centroid')).toHaveLength(2);
-    expect(reference.text()).toContain('Goal: 30');
-    expect(errors.text()).toContain('A: mean');
+    expect(reference.text()).toContain('Goal');
+    expect(errors.findAll('.st-barChart__bar')).toHaveLength(2);
   });
 });
