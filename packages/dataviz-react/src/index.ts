@@ -4,8 +4,8 @@
  * React adapter + dashboard components for @sentropic/dataviz-core, built on
  * @sentropic/design-system-react. The adapter wires the core's observable store
  * onto React (`useSyncExternalStore`); the components compose design-system
- * presentational pieces and bind them to the shared dashboard state. No
- * presentation is authored here — it all comes from the design system.
+ * presentational pieces where available, with lightweight SVG fallbacks for
+ * chart types not exposed by the design system.
  */
 
 // Adapter + full core surface re-export (incl. the core's `describeFilterSpec`).
@@ -48,6 +48,12 @@ export { WaterfallChart } from './lib/WaterfallChart.js';
 export type { WaterfallChartProps } from './lib/WaterfallChart.js';
 export { MekkoChart } from './lib/MekkoChart.js';
 export type { MekkoChartProps } from './lib/MekkoChart.js';
+export { ChordChart } from './lib/ChordChart.js';
+export type { ChordChartProps } from './lib/ChordChart.js';
+export { RoseChart } from './lib/RoseChart.js';
+export type { RoseChartProps } from './lib/RoseChart.js';
+export { PackedBubbleChart } from './lib/PackedBubbleChart.js';
+export type { PackedBubbleChartProps } from './lib/PackedBubbleChart.js';
 export { TreemapChart } from './lib/TreemapChart.js';
 export type { TreemapChartProps } from './lib/TreemapChart.js';
 export { SunburstChart } from './lib/SunburstChart.js';

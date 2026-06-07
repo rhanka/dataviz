@@ -2,10 +2,13 @@ import { mount } from '@vue/test-utils';
 import { nextTick } from 'vue';
 import { describe, expect, it } from 'vitest';
 import { createDashboardStore, type DataModel, type Row } from '@sentropic/dataviz-core';
+import { ChordChart } from './ChordChart.js';
 import { DonutChart } from './DonutChart.js';
 import { FunnelChart } from './FunnelChart.js';
 import { MekkoChart } from './MekkoChart.js';
+import { PackedBubbleChart } from './PackedBubbleChart.js';
 import { RadarChart } from './RadarChart.js';
+import { RoseChart } from './RoseChart.js';
 import { SankeyChart } from './SankeyChart.js';
 import { SunburstChart } from './SunburstChart.js';
 import { TreemapChart } from './TreemapChart.js';
@@ -108,6 +111,29 @@ describe('part-of-whole charts (vue)', () => {
     expect(mekko.text()).toContain('North');
     expect(mekko.text()).toContain('South');
     expect(mekko.text()).toContain('North, Enterprise');
+  });
+
+  it('renders chord, rose and packed bubble charts from remaining part-whole core models', () => {
+    const store = newStore();
+    const chord = mount(ChordChart, {
+      props: { store, viewId: 'chord', source: 'source', target: 'target', measure: 'revenue', label: 'Revenue chord' },
+    });
+    const rose = mount(RoseChart, {
+      props: { store, viewId: 'rose', category: 'region', measure: 'revenue', label: 'Revenue rose' },
+    });
+    const packed = mount(PackedBubbleChart, {
+      props: { store, viewId: 'packed', category: 'region', measure: 'revenue', label: 'Revenue packed' },
+    });
+
+    expect(chord.find('[role="img"]').attributes('aria-label')).toBe('Revenue chord');
+    expect(rose.find('[role="img"]').attributes('aria-label')).toBe('Revenue rose');
+    expect(packed.find('[role="img"]').attributes('aria-label')).toBe('Revenue packed');
+    expect(chord.findAll('.st-chordChart__ribbon')).toHaveLength(3);
+    expect(rose.findAll('.st-roseChart__sector')).toHaveLength(2);
+    expect(packed.findAll('.st-packedBubbleChart__bubble')).toHaveLength(2);
+    expect(chord.text()).toContain('Lead -> Qualified: 70');
+    expect(rose.text()).toContain('North: 60');
+    expect(packed.text()).toContain('South: 40');
   });
 
   it('rebuilds part-whole aggregates from this view cross-filter scope', async () => {

@@ -4,8 +4,8 @@
  * Svelte 5 adapter + dashboard components for @sentropic/dataviz-core, built on
  * @sentropic/design-system-svelte. The adapter wires the core's observable store
  * onto Svelte reactivity; the components compose design-system presentational
- * pieces and bind them to the shared dashboard state. No presentation is
- * authored here — it all comes from the design system.
+ * pieces where available, with lightweight SVG fallbacks for chart types not
+ * exposed by the design system.
  */
 
 // Adapter + full core surface re-export (incl. the core's `describeFilterSpec`).
@@ -52,6 +52,12 @@ export { default as WaterfallChart } from './lib/WaterfallChart.svelte';
 export type { WaterfallChartProps } from './lib/WaterfallChart.svelte';
 export { default as MekkoChart } from './lib/MekkoChart.svelte';
 export type { MekkoChartProps } from './lib/MekkoChart.svelte';
+export { default as ChordChart } from './lib/ChordChart.svelte';
+export type { ChordChartProps } from './lib/ChordChart.svelte';
+export { default as RoseChart } from './lib/RoseChart.svelte';
+export type { RoseChartProps } from './lib/RoseChart.svelte';
+export { default as PackedBubbleChart } from './lib/PackedBubbleChart.svelte';
+export type { PackedBubbleChartProps } from './lib/PackedBubbleChart.svelte';
 export { default as TreemapChart } from './lib/TreemapChart.svelte';
 export type { TreemapChartProps } from './lib/TreemapChart.svelte';
 export { default as SunburstChart } from './lib/SunburstChart.svelte';
