@@ -1,7 +1,8 @@
 import { defineComponent, h, type PropType } from 'vue';
-import { buildGeoDensityModel, type DashboardStore } from '@sentropic/dataviz-core';
+import type { DashboardStore } from '@sentropic/dataviz-core';
+import { GeoMap } from '@sentropic/design-system-vue';
 import { useDashboard } from '../adapter.js';
-import { projectCoordinate, scaleNumber } from './geoMapLayout.js';
+import { densityLayer, mapClass } from './geoMapLayers.js';
 
 export type GeoDensityMapProps = {
   store: DashboardStore;
@@ -34,46 +35,21 @@ export const GeoDensityMap = defineComponent({
     const state = useDashboard(props.store);
     return () => {
       void state.value;
-      const model = buildGeoDensityModel(props.store.model, props.store.applyCrossfilter(props.viewId), {
+      void props.cellSize;
+      const layer = densityLayer(props.store, props.viewId, {
         latitude: props.latitude,
         longitude: props.longitude,
         value: props.value,
-        cellSize: props.cellSize,
+        labelText: props.label,
       });
-      const max = Math.max(1, ...model.cells.map((cell) => cell.density));
 
-      return h(
-        'svg',
-        {
-          role: 'img',
-          'aria-label': props.label,
-          class: ['st-geoDensityMap', props.class],
-          width: props.width,
-          height: props.height,
-          viewBox: `0 0 ${props.width} ${props.height}`,
-        },
-        [
-          h('title', props.label),
-          ...model.cells.map((cell) => {
-            const point = projectCoordinate(cell.center, props.width, props.height);
-            const size = scaleNumber(cell.density, 0, max, 16, 34);
-            return h(
-              'rect',
-              {
-                key: cell.id,
-                class: 'st-geoDensityMap__cell',
-                x: point.x - size / 2,
-                y: point.y - size / 2,
-                width: size,
-                height: size,
-                fill: '#dc2626',
-                'fill-opacity': '0.5',
-              },
-              [h('title', `${cell.id}: ${cell.density}`)],
-            );
-          }),
-        ],
-      );
+      return h(GeoMap, {
+        layers: [layer],
+        width: props.width,
+        height: props.height,
+        label: props.label,
+        class: mapClass('st-geoDensityMap', props.class),
+      });
     };
   },
 });

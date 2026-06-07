@@ -1,6 +1,7 @@
-import { buildGeoDensityModel, type DashboardStore } from '@sentropic/dataviz-core';
+import type { DashboardStore } from '@sentropic/dataviz-core';
+import { GeoMap } from '@sentropic/design-system-react';
 import { useDashboard } from '../adapter.js';
-import { projectCoordinate, scaleNumber } from './geoMapLayout.js';
+import { densityLayer, mapClass } from './geoMapLayers.js';
 
 export type GeoDensityMapProps = {
   store: DashboardStore;
@@ -29,37 +30,16 @@ export function GeoDensityMap({
 }: GeoDensityMapProps) {
   const state = useDashboard(store);
   void state;
-  const model = buildGeoDensityModel(store.model, store.applyCrossfilter(viewId), { latitude, longitude, value, cellSize });
-  const max = Math.max(1, ...model.cells.map((cell) => cell.density));
+  void cellSize;
+  const layer = densityLayer(store, viewId, { latitude, longitude, value, labelText: label });
 
   return (
-    <svg
-      role="img"
-      aria-label={label}
-      className={['st-geoDensityMap', className].filter(Boolean).join(' ') || undefined}
+    <GeoMap
+      layers={[layer]}
       width={width}
       height={height}
-      viewBox={`0 0 ${width} ${height}`}
-    >
-      <title>{label}</title>
-      {model.cells.map((cell) => {
-        const point = projectCoordinate(cell.center, width, height);
-        const size = scaleNumber(cell.density, 0, max, 16, 34);
-        return (
-          <rect
-            key={cell.id}
-            className="st-geoDensityMap__cell"
-            x={point.x - size / 2}
-            y={point.y - size / 2}
-            width={size}
-            height={size}
-            fill="#dc2626"
-            fillOpacity="0.5"
-          >
-            <title>{`${cell.id}: ${cell.density}`}</title>
-          </rect>
-        );
-      })}
-    </svg>
+      label={label}
+      className={mapClass('st-geoDensityMap', className)}
+    />
   );
 }

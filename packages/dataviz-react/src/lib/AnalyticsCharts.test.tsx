@@ -56,10 +56,13 @@ describe('analytics charts (react)', () => {
     expect(container.querySelectorAll('.st-percentileBandChart__band')).toHaveLength(0);
     expect(container.querySelectorAll('.st-trendLineChart .st-lineChart__trend')).toHaveLength(1);
     expect(container.querySelectorAll('.st-trendLineChart__line')).toHaveLength(0);
-    expect(container.querySelectorAll('.st-forecastLineChart__point')).toHaveLength(2);
+    expect(container.querySelectorAll('.st-forecastLineChart .st-lineChart__line--forecast').length).toBeGreaterThan(0);
+    expect(container.querySelectorAll('.st-forecastLineChart__point')).toHaveLength(0);
     expect(container.querySelectorAll('.st-errorBarsChart .st-barChart__errorBar')).toHaveLength(2);
     expect(container.querySelectorAll('.st-errorBarsChart__bar')).toHaveLength(0);
-    expect(container.querySelectorAll('.st-analyticsClusterPlot__centroid')).toHaveLength(2);
+    expect(container.querySelectorAll('.st-analyticsClusterPlot .st-scatterPlot__point')).toHaveLength(4);
+    expect(container.querySelectorAll('.st-analyticsClusterPlot .st-scatterPlot__centroid')).toHaveLength(2);
+    expect(container.querySelectorAll('.st-analyticsClusterPlot__centroid')).toHaveLength(0);
     expect(container.querySelector('.st-lineChart')?.textContent).toContain('Goal');
     expect(container.querySelectorAll('.st-errorBarsChart .st-barChart__bar')).toHaveLength(2);
   });

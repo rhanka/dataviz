@@ -62,10 +62,13 @@ describe('analytics charts (vue)', () => {
     expect(band.findAll('.st-percentileBandChart__band')).toHaveLength(0);
     expect(trend.findAll('.st-lineChart__trend')).toHaveLength(1);
     expect(trend.findAll('.st-trendLineChart__line')).toHaveLength(0);
-    expect(forecast.findAll('.st-forecastLineChart__point')).toHaveLength(2);
+    expect(forecast.findAll('.st-lineChart__line--forecast').length).toBeGreaterThan(0);
+    expect(forecast.findAll('.st-forecastLineChart__point')).toHaveLength(0);
     expect(errors.findAll('.st-barChart__errorBar')).toHaveLength(2);
     expect(errors.findAll('.st-errorBarsChart__bar')).toHaveLength(0);
-    expect(clusters.findAll('.st-analyticsClusterPlot__centroid')).toHaveLength(2);
+    expect(clusters.findAll('.st-scatterPlot__point')).toHaveLength(4);
+    expect(clusters.findAll('.st-scatterPlot__centroid')).toHaveLength(2);
+    expect(clusters.findAll('.st-analyticsClusterPlot__centroid')).toHaveLength(0);
     expect(reference.text()).toContain('Goal');
     expect(errors.findAll('.st-barChart__bar')).toHaveLength(2);
   });

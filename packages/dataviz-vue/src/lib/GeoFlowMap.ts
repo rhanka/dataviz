@@ -1,7 +1,8 @@
 import { defineComponent, h, type PropType } from 'vue';
-import { buildGeoFlowModel, type DashboardStore } from '@sentropic/dataviz-core';
+import type { DashboardStore } from '@sentropic/dataviz-core';
+import { GeoMap } from '@sentropic/design-system-vue';
 import { useDashboard } from '../adapter.js';
-import { projectCoordinate, scaleNumber } from './geoMapLayout.js';
+import { flowLayer, mapClass } from './geoMapLayers.js';
 
 export type GeoFlowMapProps = {
   store: DashboardStore;
@@ -36,49 +37,22 @@ export const GeoFlowMap = defineComponent({
     const state = useDashboard(props.store);
     return () => {
       void state.value;
-      const model = buildGeoFlowModel(props.store.model, props.store.applyCrossfilter(props.viewId), {
+      const layer = flowLayer(props.store, props.viewId, {
         sourceLatitude: props.sourceLatitude,
         sourceLongitude: props.sourceLongitude,
         targetLatitude: props.targetLatitude,
         targetLongitude: props.targetLongitude,
         value: props.value,
+        labelText: props.label,
       });
-      const max = Math.max(1, ...model.links.map((link) => link.value));
 
-      return h(
-        'svg',
-        {
-          role: 'img',
-          'aria-label': props.label,
-          class: ['st-geoFlowMap', props.class],
-          width: props.width,
-          height: props.height,
-          viewBox: `0 0 ${props.width} ${props.height}`,
-        },
-        [
-          h('title', props.label),
-          ...model.links.map((link) => {
-            const source = projectCoordinate(link.source, props.width, props.height);
-            const target = projectCoordinate(link.target, props.width, props.height);
-            return h(
-              'line',
-              {
-                key: link.id,
-                class: 'st-geoFlowMap__link',
-                x1: source.x,
-                y1: source.y,
-                x2: target.x,
-                y2: target.y,
-                stroke: '#2563eb',
-                'stroke-width': scaleNumber(link.value, 0, max, 2, 9),
-                'stroke-linecap': 'round',
-                'stroke-opacity': '0.62',
-              },
-              [h('title', `${link.count} flows: ${link.value}`)],
-            );
-          }),
-        ],
-      );
+      return h(GeoMap, {
+        layers: [layer],
+        width: props.width,
+        height: props.height,
+        label: props.label,
+        class: mapClass('st-geoFlowMap', props.class),
+      });
     };
   },
 });

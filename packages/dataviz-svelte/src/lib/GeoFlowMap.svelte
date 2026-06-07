@@ -17,9 +17,9 @@
 </script>
 
 <script lang="ts">
-  import { buildGeoFlowModel } from '@sentropic/dataviz-core';
+  import { GeoMap as DsGeoMap } from '@sentropic/design-system-svelte';
   import { useDashboard } from '../adapter.js';
-  import { projectCoordinate, scaleNumber } from './geoMapLayout.js';
+  import { flowLayer, mapClass } from './geoMapLayers.js';
 
   let {
     store,
@@ -36,49 +36,19 @@
   }: GeoFlowMapProps = $props();
 
   const dash = $derived(useDashboard(store));
-  const model = $derived.by(() => {
+  const layer = $derived.by(() => {
     void $dash;
-    return buildGeoFlowModel(store.model, store.applyCrossfilter(viewId), {
+    return flowLayer(store, viewId, {
       sourceLatitude,
       sourceLongitude,
       targetLatitude,
       targetLongitude,
       value,
+      labelText: label,
     });
   });
-  const links = $derived.by(() => {
-    const max = Math.max(1, ...model.links.map((link) => link.value));
-    return model.links.map((link) => ({
-      link,
-      source: projectCoordinate(link.source, width, height),
-      target: projectCoordinate(link.target, width, height),
-      strokeWidth: scaleNumber(link.value, 0, max, 2, 9),
-    }));
-  });
+  const layers = $derived([layer]);
+  const classes = $derived(mapClass('st-geoFlowMap', className));
 </script>
 
-<svg
-  role="img"
-  aria-label={label}
-  class={['st-geoFlowMap', className].filter(Boolean).join(' ')}
-  {width}
-  {height}
-  viewBox="0 0 {width} {height}"
->
-  <title>{label}</title>
-  {#each links as item (item.link.id)}
-    <line
-      class="st-geoFlowMap__link"
-      x1={item.source.x}
-      y1={item.source.y}
-      x2={item.target.x}
-      y2={item.target.y}
-      stroke="#2563eb"
-      stroke-width={item.strokeWidth}
-      stroke-linecap="round"
-      stroke-opacity="0.62"
-    >
-      <title>{item.link.count} flows: {item.link.value}</title>
-    </line>
-  {/each}
-</svg>
+<DsGeoMap {layers} {width} {height} {label} class={classes} />

@@ -16,9 +16,9 @@
 </script>
 
 <script lang="ts">
-  import { buildGeoDensityModel } from '@sentropic/dataviz-core';
+  import { GeoMap as DsGeoMap } from '@sentropic/design-system-svelte';
   import { useDashboard } from '../adapter.js';
-  import { projectCoordinate, scaleNumber } from './geoMapLayout.js';
+  import { densityLayer, mapClass } from './geoMapLayers.js';
 
   let {
     store,
@@ -34,40 +34,13 @@
   }: GeoDensityMapProps = $props();
 
   const dash = $derived(useDashboard(store));
-  const model = $derived.by(() => {
+  const layer = $derived.by(() => {
     void $dash;
-    return buildGeoDensityModel(store.model, store.applyCrossfilter(viewId), { latitude, longitude, value, cellSize });
+    void cellSize;
+    return densityLayer(store, viewId, { latitude, longitude, value, labelText: label });
   });
-  const cells = $derived.by(() => {
-    const max = Math.max(1, ...model.cells.map((cell) => cell.density));
-    return model.cells.map((cell) => {
-      const point = projectCoordinate(cell.center, width, height);
-      const size = scaleNumber(cell.density, 0, max, 16, 34);
-      return { cell, x: point.x - size / 2, y: point.y - size / 2, size };
-    });
-  });
+  const layers = $derived([layer]);
+  const classes = $derived(mapClass('st-geoDensityMap', className));
 </script>
 
-<svg
-  role="img"
-  aria-label={label}
-  class={['st-geoDensityMap', className].filter(Boolean).join(' ')}
-  {width}
-  {height}
-  viewBox="0 0 {width} {height}"
->
-  <title>{label}</title>
-  {#each cells as item (item.cell.id)}
-    <rect
-      class="st-geoDensityMap__cell"
-      x={item.x}
-      y={item.y}
-      width={item.size}
-      height={item.size}
-      fill="#dc2626"
-      fill-opacity="0.5"
-    >
-      <title>{item.cell.id}: {item.cell.density}</title>
-    </rect>
-  {/each}
-</svg>
+<DsGeoMap {layers} {width} {height} {label} class={classes} />

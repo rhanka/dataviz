@@ -1,6 +1,7 @@
-import { buildGeoHexbinModel, type DashboardStore } from '@sentropic/dataviz-core';
+import type { DashboardStore } from '@sentropic/dataviz-core';
+import { GeoMap } from '@sentropic/design-system-react';
 import { useDashboard } from '../adapter.js';
-import { GEO_TONES, hexagonPoints, projectCoordinate, scaleNumber } from './geoMapLayout.js';
+import { hexbinLayer, mapClass } from './geoMapLayers.js';
 
 export type GeoHexbinMapProps = {
   store: DashboardStore;
@@ -29,34 +30,15 @@ export function GeoHexbinMap({
 }: GeoHexbinMapProps) {
   const state = useDashboard(store);
   void state;
-  const model = buildGeoHexbinModel(store.model, store.applyCrossfilter(viewId), { latitude, longitude, value, cellSize });
-  const max = Math.max(1, ...model.bins.map((bin) => bin.value));
+  const layer = hexbinLayer(store, viewId, { latitude, longitude, value, cellSize, labelText: label });
 
   return (
-    <svg
-      role="img"
-      aria-label={label}
-      className={['st-geoHexbinMap', className].filter(Boolean).join(' ') || undefined}
+    <GeoMap
+      layers={[layer]}
       width={width}
       height={height}
-      viewBox={`0 0 ${width} ${height}`}
-    >
-      <title>{label}</title>
-      {model.bins.map((bin, index) => {
-        const point = projectCoordinate(bin.center, width, height);
-        const radius = scaleNumber(bin.value, 0, max, 10, 22);
-        return (
-          <polygon
-            key={bin.id}
-            className="st-geoHexbinMap__bin"
-            points={hexagonPoints(point.x, point.y, radius)}
-            fill={GEO_TONES[index % GEO_TONES.length]}
-            fillOpacity="0.72"
-          >
-            <title>{`${bin.id}: ${bin.value}`}</title>
-          </polygon>
-        );
-      })}
-    </svg>
+      label={label}
+      className={mapClass('st-geoHexbinMap', className)}
+    />
   );
 }

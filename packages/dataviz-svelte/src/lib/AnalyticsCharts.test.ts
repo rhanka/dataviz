@@ -62,10 +62,13 @@ describe('analytics charts (svelte)', () => {
     expect(band.container.querySelectorAll('.st-percentileBandChart__band')).toHaveLength(0);
     expect(trend.container.querySelectorAll('.st-lineChart__trend')).toHaveLength(1);
     expect(trend.container.querySelectorAll('.st-trendLineChart__line')).toHaveLength(0);
-    expect(forecast.container.querySelectorAll('.st-forecastLineChart__point')).toHaveLength(2);
+    expect(forecast.container.querySelectorAll('.st-lineChart__line--forecast').length).toBeGreaterThan(0);
+    expect(forecast.container.querySelectorAll('.st-forecastLineChart__point')).toHaveLength(0);
     expect(errors.container.querySelectorAll('.st-barChart__errorBar')).toHaveLength(2);
     expect(errors.container.querySelectorAll('.st-errorBarsChart__bar')).toHaveLength(0);
-    expect(clusters.container.querySelectorAll('.st-analyticsClusterPlot__centroid')).toHaveLength(2);
+    expect(clusters.container.querySelectorAll('.st-scatterPlot__point')).toHaveLength(4);
+    expect(clusters.container.querySelectorAll('.st-scatterPlot__centroid')).toHaveLength(2);
+    expect(clusters.container.querySelectorAll('.st-analyticsClusterPlot__centroid')).toHaveLength(0);
     expect(reference.container.textContent).toContain('Goal');
     expect(errors.container.querySelectorAll('.st-barChart__bar')).toHaveLength(2);
   });

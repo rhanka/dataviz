@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@sentropic/dataviz-vue": "*",
-    "@sentropic/design-system-vue": "0.26.1",
+    "@sentropic/design-system-vue": "0.29.0",
     "@sentropic/design-system-themes": "0.11.0",
     "vue": "^3.5.35"
   },
