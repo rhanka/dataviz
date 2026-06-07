@@ -260,6 +260,30 @@ export {
   updateMarkerFormat,
 } from './format.js';
 
+// Calculations / expressions
+export type {
+  CalculationVariable,
+  CalculatedFieldKind,
+  CalculatedFieldConfig,
+  CalculationSuggestionKind,
+  CalculationSuggestion,
+  CalculationBinConfig,
+  CalculationGroup,
+  CalculationGroupConfig,
+  CalculationSetConfig,
+  TableCalculationKind,
+} from './calculations.js';
+export {
+  evaluateCalculationExpression,
+  applyCalculatedFields,
+  extendModelWithCalculatedFields,
+  suggestCalculationTokens,
+  applyCalculationBins,
+  applyCalculationGroups,
+  applyCalculationSet,
+  calculateTableValues,
+} from './calculations.js';
+
 // Store
 export type {
   FilterSpec,
