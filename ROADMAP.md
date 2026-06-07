@@ -40,7 +40,10 @@ Source de vérité : `~/src/sent-tech-design-system/docs/bi-study/INVENTORY.md` 
 ## Vague 2 — Consommateurs d'état & multiplicateur  *(claude:dataviz)*
 - [x] Cross-filter / cross-highlight (callbacks charts, highlight, scoping) — **complet à parité 3 fw** : DashboardFilterBar, SelectionLegend, CrossfilteredBarChart (sortie via `applyCrossfilter` + brushing-clic via DS BarChart `selectedKeys`/`onSelect` → `toggleSelection`, échelle partagée `domain`, opt-out `selectable`)
 - [x] Drill & exploration (down/up/expand, through/by, show records, back+historique) — **complet à parité 3 fw** : `DrillBarChart` (clic = setFilter valeur + `drillDown` ; sélection à la feuille), `DrillBreadcrumb` (DS Breadcrumb + bouton « Remonter » = `drillUp` + clear filtre), `RecordsTable` (show records via DS DataTable) ; consomme `state.drill`/`drillDown`/`drillUp`/`clearDrill` du core
-- [ ] Small multiples / faceting (trellis via `Grid`, échelle partagée)
+- [x] Small multiples / faceting — **complet à parité 3 fw** : `SmallMultiples`
+  consomme `Grid` + `BarChart` DS, facette par dimension, agrège via core,
+  applique `store.applyCrossfilter(viewId)` et partage un domaine de valeur
+  commun entre facettes.
 
 ## Vague 3 — Moteur de viz  *(codex:dataviz)*
 - [~] Catégoriels & combo (multi-série lignes/aires, barres groupées & 100 %, combo+2e axe, step, Pareto, lollipop, divergentes) — contrats core `buildCategoricalSeries` + Pareto/divergentes faits ; reste câblage DS / sous-types spécialisés
@@ -58,7 +61,10 @@ Source de vérité : `~/src/sent-tech-design-system/docs/bi-study/INVENTORY.md` 
 
 ## Vague 5 — Génériques courts  *(claude:dataviz)*
 - [x] Range slider à 2 poignées (utile hors BI) — `RangeSliderFilter` sur le DS `RangeSlider` 2 poignées, helpers purs, parité 3 fw
-- [ ] Menu d'export / téléchargement (UI)
+- [x] Menu d'export / téléchargement (UI) — **complet à parité 3 fw** :
+  `ExportMenu` consomme un `Button` DS, exporte les rows cross-filtrées en CSV
+  via `store.applyCrossfilter(viewId)`, supporte colonnes/filename/label et
+  expose `rowsToCsv` testé.
 - [ ] Wrapper iframe / page web ; Image data-driven ; Object/layer panel (réutilise `TreeView`)
 
 ## Démo & revue  *(claude:dataviz)*
