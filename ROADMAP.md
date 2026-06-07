@@ -56,7 +56,7 @@ Source de vérité : `~/src/sent-tech-design-system/docs/bi-study/INVENTORY.md` 
 ## Vague 4 — Authoring & signets  *(claude:dataviz)*
 - [x] Filtres BI avancés (range slider 2 poignées, date relative, time range, granularité, filtre et/ou, Top N) — **faits à parité 3 fw** : `TopNFilter` (Top N par mesure), `ValueSlicer` (filtre OU multi-valeurs, CheckboxGroup), `DateRangeFilter` (DatePicker range → filtre range dates), `RelativeDateFilter` (DS `Select` de presets → filtre `range` fenêtre glissante : tout / 7 / 30 / 90 j / 12 mois, `now` injectable), `RangeSliderFilter` (2 poignées numériques min/max → filtre `range` sur dimension continue ; bâti sur le **vrai DS `RangeSlider`** 1 piste/2 poignées `value:[number,number]`+onChange/v-model, livré par le DS — svelte 0.27/react+vue 0.23 ; helpers purs `numericDomain`/`rangeBoundsToSpec`)
 - [x] Signets & actions (bookmarks, navigateur/diaporama, actions filtre/URL/set/aller-à, click behavior) — contrats core `DashboardBookmark`/`DashboardAction` + `runDashboardAction`/`applyDashboardBookmark` et `BookmarkNavigator` DS livrés en Svelte/React/Vue
-- [ ] Panneau format & axes (volet Format, éditeur d'axe plage/log/inversé, légendes éditables, marqueurs/forme)
+- [x] Panneau format & axes (volet Format, éditeur d'axe plage/log/inversé, légendes éditables, marqueurs/forme) — contrats core `format` immutable + `FormatPanel` DS livré en Svelte/React/Vue pour axes min/max/log/inversé, légendes titre/visible et marqueurs forme/taille/couleur
 - [ ] Éditeur de calcul / expression (champ calculé, formule+autocomplétion, calculs table/visuels, variables, bins, groupes, sets)
 
 ## Vague 5 — Génériques courts  *(claude:dataviz)*
