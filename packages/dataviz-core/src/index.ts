@@ -237,6 +237,29 @@ export {
   buildGeoJsonLayerModel,
 } from './geo.js';
 
+// Format / axes
+export type {
+  FormatAxisScale,
+  FormatMarkerShape,
+  FormatAxisConfig,
+  FormatLegendConfig,
+  FormatMarkerConfig,
+  FormatPanelConfig,
+  FormatAxis,
+  FormatLegend,
+  FormatMarker,
+  FormatPanelState,
+  FormatAxisPatch,
+  FormatLegendPatch,
+  FormatMarkerPatch,
+} from './format.js';
+export {
+  createFormatPanelState,
+  updateAxisFormat,
+  updateLegendFormat,
+  updateMarkerFormat,
+} from './format.js';
+
 // Store
 export type {
   FilterSpec,

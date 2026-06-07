@@ -16,6 +16,8 @@ export { default as DashboardFilterBar } from './lib/DashboardFilterBar.svelte';
 export type { DashboardFilterBarProps } from './lib/DashboardFilterBar.svelte';
 export { default as BookmarkNavigator } from './lib/BookmarkNavigator.svelte';
 export type { BookmarkNavigatorProps } from './lib/BookmarkNavigator.svelte';
+export { default as FormatPanel } from './lib/FormatPanel.svelte';
+export type { FormatPanelProps } from './lib/FormatPanel.svelte';
 export { default as SelectionLegend } from './lib/SelectionLegend.svelte';
 export type { SelectionLegendProps } from './lib/SelectionLegend.svelte';
 export { default as CrossfilteredBarChart } from './lib/CrossfilteredBarChart.svelte';
