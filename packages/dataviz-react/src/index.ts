@@ -20,6 +20,8 @@ export { CalculationEditor } from './lib/CalculationEditor.js';
 export type { CalculationEditorProps } from './lib/CalculationEditor.js';
 export { FormatPanel } from './lib/FormatPanel.js';
 export type { FormatPanelProps } from './lib/FormatPanel.js';
+export { WebFrame, DataImage, ObjectLayerPanel } from './lib/ObjectLayers.js';
+export type { WebFrameProps, DataImageProps, ObjectLayerPanelProps } from './lib/ObjectLayers.js';
 export { SelectionLegend } from './lib/SelectionLegend.js';
 export type { SelectionLegendProps } from './lib/SelectionLegend.js';
 export { CrossfilteredBarChart } from './lib/CrossfilteredBarChart.js';

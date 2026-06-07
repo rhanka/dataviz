@@ -284,6 +284,32 @@ export {
   calculateTableValues,
 } from './calculations.js';
 
+// Dashboard objects / layers
+export type {
+  DashboardObjectLayerKind,
+  WebFrameLoading,
+  WebFrameReferrerPolicy,
+  WebFrameSandboxToken,
+  WebFrameConfig,
+  ResolvedWebFrame,
+  DataImageConfig,
+  ResolvedDataImage,
+  DashboardObjectLayer,
+  ObjectLayerTreeNode,
+  ObjectLayerTree,
+  ObjectLayerPanelState,
+} from './objects.js';
+export {
+  isObjectLayerVisible,
+  buildObjectLayerTree,
+  createObjectLayerPanelState,
+  selectObjectLayer,
+  setObjectLayerVisibility,
+  toggleObjectLayerVisibility,
+  resolveWebFrame,
+  resolveDataImage,
+} from './objects.js';
+
 // Store
 export type {
   FilterSpec,
