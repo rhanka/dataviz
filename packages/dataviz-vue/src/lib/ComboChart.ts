@@ -1,0 +1,79 @@
+import { defineComponent, h, type PropType } from 'vue';
+import {
+  ComboChart as DsComboChart,
+  type ComboChartBarSeries,
+  type ComboChartLineSeries,
+} from '@sentropic/design-system-vue';
+import type {
+  CategoricalMeasureInput,
+  CategoricalMode,
+  DashboardStore,
+} from '@sentropic/dataviz-core';
+import { useDashboard } from '../adapter.js';
+import { buildSafeCategoricalSeries } from './categoricalData.js';
+
+export type ComboChartProps = {
+  store: DashboardStore;
+  viewId: string;
+  category: string;
+  measures: CategoricalMeasureInput[];
+  series?: string;
+  mode?: CategoricalMode;
+  leftAxisLabel?: string;
+  rightAxisLabel?: string;
+  legend?: boolean;
+  width?: number;
+  height?: number;
+  label: string;
+  class?: string;
+};
+
+export const ComboChart = defineComponent({
+  name: 'ComboChart',
+  props: {
+    store: { type: Object as PropType<DashboardStore>, required: true },
+    viewId: { type: String, required: true },
+    category: { type: String, required: true },
+    measures: { type: Array as PropType<CategoricalMeasureInput[]>, required: true },
+    series: { type: String, default: undefined },
+    mode: { type: String as PropType<CategoricalMode>, default: 'grouped' },
+    leftAxisLabel: { type: String, default: undefined },
+    rightAxisLabel: { type: String, default: undefined },
+    legend: { type: Boolean, default: true },
+    width: { type: Number, default: undefined },
+    height: { type: Number, default: undefined },
+    label: { type: String, required: true },
+    class: { type: String, default: undefined },
+  },
+  setup(props) {
+    const state = useDashboard(props.store);
+    return () => {
+      void state.value;
+      const seriesModel = buildSafeCategoricalSeries(props.store.model, props.store.applyCrossfilter(props.viewId), {
+        category: props.category,
+        series: props.series,
+        measures: props.measures,
+        mode: props.mode,
+      });
+      const bars: ComboChartBarSeries[] = seriesModel.series
+        .filter((item) => item.mark === 'bar')
+        .map((item) => ({ label: item.label, data: item.values }));
+      const lines: ComboChartLineSeries[] = seriesModel.series
+        .filter((item) => item.mark === 'line')
+        .map((item) => ({ label: item.label, data: item.values }));
+
+      return h(DsComboChart, {
+        categories: seriesModel.categories,
+        bars,
+        lines,
+        leftAxisLabel: props.leftAxisLabel,
+        rightAxisLabel: props.rightAxisLabel,
+        legend: props.legend,
+        width: props.width,
+        height: props.height,
+        label: props.label,
+        class: props.class,
+      });
+    };
+  },
+});
