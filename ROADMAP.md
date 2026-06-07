@@ -46,7 +46,7 @@ Source de vérité : `~/src/sent-tech-design-system/docs/bi-study/INVENTORY.md` 
   commun entre facettes.
 
 ## Vague 3 — Moteur de viz  *(codex:dataviz)*
-- [~] Catégoriels & combo (multi-série lignes/aires, barres groupées & 100 %, combo+2e axe, step, Pareto, lollipop, divergentes) — contrats core `buildCategoricalSeries` + Pareto/divergentes faits ; reste câblage DS / sous-types spécialisés
+- [~] Catégoriels & combo (multi-série lignes/aires, barres groupées & 100 %, combo+2e axe, step, Pareto, lollipop, divergentes) — contrats core `buildCategoricalSeries` faits ; wrappers DS Pareto + divergentes livrés en Svelte/React/Vue ; reste combo/lollipop/stacked/area/step
 - [~] Flux & part-of-whole (pie plein, funnel, waterfall+variance, treemap, sunburst, sankey, chord, radar, mekko, packed bubbles, rose) — contrats core part/hiérarchie/waterfall/flow/radar/rose/mekko/packed bubbles faits ; reste câblage DS / sous-types spécialisés
 - [~] Pivot avancé (cross-tab agrégé, sous-totaux, expand/collapse, heat de cellule, sparkline en cellule) — contrat core `buildAdvancedPivotTable` fait ; reste câblage DS
 - [~] Distribution & statistique (box plot, histogramme/bins, distribution, heatmap cat.+calendaire, bullet, gauge) — contrats core histogram/box/heatmap/bullet/gauge faits ; reste câblage DS
