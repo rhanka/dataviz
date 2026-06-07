@@ -2,10 +2,13 @@ import { render } from '@testing-library/svelte';
 import { tick } from 'svelte';
 import { describe, expect, it } from 'vitest';
 import { createDashboardStore, type DataModel, type Row } from '@sentropic/dataviz-core';
+import ChordChart from './ChordChart.svelte';
 import DonutChart from './DonutChart.svelte';
 import FunnelChart from './FunnelChart.svelte';
 import MekkoChart from './MekkoChart.svelte';
+import PackedBubbleChart from './PackedBubbleChart.svelte';
 import RadarChart from './RadarChart.svelte';
+import RoseChart from './RoseChart.svelte';
 import SankeyChart from './SankeyChart.svelte';
 import SunburstChart from './SunburstChart.svelte';
 import TreemapChart from './TreemapChart.svelte';
@@ -108,6 +111,29 @@ describe('part-of-whole charts', () => {
     expect(mekko.container.textContent).toContain('North');
     expect(mekko.container.textContent).toContain('South');
     expect(mekko.container.textContent).toContain('North, Enterprise');
+  });
+
+  it('renders chord, rose and packed bubble charts from remaining part-whole core models', () => {
+    const store = newStore();
+    const chord = render(ChordChart, {
+      props: { store, viewId: 'chord', source: 'source', target: 'target', measure: 'revenue', label: 'Revenue chord' },
+    });
+    const rose = render(RoseChart, {
+      props: { store, viewId: 'rose', category: 'region', measure: 'revenue', label: 'Revenue rose' },
+    });
+    const packed = render(PackedBubbleChart, {
+      props: { store, viewId: 'packed', category: 'region', measure: 'revenue', label: 'Revenue packed' },
+    });
+
+    expect(chord.getByRole('img', { name: 'Revenue chord' })).toBeTruthy();
+    expect(rose.getByRole('img', { name: 'Revenue rose' })).toBeTruthy();
+    expect(packed.getByRole('img', { name: 'Revenue packed' })).toBeTruthy();
+    expect(chord.container.querySelectorAll('.st-chordChart__ribbon')).toHaveLength(3);
+    expect(rose.container.querySelectorAll('.st-roseChart__sector')).toHaveLength(2);
+    expect(packed.container.querySelectorAll('.st-packedBubbleChart__bubble')).toHaveLength(2);
+    expect(chord.container.textContent).toContain('Lead -> Qualified: 70');
+    expect(rose.container.textContent).toContain('North: 60');
+    expect(packed.container.textContent).toContain('South: 40');
   });
 
   it('rebuilds part-whole aggregates from this view cross-filter scope', async () => {

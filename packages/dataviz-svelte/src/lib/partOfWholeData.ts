@@ -3,7 +3,9 @@ import {
   buildMekkoModel,
   buildPartWholeHierarchy,
   buildPartWholeModel,
+  buildPackedBubbleModel,
   buildRadarModel,
+  buildRoseModel,
   buildWaterfallModel,
   findDimension,
   findMeasure,
@@ -12,6 +14,8 @@ import {
   type FlowModel,
   type MekkoConfig,
   type MekkoModel,
+  type PackedBubbleConfig,
+  type PackedBubbleModel,
   type PartWholeConfig,
   type PartWholeHierarchyConfig,
   type PartWholeItem,
@@ -19,6 +23,8 @@ import {
   type PartWholeNode,
   type RadarConfig,
   type RadarModel,
+  type RoseConfig,
+  type RoseModel,
   type Row,
   type WaterfallConfig,
   type WaterfallModel,
@@ -28,7 +34,9 @@ const EMPTY_PART_WHOLE: PartWholeModel = { total: 0, items: [] };
 const EMPTY_HIERARCHY: PartWholeNode = { key: 'root', label: 'Total', value: 0, children: [] };
 const EMPTY_FLOW: FlowModel = { nodes: [], links: [] };
 const EMPTY_MEKKO: MekkoModel = { total: 0, columns: [] };
+const EMPTY_PACKED_BUBBLE: PackedBubbleModel = { total: 0, bubbles: [] };
 const EMPTY_RADAR: RadarModel = { axes: [], series: [] };
+const EMPTY_ROSE: RoseModel = { total: 0, sectors: [] };
 const EMPTY_WATERFALL: WaterfallModel = { total: 0, steps: [] };
 
 export type HierarchyDatum = {
@@ -99,11 +107,29 @@ export function buildSafeMekkoModel(model: DataModel, rows: readonly Row[], conf
   return buildMekkoModel(model, rows, config);
 }
 
+export function buildSafePackedBubbleModel(
+  model: DataModel,
+  rows: readonly Row[],
+  config: PackedBubbleConfig,
+): PackedBubbleModel {
+  if (!hasDimensions(model, [config.category]) || !hasMeasures(model, [config.measure])) {
+    return EMPTY_PACKED_BUBBLE;
+  }
+  return buildPackedBubbleModel(model, rows, config);
+}
+
 export function buildSafeRadarModel(model: DataModel, rows: readonly Row[], config: RadarConfig): RadarModel {
   if (config.axes.length === 0) return EMPTY_RADAR;
   if (config.series !== undefined && !hasDimensions(model, [config.series])) return EMPTY_RADAR;
   if (!hasMeasures(model, config.axes)) return EMPTY_RADAR;
   return buildRadarModel(model, rows, config);
+}
+
+export function buildSafeRoseModel(model: DataModel, rows: readonly Row[], config: RoseConfig): RoseModel {
+  if (!hasDimensions(model, [config.category]) || !hasMeasures(model, [config.measure])) {
+    return EMPTY_ROSE;
+  }
+  return buildRoseModel(model, rows, config);
 }
 
 export function toPartWholeData(items: readonly PartWholeItem[]) {
