@@ -46,6 +46,8 @@ export { FunnelChart } from './lib/FunnelChart.js';
 export type { FunnelChartProps } from './lib/FunnelChart.js';
 export { WaterfallChart } from './lib/WaterfallChart.js';
 export type { WaterfallChartProps } from './lib/WaterfallChart.js';
+export { MekkoChart } from './lib/MekkoChart.js';
+export type { MekkoChartProps } from './lib/MekkoChart.js';
 export { TreemapChart } from './lib/TreemapChart.js';
 export type { TreemapChartProps } from './lib/TreemapChart.js';
 export { SunburstChart } from './lib/SunburstChart.js';

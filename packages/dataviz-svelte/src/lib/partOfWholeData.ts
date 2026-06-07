@@ -1,5 +1,6 @@
 import {
   buildFlowModel,
+  buildMekkoModel,
   buildPartWholeHierarchy,
   buildPartWholeModel,
   buildRadarModel,
@@ -9,6 +10,8 @@ import {
   type DataModel,
   type FlowConfig,
   type FlowModel,
+  type MekkoConfig,
+  type MekkoModel,
   type PartWholeConfig,
   type PartWholeHierarchyConfig,
   type PartWholeItem,
@@ -24,6 +27,7 @@ import {
 const EMPTY_PART_WHOLE: PartWholeModel = { total: 0, items: [] };
 const EMPTY_HIERARCHY: PartWholeNode = { key: 'root', label: 'Total', value: 0, children: [] };
 const EMPTY_FLOW: FlowModel = { nodes: [], links: [] };
+const EMPTY_MEKKO: MekkoModel = { total: 0, columns: [] };
 const EMPTY_RADAR: RadarModel = { axes: [], series: [] };
 const EMPTY_WATERFALL: WaterfallModel = { total: 0, steps: [] };
 
@@ -88,6 +92,13 @@ export function buildSafeFlowModel(model: DataModel, rows: readonly Row[], confi
   return buildFlowModel(model, rows, config);
 }
 
+export function buildSafeMekkoModel(model: DataModel, rows: readonly Row[], config: MekkoConfig): MekkoModel {
+  if (!hasDimensions(model, [config.category, config.series]) || !hasMeasures(model, [config.measure])) {
+    return EMPTY_MEKKO;
+  }
+  return buildMekkoModel(model, rows, config);
+}
+
 export function buildSafeRadarModel(model: DataModel, rows: readonly Row[], config: RadarConfig): RadarModel {
   if (config.axes.length === 0) return EMPTY_RADAR;
   if (config.series !== undefined && !hasDimensions(model, [config.series])) return EMPTY_RADAR;
@@ -137,5 +148,16 @@ export function toRadarSeries(model: RadarModel) {
   return model.series.map((series) => ({
     label: series.label,
     values: series.points.map((point) => point.value),
+  }));
+}
+
+export function toMarimekkoData(model: MekkoModel) {
+  return model.columns.map((column) => ({
+    label: column.label,
+    width: column.width,
+    segments: column.segments.map((segment) => ({
+      label: segment.label,
+      value: segment.value,
+    })),
   }));
 }

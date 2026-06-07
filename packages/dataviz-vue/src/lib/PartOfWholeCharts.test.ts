@@ -4,6 +4,7 @@ import { describe, expect, it } from 'vitest';
 import { createDashboardStore, type DataModel, type Row } from '@sentropic/dataviz-core';
 import { DonutChart } from './DonutChart.js';
 import { FunnelChart } from './FunnelChart.js';
+import { MekkoChart } from './MekkoChart.js';
 import { RadarChart } from './RadarChart.js';
 import { SankeyChart } from './SankeyChart.js';
 import { SunburstChart } from './SunburstChart.js';
@@ -87,6 +88,26 @@ describe('part-of-whole charts (vue)', () => {
     expect(radar.findAll('.st-radarChart__polygon')).toHaveLength(2);
     expect(sankey.text()).toContain('Lead -> Qualified: 70');
     expect(radar.text()).toContain('Enterprise, Revenue: 70');
+  });
+
+  it('renders a Mekko chart from category and segment part-whole aggregates', () => {
+    const store = newStore();
+    const mekko = mount(MekkoChart, {
+      props: {
+        store,
+        viewId: 'mekko',
+        category: 'region',
+        series: 'segment',
+        measure: 'revenue',
+        label: 'Revenue mekko',
+      },
+    });
+
+    expect(mekko.find('[role="img"]').attributes('aria-label')).toBe('Revenue mekko');
+    expect(mekko.findAll('.st-marimekkoChart__cell')).toHaveLength(4);
+    expect(mekko.text()).toContain('North');
+    expect(mekko.text()).toContain('South');
+    expect(mekko.text()).toContain('North, Enterprise');
   });
 
   it('rebuilds part-whole aggregates from this view cross-filter scope', async () => {
