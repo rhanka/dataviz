@@ -47,6 +47,11 @@ jobs:
           mkdir -p _site/site
           cp -r apps/site/dist/* _site/site/
           cp apps/site/dist/index.html _site/site/404.html
+          # GitHub Pages serves the PUBLISHED-SITE-ROOT 404.html for any missing
+          # sub-path, so the docs SPA deep links (/site/charts/*) need the SPA
+          # index served as the root 404 fallback (the /site/404.html above is
+          # not consulted by Pages for sub-path 404s).
+          cp apps/site/dist/index.html _site/404.html
       - uses: actions/upload-pages-artifact@v3
         with:
           path: _site
