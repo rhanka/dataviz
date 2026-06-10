@@ -1,0 +1,30 @@
+{
+  "name": "@sentropic/dataviz-site",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Docs + gallery website for @sentropic/dataviz, mapped to the Sent Tech design-system website.",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@lucide/svelte": "^0.562.0",
+    "@sentropic/dataviz-react": "*",
+    "@sentropic/dataviz-svelte": "*",
+    "@sentropic/dataviz-vue": "*",
+    "@sentropic/design-system-react": "0.29.0",
+    "@sentropic/design-system-svelte": "0.33.0",
+    "@sentropic/design-system-themes": "0.11.0",
+    "@sentropic/design-system-vue": "0.29.0",
+    "react": "^19.2.1",
+    "react-dom": "^19.2.1",
+    "svelte": "^5.56.2",
+    "vue": "^3.5.35"
+  },
+  "devDependencies": {
+    "@sveltejs/vite-plugin-svelte": "^7.1.2",
+    "vite": "^8.0.16"
+  }
+}
