@@ -128,7 +128,7 @@ document.head.appendChild(style);`,
       <b>Présentation = design system ; dataviz = état &amp; orchestration.</b>
       Cross-filter, drill, sync, signets, scoping et modèle de données viennent
       de <code>dataviz-core</code> ; tout le rendu (axes, contraste, a11y) vient
-      des surfaces du design system Sent Tech. Rien n'est peint « à la main ».
+      des surfaces du design system Sentropic. Rien n'est peint « à la main ».
     </p>
   </section>
 </div>

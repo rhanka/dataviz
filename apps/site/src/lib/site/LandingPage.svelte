@@ -13,7 +13,7 @@
 <div class="dv-prose">
   <section class="dv-hero">
     <span class="dv-badge">@sentropic/dataviz</span>
-    <h1>La couche BI &amp; dashboard du design system Sent Tech.</h1>
+    <h1>Visualisation de données et tableaux de bord pour le design system Sentropic.</h1>
     <p>
       Charts, tableaux de bord cross-filtrés et grilles, bâtis nativement sur le
       design system : présentation 100 % design-system, état &amp; orchestration

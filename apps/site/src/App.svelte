@@ -106,7 +106,12 @@
     </button>
 
     <a class="dv-brand" href={router.href('/')} onclick={(e) => onLinkClick(e, '/')}>
-      <span class="dv-brand__mark">dv</span>
+      <img
+        class="dv-brand__mark"
+        src="{import.meta.env.BASE_URL}SENT-logo-squared.svg"
+        alt="Sentropic"
+        style="object-fit: contain; background: transparent; border: 0; padding: 0;"
+      />
       <span class="dv-brand__copy">
         <span class="dv-brand__name">Sentropic</span>
         <span class="dv-brand__product">dataviz</span>
