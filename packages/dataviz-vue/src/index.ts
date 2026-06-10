@@ -132,3 +132,15 @@ export {
 export type { RelativeDateFilterProps, RelativeDatePreset } from './lib/RelativeDateFilter.js';
 export { RangeSliderFilter, numericDomain, rangeBoundsToSpec } from './lib/RangeSliderFilter.js';
 export type { RangeSliderFilterProps, NumericDomain } from './lib/RangeSliderFilter.js';
+export { ChartExport } from './lib/ChartExport.js';
+export type { ChartExportProps, ChartExportTarget } from './lib/ChartExport.js';
+export {
+  serializeSvg,
+  svgStringToBlob,
+  svgStringToPngBlob,
+  downloadBlob,
+  downloadSvg,
+  downloadPng,
+  printElement,
+} from './lib/chart-export.js';
+export type { SerializeSvgOptions, RasterizeOptions, ChartExportFormat } from './lib/chart-export.js';
