@@ -1,8 +1,10 @@
 name: GitHub Pages
 
-# Build the three framework demos (Svelte / React / Vue) and deploy them to
-# GitHub Pages, behind a landing page. Demos use a relative `base`, so each is
-# served from its own sub-path.
+# Build the three framework demos (Svelte / React / Vue) AND the docs + gallery
+# website (apps/site), then deploy them to GitHub Pages behind a landing page.
+# The demos use a relative `base` (served from their own sub-paths); the docs
+# website is an SPA with an absolute base `/dataviz/site/` and a 404.html
+# fallback so its deep links resolve on a static host.
 
 on:
   push:
@@ -29,15 +31,22 @@ jobs:
           node-version: "22"
           cache: "npm"
       - run: npm ci
-      # Builds packages (core + adapters) then the three demo apps.
+      # Builds packages (core + adapters) then every app workspace, including
+      # the three demos AND apps/site (the docs + gallery website). The site's
+      # vite config defaults its base to `/dataviz/site/` for this deployment.
       - run: npm run build
-      - name: Assemble site (landing + per-framework demos)
+      - name: Assemble site (landing + per-framework demos + docs website)
         run: |
           mkdir -p _site
           cp apps/pages-landing.html _site/index.html
           cp -r apps/docs/dist _site/svelte
           cp -r apps/docs-react/dist _site/react
           cp -r apps/docs-vue/dist _site/vue
+          # Docs + gallery website (SPA) under /site, with a 404.html fallback
+          # so deep links (e.g. /site/charts/treemap) resolve on GitHub Pages.
+          mkdir -p _site/site
+          cp -r apps/site/dist/* _site/site/
+          cp apps/site/dist/index.html _site/site/404.html
       - uses: actions/upload-pages-artifact@v3
         with:
           path: _site

@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sentropic dataviz — documentation &amp; galerie</title>
+    <meta
+      name="description"
+      content="Documentation et galerie interactive de @sentropic/dataviz : charts, dashboards BI et grilles, bâtis sur le design system Sent Tech."
+    />
+    <!--
+      Anti-FOUC : restaure data-color-mode sur <html> AVANT le premier paint,
+      pour éviter un flash clair→sombre. Identique au site du design system.
+    -->
+    <script>
+      (function () {
+        try {
+          var m = localStorage.getItem('dv-site-color-mode');
+          if (m === 'dark' || m === 'light') {
+            document.documentElement.setAttribute('data-color-mode', m);
+          }
+        } catch (e) {
+          /* localStorage indisponible */
+        }
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
