@@ -140,3 +140,15 @@ export {
   rangeBoundsToSpec,
 } from './lib/RangeSliderFilter.svelte';
 export type { RangeSliderFilterProps, NumericDomain } from './lib/RangeSliderFilter.svelte';
+export { default as ChartExport } from './lib/ChartExport.svelte';
+export type { ChartExportProps, ChartExportTarget } from './lib/ChartExport.svelte';
+export {
+  serializeSvg,
+  svgStringToBlob,
+  svgStringToPngBlob,
+  downloadBlob,
+  downloadSvg,
+  downloadPng,
+  printElement,
+} from './lib/chart-export.js';
+export type { SerializeSvgOptions, RasterizeOptions, ChartExportFormat } from './lib/chart-export.js';
