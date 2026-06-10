@@ -31,27 +31,26 @@ jobs:
           node-version: "22"
           cache: "npm"
       - run: npm ci
-      # Builds packages (core + adapters) then every app workspace, including
-      # the three demos AND apps/site (the docs + gallery website). The site's
-      # vite config defaults its base to `/dataviz/site/` for this deployment.
-      - run: npm run build
-      - name: Assemble site (landing + per-framework demos + docs website)
+      # Builds packages + every app workspace. apps/site builds at base "/"
+      # (DV_SITE_BASE) so the docs website serves at the custom-domain ROOT
+      # (dataviz.sent-tech.ca). The three demos use a relative base (served
+      # from /demos/*).
+      - run: DV_SITE_BASE=/ npm run build
+      - name: Assemble site (docs website at root + per-framework demos)
         run: |
           mkdir -p _site
-          cp apps/pages-landing.html _site/index.html
-          cp -r apps/docs/dist _site/svelte
-          cp -r apps/docs-react/dist _site/react
-          cp -r apps/docs-vue/dist _site/vue
-          # Docs + gallery website (SPA) under /site, with a 404.html fallback
-          # so deep links (e.g. /site/charts/treemap) resolve on GitHub Pages.
-          mkdir -p _site/site
-          cp -r apps/site/dist/* _site/site/
-          cp apps/site/dist/index.html _site/site/404.html
-          # GitHub Pages serves the PUBLISHED-SITE-ROOT 404.html for any missing
-          # sub-path, so the docs SPA deep links (/site/charts/*) need the SPA
-          # index served as the root 404 fallback (the /site/404.html above is
-          # not consulted by Pages for sub-path 404s).
+          # Docs + gallery website (apps/site, base "/") at the custom-domain root.
+          cp -r apps/site/dist/* _site/
+          # GitHub Pages serves the published-site-root 404.html for any missing
+          # path, so the docs SPA index doubles as the deep-link fallback.
           cp apps/site/dist/index.html _site/404.html
+          # Custom domain (keeps the Pages custom-domain binding across deploys).
+          echo dataviz.sent-tech.ca > _site/CNAME
+          # The three framework demos (relative base) under /demos/*.
+          mkdir -p _site/demos
+          cp -r apps/docs/dist _site/demos/svelte
+          cp -r apps/docs-react/dist _site/demos/react
+          cp -r apps/docs-vue/dist _site/demos/vue
       - uses: actions/upload-pages-artifact@v3
         with:
           path: _site
