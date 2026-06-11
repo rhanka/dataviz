@@ -10,16 +10,50 @@
     />
     <link rel="icon" href="/SENT-logo-squared.svg" type="image/svg+xml" />
     <!--
-      Police de marque du design system Sentropic. Le thème sentTech déclare
-      `--st-font-sans: Inter, …` ; sans la charger, :root (app.css) retombe sur
-      system-ui et tout le chrome (boutons/typo) paraît « cassé ».
+      Polices de marque des thèmes DS, chargées GLOBALEMENT (comme le site DS) :
+      Inter (sent-tech / airbus) + IBM Plex Sans (Carbon) via Google Fonts ;
+      Marianne (DSFR) via @font-face du CDN DSFR. Le thème actif déclare
+      `--st-font-sans` ; sans la police, :root (app.css) retombe sur system-ui et
+      le chrome (boutons/typo) paraît « cassé ». On ne charge QUE les polices,
+      jamais le reset global dsfr/carbon.
     -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
     <link
       rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap"
     />
+    <style>
+      /* Marianne (DSFR) — @font-face servis par le CDN DSFR, sans le reset DSFR. */
+      @font-face {
+        font-display: swap;
+        font-family: Marianne;
+        font-style: normal;
+        font-weight: 400;
+        src:
+          url("https://cdn.jsdelivr.net/npm/@gouvfr/dsfr/dist/fonts/Marianne-Regular.woff2") format("woff2"),
+          url("https://cdn.jsdelivr.net/npm/@gouvfr/dsfr/dist/fonts/Marianne-Regular.woff") format("woff");
+      }
+      @font-face {
+        font-display: swap;
+        font-family: Marianne;
+        font-style: normal;
+        font-weight: 500;
+        src:
+          url("https://cdn.jsdelivr.net/npm/@gouvfr/dsfr/dist/fonts/Marianne-Medium.woff2") format("woff2"),
+          url("https://cdn.jsdelivr.net/npm/@gouvfr/dsfr/dist/fonts/Marianne-Medium.woff") format("woff");
+      }
+      @font-face {
+        font-display: swap;
+        font-family: Marianne;
+        font-style: normal;
+        font-weight: 700;
+        src:
+          url("https://cdn.jsdelivr.net/npm/@gouvfr/dsfr/dist/fonts/Marianne-Bold.woff2") format("woff2"),
+          url("https://cdn.jsdelivr.net/npm/@gouvfr/dsfr/dist/fonts/Marianne-Bold.woff") format("woff");
+      }
+    </style>
     <!--
       Anti-FOUC : restaure data-color-mode sur <html> AVANT le premier paint,
       pour éviter un flash clair→sombre. Identique au site du design system.

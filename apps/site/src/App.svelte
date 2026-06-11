@@ -4,12 +4,15 @@
   presentation from @sentropic/design-system-svelte, so it matches the DS site
   (design-system.sent-tech.ca) by construction. A tiny click-delegation action
   routes AppChrome's internal <a> links through the SPA router (external/GitHub
-  links fall through). The framework switcher (Svelte/React/Vue) is the one
-  dataviz-specific control: it is mounted in AppChrome's `identity` slot via DS
-  Menu pieces, and only on pages where a live demo makes the switch meaningful.
-  Tokens are injected the way the DS site does it (compileTheme → managed <style>
-  on :root) + a dark overlay; chart colours come from the DS data-category
-  tokens — there is no app-level palette.
+  links fall through). The DS theme selector (Sent Tech / DSFR / Carbon / Airbus)
+  is a first-class AppChrome control (themes/theme/onThemeChange), so switching
+  tenant re-emits the whole DS token set on :root. The framework switcher
+  (Svelte/React/Vue) is the dataviz-specific control: it is mounted in AppChrome's
+  `identity` slot via DS Menu pieces, and only on pages where a live demo makes
+  the switch meaningful. Tokens are injected the way the DS site does it
+  (compileTheme on the active tenant → managed <style> on :root) + a dark overlay;
+  chart colours come from the DS data-category tokens — there is no app-level
+  palette.
 -->
 <script lang="ts">
   import { Boxes } from '@lucide/svelte';
@@ -22,8 +25,8 @@
     type AppChromeNavItem,
   } from '@sentropic/design-system-svelte';
   import { router, onLinkClick } from './lib/site/router.svelte';
-  import { colorMode, framework, FRAMEWORKS } from './lib/site/stores.svelte';
-  import { baseThemeCss, darkModeCss } from './lib/site/theme';
+  import { colorMode, framework, theme, FRAMEWORKS } from './lib/site/stores.svelte';
+  import { themeCss, darkModeCss, THEMES } from './lib/site/theme';
   import { findEntry, SECTION_META } from './lib/registry/index';
   import type { Section } from './lib/registry/types';
   import Sidebar from './lib/site/Sidebar.svelte';
@@ -36,11 +39,15 @@
   router.init();
   colorMode.init();
   framework.init();
+  theme.init();
 
   // ── Theme injection ──────────────────────────────────────────────────────
-  // Base DS tokens (light) + dark token overlay — static, injected once.
-  const baseCss = baseThemeCss();
+  // Active tenant theme tokens (light) — reactive to the theme store, so
+  // switching theme re-emits the :root token set. Dark overlay is static.
+  const themeCssStr = $derived(themeCss(theme.value));
   const darkCss = darkModeCss();
+  // Theme options for AppChrome's selector (DS official tenants).
+  const chromeThemes = THEMES.map((t) => ({ id: t.id, label: t.label }));
 
   // ── Header state ─────────────────────────────────────────────────────────
   let mobileMenuOpen = $state(false);
@@ -131,7 +138,7 @@
 </script>
 
 <svelte:head>
-  {@html `<style data-dv-base>${baseCss}</style>`}
+  {@html `<style data-dv-theme>${themeCssStr}</style>`}
   {@html `<style data-dv-dark>${darkCss}</style>`}
 </svelte:head>
 
@@ -185,6 +192,10 @@
       colorModeLabels={COLOR_MODE_LABELS}
       githubHref="https://github.com/rhanka/dataviz"
       githubLabel="GitHub"
+      themes={chromeThemes}
+      theme={theme.value}
+      onThemeChange={(id) => theme.set(id)}
+      themeLabel="Changer de thème"
       identity={showFwSwitch ? fwSwitch : undefined}
       {mobileMenuOpen}
       onMobileMenuToggle={() => (mobileMenuOpen = !mobileMenuOpen)}
