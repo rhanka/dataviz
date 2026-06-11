@@ -6,7 +6,16 @@
   and a dark token overlay layered on top.
 -->
 <script lang="ts">
-  import { Moon, Sun, Palette as PaletteIcon, Boxes, Menu, X, Github } from '@lucide/svelte';
+  import { Moon, Sun, Palette as PaletteIcon, Boxes, Github } from '@lucide/svelte';
+  import {
+    AppHeader,
+    MenuTriggerButton,
+    MenuPopover,
+    Menu as DsMenu,
+    IconButton,
+    Link as DsLink,
+    type MenuItem,
+  } from '@sentropic/design-system-svelte';
   import { router, onLinkClick } from './lib/site/router.svelte';
   import { colorMode, framework, palette, FRAMEWORKS } from './lib/site/stores.svelte';
   import { PALETTES, baseThemeCss, paletteCss, darkModeCss } from './lib/site/theme';
@@ -31,12 +40,52 @@
   // Palette overlay — reactive to the palette store.
   const palCss = $derived(paletteCss(palette.value));
 
+  // ── Header control state ─────────────────────────────────────────────────
+  // The palette + framework switchers are DS anchored menus
+  // (MenuTriggerButton -> MenuPopover -> Menu). Each needs its own open flag and
+  // a ref to its trigger button (MenuPopover anchors off the trigger element).
   let isPaletteOpen = $state(false);
   let isFwOpen = $state(false);
+  let paletteTrigger = $state<HTMLElement | null>(null);
+  let fwTrigger = $state<HTMLElement | null>(null);
   let sidebarOpen = $state(false);
+
+  // Compact (burger) mode: AppHeader's `compact` prop is controlled, so we drive
+  // it from a matchMedia query at the same 860px breakpoint the sidebar uses.
+  let compact = $state(false);
+  $effect(() => {
+    if (typeof window === 'undefined') return;
+    const mq = window.matchMedia('(max-width: 860px)');
+    const sync = () => (compact = mq.matches);
+    sync();
+    mq.addEventListener('change', sync);
+    return () => mq.removeEventListener('change', sync);
+  });
+
+  // Palette / framework menus rendered as DS Menu items (text + value).
+  // NOTE: DS `Menu` items carry only label/value/icon — they cannot render the
+  // per-palette colour swatches the old hand-rolled menu showed. See summary
+  // (DS feature-request candidate: swatch/colour-preview menu items).
+  const paletteItems = $derived<MenuItem[]>(
+    PALETTES.map((p) => ({ label: p.label, value: p.id })),
+  );
+  const frameworkItems = $derived<MenuItem[]>(
+    FRAMEWORKS.map((f) => ({ label: f.label, value: f.id })),
+  );
+  const paletteLabel = $derived(PALETTES.find((p) => p.id === palette.value)?.label ?? '');
+  const frameworkLabel = $derived(
+    FRAMEWORKS.find((f) => f.id === framework.value)?.label ?? '',
+  );
 
   function colorIcon() {
     return colorMode.value;
+  }
+  function colorModeLabel(): string {
+    return colorMode.value === 'dark'
+      ? 'Mode sombre — passer à auto'
+      : colorMode.value === 'light'
+        ? 'Mode clair — passer au sombre'
+        : 'Mode auto — passer au clair';
   }
 
   // ── Route resolution ─────────────────────────────────────────────────────
@@ -80,142 +129,132 @@
 </svelte:head>
 
 <svelte:window
-  onclick={(e) => {
-    const t = e.target as Element | null;
-    if (isPaletteOpen && t && !t.closest('.dv-palette-wrap')) isPaletteOpen = false;
-    if (isFwOpen && t && !t.closest('.dv-fw-wrap')) isFwOpen = false;
-  }}
   onkeydown={(e) => {
-    if (e.key === 'Escape') {
-      isPaletteOpen = false;
-      isFwOpen = false;
-      sidebarOpen = false;
-    }
+    if (e.key === 'Escape') sidebarOpen = false;
   }}
 />
 
-<div class="dv-shell">
-  <header class="dv-header">
-    <button
-      class="dv-ctrl dv-ctrl--icon dv-sidebar-toggle"
-      type="button"
-      aria-label="Menu"
-      onclick={() => (sidebarOpen = !sidebarOpen)}
+{#snippet brand()}
+  <a class="dv-brand" href={router.href('/')} onclick={(e) => onLinkClick(e, '/')}>
+    <img
+      class="dv-brand__mark"
+      src="{import.meta.env.BASE_URL}SENT-logo-squared.svg"
+      alt="Sentropic"
+    />
+    <span class="dv-brand__copy">
+      <span class="dv-brand__name">Sentropic</span>
+      <span class="dv-brand__product">dataviz</span>
+    </span>
+  </a>
+{/snippet}
+
+{#snippet topNav()}
+  {#each TOP_NAV as item (item.href)}
+    <DsLink
+      href={router.href(item.href)}
+      variant="muted"
+      aria-current={topActive(item.href) ? 'page' : undefined}
+      onclick={(e) => onLinkClick(e, item.href)}>{item.label}</DsLink
     >
-      {#if sidebarOpen}<X size={18} />{:else}<Menu size={18} />{/if}
-    </button>
+  {/each}
+{/snippet}
 
-    <a class="dv-brand" href={router.href('/')} onclick={(e) => onLinkClick(e, '/')}>
-      <img
-        class="dv-brand__mark"
-        src="{import.meta.env.BASE_URL}SENT-logo-squared.svg"
-        alt="Sentropic"
-        style="object-fit: contain; background: transparent; border: 0; padding: 0;"
-      />
-      <span class="dv-brand__copy">
-        <span class="dv-brand__name">Sentropic</span>
-        <span class="dv-brand__product">dataviz</span>
-      </span>
-    </a>
+{#snippet headerActions()}
+  <!-- Framework switcher — DS anchored menu (MenuTriggerButton + MenuPopover + Menu).
+       The trigger button is wrapped in a tight inline-flex span so MenuPopover gets
+       a real HTMLElement to anchor off (bind:this on a component yields the instance,
+       not the DOM node). -->
+  <span class="dv-menu-anchor" bind:this={fwTrigger}>
+    <MenuTriggerButton
+      aria-label="Changer de framework"
+      expanded={isFwOpen}
+      variant="ghost"
+      onclick={() => (isFwOpen = !isFwOpen)}
+    >
+      <Boxes size={14} aria-hidden="true" />
+      <span>{frameworkLabel}</span>
+    </MenuTriggerButton>
+  </span>
+  <MenuPopover bind:open={isFwOpen} trigger={fwTrigger} placement="bottom-end" label="Framework">
+    <DsMenu
+      label="Framework"
+      items={frameworkItems}
+      onselect={(value) => {
+        framework.set(value as typeof framework.value);
+        isFwOpen = false;
+      }}
+    />
+  </MenuPopover>
 
-    <nav class="dv-topnav" aria-label="Navigation principale">
-      {#each TOP_NAV as item (item.href)}
-        <a
-          href={router.href(item.href)}
-          aria-current={topActive(item.href) ? 'page' : undefined}
-          onclick={(e) => onLinkClick(e, item.href)}>{item.label}</a
-        >
-      {/each}
-    </nav>
+  <!-- Palette switcher — DS anchored menu. -->
+  <span class="dv-menu-anchor" bind:this={paletteTrigger}>
+    <MenuTriggerButton
+      aria-label="Changer la palette"
+      expanded={isPaletteOpen}
+      variant="ghost"
+      onclick={() => (isPaletteOpen = !isPaletteOpen)}
+    >
+      <PaletteIcon size={14} aria-hidden="true" />
+      <span>{paletteLabel}</span>
+    </MenuTriggerButton>
+  </span>
+  <MenuPopover
+    bind:open={isPaletteOpen}
+    trigger={paletteTrigger}
+    placement="bottom-end"
+    label="Palette"
+  >
+    <DsMenu
+      label="Palette"
+      items={paletteItems}
+      onselect={(value) => {
+        palette.set(value);
+        isPaletteOpen = false;
+      }}
+    />
+  </MenuPopover>
 
-    <div class="dv-actions">
-      <!-- Palette switcher (multi-colour, non-monochrome) -->
-      <div class="dv-palette-wrap dv-menu-wrap">
-        <button
-          class="dv-ctrl"
-          type="button"
-          aria-haspopup="true"
-          aria-expanded={isPaletteOpen}
-          onclick={() => (isPaletteOpen = !isPaletteOpen)}
-        >
-          <PaletteIcon size={14} />
-          <span>{PALETTES.find((p) => p.id === palette.value)?.label}</span>
-        </button>
-        {#if isPaletteOpen}
-          <div class="dv-menu" role="menu">
-            {#each PALETTES as p (p.id)}
-              <button
-                class:active={palette.value === p.id}
-                role="menuitem"
-                onclick={() => {
-                  palette.set(p.id);
-                  isPaletteOpen = false;
-                }}
-              >
-                <span>{p.label}</span>
-                <span class="dv-swatch">
-                  {#each p.colors.slice(0, 5) as c (c)}
-                    <span style="background:{c}"></span>
-                  {/each}
-                </span>
-              </button>
-            {/each}
-          </div>
-        {/if}
-      </div>
+  <!-- Color-mode toggle — DS IconButton (ghost). -->
+  <IconButton aria-label={colorModeLabel()} variant="ghost" onclick={() => colorMode.cycle()}>
+    {#if colorIcon() === 'dark'}<Moon size={16} aria-hidden="true" />{:else if colorIcon() === 'light'}<Sun
+        size={16}
+        aria-hidden="true"
+      />{:else}<Sun size={16} aria-hidden="true" style="opacity:.6" />{/if}
+  </IconButton>
 
-      <!-- Framework switcher -->
-      <div class="dv-fw-wrap dv-menu-wrap">
-        <button
-          class="dv-ctrl"
-          type="button"
-          aria-haspopup="true"
-          aria-expanded={isFwOpen}
-          onclick={() => (isFwOpen = !isFwOpen)}
-        >
-          <Boxes size={14} />
-          <span>{FRAMEWORKS.find((f) => f.id === framework.value)?.label}</span>
-        </button>
-        {#if isFwOpen}
-          <div class="dv-menu" role="menu">
-            {#each FRAMEWORKS as f (f.id)}
-              <button
-                class:active={framework.value === f.id}
-                role="menuitem"
-                onclick={() => {
-                  framework.set(f.id);
-                  isFwOpen = false;
-                }}>{f.label}</button
-              >
-            {/each}
-          </div>
-        {/if}
-      </div>
+  <!-- GitHub — DS Link (anchor) wrapping the icon. -->
+  <DsLink href="https://github.com/rhanka/dataviz" external variant="muted" aria-label="GitHub">
+    <Github size={16} aria-hidden="true" />
+  </DsLink>
+{/snippet}
 
-      <!-- Color mode toggle -->
-      <button
-        class="dv-ctrl dv-ctrl--icon"
-        type="button"
-        aria-label="Mode couleur"
-        title="Mode : {colorMode.value}"
-        onclick={() => colorMode.cycle()}
+{#snippet drawer()}
+  <nav class="dv-drawer-nav" aria-label="Navigation principale">
+    {#each TOP_NAV as item (item.href)}
+      <DsLink
+        href={router.href(item.href)}
+        variant="muted"
+        aria-current={topActive(item.href) ? 'page' : undefined}
+        onclick={(e) => {
+          onLinkClick(e, item.href);
+          sidebarOpen = false;
+        }}>{item.label}</DsLink
       >
-        {#if colorIcon() === 'dark'}<Moon size={16} />{:else if colorIcon() === 'light'}<Sun
-            size={16}
-          />{:else}<Sun size={16} style="opacity:.6" />{/if}
-      </button>
+    {/each}
+  </nav>
+{/snippet}
 
-      <a
-        class="dv-ctrl dv-ctrl--icon"
-        href="https://github.com/rhanka/dataviz"
-        target="_blank"
-        rel="noreferrer"
-        aria-label="GitHub"
-      >
-        <Github size={16} />
-      </a>
-    </div>
-  </header>
+<div class="dv-shell">
+  <AppHeader
+    {compact}
+    menuOpen={sidebarOpen}
+    onMenuToggle={() => (sidebarOpen = !sidebarOpen)}
+    menuLabel="Menu"
+    logo={brand}
+    nav={topNav}
+    actions={headerActions}
+    {drawer}
+  />
 
   {#if route.kind === 'home'}
     <main class="dv-content" style="max-width:none;margin:0 auto;">
