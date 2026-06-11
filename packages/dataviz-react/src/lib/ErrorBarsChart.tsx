@@ -1,4 +1,4 @@
-import { buildErrorBarsModel, type DashboardStore } from '@sentropic/dataviz-core';
+import { buildErrorBarsModel, type ChartAnnotation, type DashboardStore } from '@sentropic/dataviz-core';
 import { BarChart, type BarChartDatum } from '@sentropic/design-system-react';
 import { useDashboard } from '../adapter.js';
 
@@ -11,6 +11,7 @@ export type ErrorBarsChartProps = {
   width?: number;
   height?: number;
   label: string;
+  annotations?: ChartAnnotation[];
   className?: string;
 };
 
@@ -23,6 +24,7 @@ export function ErrorBarsChart({
   width = 420,
   height = 240,
   label,
+  annotations,
   className,
 }: ErrorBarsChartProps) {
   const state = useDashboard(store);
@@ -41,6 +43,7 @@ export function ErrorBarsChart({
       width={width}
       height={height}
       label={label}
+      annotations={annotations}
       className={['st-errorBarsChart', className].filter(Boolean).join(' ') || undefined}
     />
   );

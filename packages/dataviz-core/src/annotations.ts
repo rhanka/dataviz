@@ -15,8 +15,11 @@
 /** A position along the category/numeric (`x`) axis. */
 export type AnnotationCoordinate = number | string;
 
-/** Optional marker glyph for a point annotation. */
-export type AnnotationMarker = 'circle' | 'square' | 'triangle' | 'diamond';
+/**
+ * Optional marker glyph for a point annotation. Matches the design-system
+ * renderer's supported set exactly (it is the rendering authority for this prop).
+ */
+export type AnnotationMarker = 'circle' | 'square' | 'diamond';
 
 /** Text anchoring for a label annotation. */
 export type AnnotationAnchor = 'start' | 'middle' | 'end';
@@ -48,20 +51,24 @@ export interface LabelAnnotation {
   anchor?: AnnotationAnchor;
 }
 
-/** A reference line at a fixed value on one axis. */
+/**
+ * A reference line at a fixed value on one axis. `value` is numeric: the DS
+ * renderer draws guide lines on a continuous scale (categorical guide lines are
+ * not yet supported by the renderer).
+ */
 export interface LineAnnotation {
   kind: 'line';
   axis: AnnotationAxis;
-  value: AnnotationCoordinate;
+  value: number;
   label?: string;
 }
 
-/** A shaded band spanning `[from, to]` on one axis. */
+/** A shaded band spanning `[from, to]` (numeric) on one axis. */
 export interface RegionAnnotation {
   kind: 'region';
   axis: AnnotationAxis;
-  from: AnnotationCoordinate;
-  to: AnnotationCoordinate;
+  from: number;
+  to: number;
   label?: string;
 }
 
@@ -80,7 +87,7 @@ export type ChartAnnotation =
   | RegionAnnotation
   | ShapeAnnotation;
 
-const MARKERS: readonly AnnotationMarker[] = ['circle', 'square', 'triangle', 'diamond'];
+const MARKERS: readonly AnnotationMarker[] = ['circle', 'square', 'diamond'];
 const ANCHORS: readonly AnnotationAnchor[] = ['start', 'middle', 'end'];
 const AXES: readonly AnnotationAxis[] = ['x', 'y'];
 
@@ -138,14 +145,14 @@ export function isChartAnnotation(value: unknown): value is ChartAnnotation {
     case 'line':
       return (
         isOneOf(value.axis, AXES, false) &&
-        isCoordinate(value.value) &&
+        isNumber(value.value) &&
         isOptionalString(value.label)
       );
     case 'region':
       return (
         isOneOf(value.axis, AXES, false) &&
-        isCoordinate(value.from) &&
-        isCoordinate(value.to) &&
+        isNumber(value.from) &&
+        isNumber(value.to) &&
         isOptionalString(value.label)
       );
     case 'shape':
@@ -189,7 +196,7 @@ export function labelAnnotation(
 /** Construct a {@link LineAnnotation}. */
 export function lineAnnotation(
   axis: AnnotationAxis,
-  value: AnnotationCoordinate,
+  value: number,
   options: { label?: string } = {},
 ): LineAnnotation {
   const a: LineAnnotation = { kind: 'line', axis, value };
@@ -200,8 +207,8 @@ export function lineAnnotation(
 /** Construct a {@link RegionAnnotation}. */
 export function regionAnnotation(
   axis: AnnotationAxis,
-  from: AnnotationCoordinate,
-  to: AnnotationCoordinate,
+  from: number,
+  to: number,
   options: { label?: string } = {},
 ): RegionAnnotation {
   const a: RegionAnnotation = { kind: 'region', axis, from, to };

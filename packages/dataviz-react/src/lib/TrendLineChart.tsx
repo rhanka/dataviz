@@ -1,4 +1,4 @@
-import { buildTrendLineModel, type DashboardStore } from '@sentropic/dataviz-core';
+import { buildTrendLineModel, type ChartAnnotation, type DashboardStore } from '@sentropic/dataviz-core';
 import { LineChart, type LineChartDatum } from '@sentropic/design-system-react';
 import { useDashboard } from '../adapter.js';
 
@@ -10,10 +10,11 @@ export type TrendLineChartProps = {
   width?: number;
   height?: number;
   label: string;
+  annotations?: ChartAnnotation[];
   className?: string;
 };
 
-export function TrendLineChart({ store, viewId, x, y, width = 360, height = 220, label, className }: TrendLineChartProps) {
+export function TrendLineChart({ store, viewId, x, y, width = 360, height = 220, label, annotations, className }: TrendLineChartProps) {
   const state = useDashboard(store);
   void state;
   const model = buildTrendLineModel(store.model, store.applyCrossfilter(viewId), { x, y });
@@ -25,6 +26,7 @@ export function TrendLineChart({ store, viewId, x, y, width = 360, height = 220,
       width={width}
       height={height}
       label={label}
+      annotations={annotations}
       trend
       className={['st-trendLineChart', className].filter(Boolean).join(' ') || undefined}
     />

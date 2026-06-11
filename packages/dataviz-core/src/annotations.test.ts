@@ -28,16 +28,24 @@ describe('isChartAnnotation', () => {
     ).toBe(true);
   });
 
-  it('accepts a line annotation on either axis', () => {
+  it('accepts a numeric line annotation on either axis', () => {
     expect(isChartAnnotation({ kind: 'line', axis: 'x', value: 5 })).toBe(true);
-    expect(isChartAnnotation({ kind: 'line', axis: 'y', value: 'A', label: 'target' })).toBe(true);
+    expect(isChartAnnotation({ kind: 'line', axis: 'y', value: 42, label: 'target' })).toBe(true);
   });
 
-  it('accepts a region annotation', () => {
+  it('rejects a categorical (string) line value — DS renders numeric guides only', () => {
+    expect(isChartAnnotation({ kind: 'line', axis: 'y', value: 'A' })).toBe(false);
+  });
+
+  it('accepts a numeric region annotation', () => {
     expect(isChartAnnotation({ kind: 'region', axis: 'x', from: 1, to: 5 })).toBe(true);
     expect(
-      isChartAnnotation({ kind: 'region', axis: 'y', from: 'a', to: 'z', label: 'band' }),
+      isChartAnnotation({ kind: 'region', axis: 'y', from: 10, to: 20, label: 'band' }),
     ).toBe(true);
+  });
+
+  it('rejects a categorical (string) region bound', () => {
+    expect(isChartAnnotation({ kind: 'region', axis: 'y', from: 'a', to: 'z' })).toBe(false);
   });
 
   it('accepts a shape annotation', () => {
@@ -99,8 +107,8 @@ describe('isChartAnnotation', () => {
 
 describe('annotation builders', () => {
   it('pointAnnotation builds a valid plain object', () => {
-    const a = pointAnnotation(1, 2, { label: 'peak', marker: 'triangle' });
-    expect(a).toEqual({ kind: 'point', x: 1, y: 2, label: 'peak', marker: 'triangle' });
+    const a = pointAnnotation(1, 2, { label: 'peak', marker: 'diamond' });
+    expect(a).toEqual({ kind: 'point', x: 1, y: 2, label: 'peak', marker: 'diamond' });
     expect(isChartAnnotation(a)).toBe(true);
   });
 

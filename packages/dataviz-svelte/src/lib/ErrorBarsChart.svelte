@@ -1,5 +1,5 @@
 <script lang="ts" module>
-  import type { DashboardStore } from '@sentropic/dataviz-core';
+  import type { ChartAnnotation, DashboardStore } from '@sentropic/dataviz-core';
 
   export type ErrorBarsChartProps = {
     store: DashboardStore;
@@ -10,6 +10,7 @@
     width?: number;
     height?: number;
     label: string;
+    annotations?: ChartAnnotation[];
     class?: string;
   };
 </script>
@@ -28,6 +29,7 @@
     width = 420,
     height = 240,
     label,
+    annotations,
     class: className,
   }: ErrorBarsChartProps = $props();
 
@@ -48,4 +50,4 @@
   const classes = $derived(['st-errorBarsChart', className].filter(Boolean).join(' '));
 </script>
 
-<DsBarChart {data} {width} {height} {label} class={classes} />
+<DsBarChart {data} {width} {height} {label} {annotations} class={classes} />
