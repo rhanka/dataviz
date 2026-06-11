@@ -1,5 +1,6 @@
 <!-- Getting-started guide: install, data model, store, golden rule. -->
 <script lang="ts">
+  import { Breadcrumb } from '@sentropic/design-system-svelte';
   import CodeBlock from './CodeBlock.svelte';
   import type { CodeTabs } from '../registry/types';
 
@@ -74,7 +75,7 @@ document.head.appendChild(style);`,
 </script>
 
 <div class="dv-prose">
-  <p class="dv-breadcrumb">Guides</p>
+  <Breadcrumb items={[{ label: 'Guides', current: true }]} label="Fil d'Ariane" />
   <h1 class="dv-h1">Prise en main</h1>
   <p class="dv-lead">
     Trois étapes : installer, déclarer un modèle + des lignes, créer un store. La

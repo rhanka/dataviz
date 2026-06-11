@@ -1,5 +1,6 @@
 <!-- Landing page: hero + section entry points + featured live dashboard. -->
 <script lang="ts">
+  import { Button, Badge } from '@sentropic/design-system-svelte';
   import { SECTION_META, entriesFor } from '../registry/index';
   import type { Section } from '../registry/types';
   import { router, onLinkClick } from './router.svelte';
@@ -12,7 +13,7 @@
 
 <div class="dv-prose">
   <section class="dv-hero">
-    <span class="dv-badge">@sentropic/dataviz</span>
+    <Badge>@sentropic/dataviz</Badge>
     <h1>Visualisation de données et tableaux de bord pour le design system Sentropic.</h1>
     <p>
       Charts, tableaux de bord cross-filtrés et grilles, bâtis nativement sur le
@@ -20,9 +21,9 @@
       par <code>dataviz-core</code>, parité Svelte / React / Vue.
     </p>
     <div class="dv-hero__cta">
-      <a class="dv-ctrl" href={router.href('/charts')} onclick={(e) => onLinkClick(e, '/charts')}>Explorer les charts →</a>
-      <a class="dv-ctrl" href={router.href('/dashboards')} onclick={(e) => onLinkClick(e, '/dashboards')}>Voir le BI</a>
-      <a class="dv-ctrl" href={router.href('/guides')} onclick={(e) => onLinkClick(e, '/guides')}>Prise en main</a>
+      <Button variant="primary" onclick={() => router.navigate('/charts')}>Explorer les charts →</Button>
+      <Button variant="secondary" onclick={() => router.navigate('/dashboards')}>Voir le BI</Button>
+      <Button variant="secondary" onclick={() => router.navigate('/guides')}>Prise en main</Button>
     </div>
     <div class="dv-hero__stat">
       <div><b>{total}</b><span>composants documentés</span></div>
