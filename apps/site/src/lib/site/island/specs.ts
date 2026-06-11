@@ -16,6 +16,7 @@
  * panels carry mutable local state that doesn't reduce to static props).
  */
 import type { DashboardStore } from '@sentropic/dataviz-svelte';
+import { lineAnnotation, regionAnnotation, makeFormatter } from '@sentropic/dataviz-core';
 import { model, DEMO_NOW } from '../../data/dataset';
 import type { Section } from '../../registry/types';
 
@@ -48,11 +49,18 @@ function chartSpec(kind: string, ctx: SpecContext): NodeSpec[] | null {
   const base = { store, viewId: 'c' };
   switch (kind) {
     case 'area':
-      return [{ comp: 'AreaChart', props: { ...base, category: dimension, measure, label: `Revenu par ${dimension}`, smooth: true } }];
+      return [{ comp: 'AreaChart', props: {
+        ...base, category: dimension, measure, label: `Revenu par ${dimension}`, smooth: true,
+        annotations: [
+          lineAnnotation('y', 400000, { label: 'Objectif' }),
+          regionAnnotation('y', 350000, 500000, { label: 'Zone cible' }),
+        ],
+        dataLabels: { format: makeFormatter({ style: 'currency', currency: 'CAD', maximumFractionDigits: 0 }) },
+      } }];
     case 'combo':
       return [{ comp: 'ComboChart', props: { ...base, category: 'category', measures: [{ measure: 'revenue', mode: 'bar', label: 'Revenu' }, { measure: 'units', mode: 'line', label: 'Unités' }], leftAxisLabel: 'Revenu (€)', rightAxisLabel: 'Unités', label: 'Revenu & unités par catégorie', legend: true } }];
     case 'stacked':
-      return [{ comp: 'StackedBarChart', props: { ...base, category: dimension, series: 'channel', measure, mode: 'stacked', label: `Par ${dimension} et canal` } }];
+      return [{ comp: 'StackedBarChart', props: { ...base, category: dimension, series: 'channel', measure, mode: 'stacked', label: `Par ${dimension} et canal`, hiddenSeries: [] } }];
     case 'lollipop':
       return [{ comp: 'LollipopChart', props: { ...base, category: dimension, measure, label: 'Lollipop', orientation: 'horizontal' } }];
     case 'step':
