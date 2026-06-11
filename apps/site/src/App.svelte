@@ -1,20 +1,25 @@
 <!--
-  Site shell. Mirrors the design-system docs site: sticky header (brand + top
-  nav + framework / color-mode switchers), a left sidebar, and a router-driven
-  content outlet. Themes/tokens are injected the same way the DS site does it
-  (compileTheme → managed <style> on :root), with a dark token overlay on top.
-  Chart colours come from the DS data-category tokens — no app-level palette.
+  Site shell. The header is the design-system `AppChrome` component (brand + top
+  nav + color-mode/GitHub controls + mobile drawer) — ZERO cloned markup, 100 %
+  presentation from @sentropic/design-system-svelte, so it matches the DS site
+  (design-system.sent-tech.ca) by construction. A tiny click-delegation action
+  routes AppChrome's internal <a> links through the SPA router (external/GitHub
+  links fall through). The framework switcher (Svelte/React/Vue) is the one
+  dataviz-specific control: it is mounted in AppChrome's `identity` slot via DS
+  Menu pieces, and only on pages where a live demo makes the switch meaningful.
+  Tokens are injected the way the DS site does it (compileTheme → managed <style>
+  on :root) + a dark overlay; chart colours come from the DS data-category
+  tokens — there is no app-level palette.
 -->
 <script lang="ts">
-  import { Moon, Sun, Boxes, Github } from '@lucide/svelte';
+  import { Boxes } from '@lucide/svelte';
   import {
-    AppHeader,
+    AppChrome,
     MenuTriggerButton,
     MenuPopover,
     Menu as DsMenu,
-    IconButton,
-    Link as DsLink,
     type MenuItem,
+    type AppChromeNavItem,
   } from '@sentropic/design-system-svelte';
   import { router, onLinkClick } from './lib/site/router.svelte';
   import { colorMode, framework, FRAMEWORKS } from './lib/site/stores.svelte';
@@ -33,31 +38,19 @@
   framework.init();
 
   // ── Theme injection ──────────────────────────────────────────────────────
-  // Base DS tokens (light) — static, injected once.
+  // Base DS tokens (light) + dark token overlay — static, injected once.
   const baseCss = baseThemeCss();
   const darkCss = darkModeCss();
 
-  // ── Header control state ─────────────────────────────────────────────────
-  // The framework switcher is a DS anchored menu (MenuTriggerButton ->
-  // MenuPopover -> Menu): it needs an open flag and a ref to its trigger button
-  // (MenuPopover anchors off the trigger element).
+  // ── Header state ─────────────────────────────────────────────────────────
+  let mobileMenuOpen = $state(false);
+  let sidebarOpen = $state(false);
+  // Framework switcher (DS anchored menu): own open flag + trigger ref for the
+  // MenuPopover to anchor off (bind:this on a component yields the instance,
+  // not the DOM node — so we wrap the trigger in an inline-flex span).
   let isFwOpen = $state(false);
   let fwTrigger = $state<HTMLElement | null>(null);
-  let sidebarOpen = $state(false);
 
-  // Compact (burger) mode: AppHeader's `compact` prop is controlled, so we drive
-  // it from a matchMedia query at the same 860px breakpoint the sidebar uses.
-  let compact = $state(false);
-  $effect(() => {
-    if (typeof window === 'undefined') return;
-    const mq = window.matchMedia('(max-width: 860px)');
-    const sync = () => (compact = mq.matches);
-    sync();
-    mq.addEventListener('change', sync);
-    return () => mq.removeEventListener('change', sync);
-  });
-
-  // Framework menu rendered as DS Menu items (text + value).
   const frameworkItems = $derived<MenuItem[]>(
     FRAMEWORKS.map((f) => ({ label: f.label, value: f.id })),
   );
@@ -65,16 +58,7 @@
     FRAMEWORKS.find((f) => f.id === framework.value)?.label ?? '',
   );
 
-  function colorIcon() {
-    return colorMode.value;
-  }
-  function colorModeLabel(): string {
-    return colorMode.value === 'dark'
-      ? 'Mode sombre — passer à auto'
-      : colorMode.value === 'light'
-        ? 'Mode clair — passer au sombre'
-        : 'Mode auto — passer au clair';
-  }
+  const COLOR_MODE_LABELS = { light: 'Mode clair', dark: 'Mode sombre', auto: 'Mode auto' };
 
   // ── Route resolution ─────────────────────────────────────────────────────
   type Route =
@@ -108,6 +92,42 @@
   function topActive(href: string): boolean {
     return href === '/guides' ? router.path === '/guides' : router.path.startsWith(href);
   }
+
+  // Nav items for AppChrome (the DS renders real <a href>; SPA routing happens
+  // through the click-delegation action below).
+  const chromeNav = $derived<AppChromeNavItem[]>(
+    TOP_NAV.map((it) => ({ label: it.label, href: router.href(it.href), active: topActive(it.href) })),
+  );
+
+  // The framework switch only changes something where a live demo is rendered
+  // (demo + catalogue pages), exactly like the DS site shows it contextually.
+  const showFwSwitch = $derived(route.kind === 'demo' || route.kind === 'catalogue');
+
+  // Click-delegation action: route AppChrome's internal brand/nav <a> through
+  // the SPA router; let external / new-tab links (GitHub) fall through to the
+  // browser. Implemented as an action (not an onclick attribute) so it adds no
+  // static-element a11y warning — the real interactive elements are the <a>s.
+  function chromeRouting(node: HTMLElement) {
+    const handler = (e: MouseEvent) => {
+      if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+      const a = (e.target as HTMLElement | null)?.closest?.('a');
+      if (!a || a.target === '_blank') return;
+      const href = a.getAttribute('href');
+      if (!href || /^https?:\/\//i.test(href)) return;
+      if (href === router.href('/')) {
+        e.preventDefault();
+        router.navigate('/');
+        return;
+      }
+      const item = TOP_NAV.find((it) => router.href(it.href) === href);
+      if (item) {
+        e.preventDefault();
+        router.navigate(item.href);
+      }
+    };
+    node.addEventListener('click', handler);
+    return { destroy: () => node.removeEventListener('click', handler) };
+  }
 </script>
 
 <svelte:head>
@@ -117,41 +137,17 @@
 
 <svelte:window
   onkeydown={(e) => {
-    if (e.key === 'Escape') sidebarOpen = false;
+    if (e.key === 'Escape') {
+      sidebarOpen = false;
+      mobileMenuOpen = false;
+    }
   }}
 />
 
-{#snippet brand()}
-  <a class="dv-brand" href={router.href('/')} onclick={(e) => onLinkClick(e, '/')}>
-    <img
-      class="dv-brand__mark"
-      src="{import.meta.env.BASE_URL}SENT-logo-squared.svg"
-      alt="Sentropic"
-    />
-    <span class="dv-brand__copy">
-      <span class="dv-brand__name">Sentropic</span>
-      <span class="dv-brand__product">dataviz</span>
-    </span>
-  </a>
-{/snippet}
-
-{#snippet topNav()}
-  {#each TOP_NAV as item (item.href)}
-    <DsLink
-      href={router.href(item.href)}
-      variant="muted"
-      aria-current={topActive(item.href) ? 'page' : undefined}
-      onclick={(e) => onLinkClick(e, item.href)}>{item.label}</DsLink
-    >
-  {/each}
-{/snippet}
-
-{#snippet headerActions()}
-  <!-- Framework switcher — DS anchored menu (MenuTriggerButton + MenuPopover + Menu).
-       The trigger button is wrapped in a tight inline-flex span so MenuPopover gets
-       a real HTMLElement to anchor off (bind:this on a component yields the instance,
-       not the DOM node). -->
-  <span class="dv-menu-anchor" bind:this={fwTrigger}>
+<!-- Framework switcher mounted in AppChrome's right-hand identity slot (DS Menu
+     pieces only — no hand-rolled control). -->
+{#snippet fwSwitch()}
+  <span style="display:inline-flex" bind:this={fwTrigger}>
     <MenuTriggerButton
       aria-label="Changer de framework"
       expanded={isFwOpen}
@@ -172,48 +168,29 @@
       }}
     />
   </MenuPopover>
-
-  <!-- Color-mode toggle — DS IconButton (ghost). -->
-  <IconButton aria-label={colorModeLabel()} variant="ghost" onclick={() => colorMode.cycle()}>
-    {#if colorIcon() === 'dark'}<Moon size={16} aria-hidden="true" />{:else if colorIcon() === 'light'}<Sun
-        size={16}
-        aria-hidden="true"
-      />{:else}<Sun size={16} aria-hidden="true" style="opacity:.6" />{/if}
-  </IconButton>
-
-  <!-- GitHub — DS Link (anchor) wrapping the icon. -->
-  <DsLink href="https://github.com/rhanka/dataviz" external variant="muted" aria-label="GitHub">
-    <Github size={16} aria-hidden="true" />
-  </DsLink>
-{/snippet}
-
-{#snippet drawer()}
-  <nav class="dv-drawer-nav" aria-label="Navigation principale">
-    {#each TOP_NAV as item (item.href)}
-      <DsLink
-        href={router.href(item.href)}
-        variant="muted"
-        aria-current={topActive(item.href) ? 'page' : undefined}
-        onclick={(e) => {
-          onLinkClick(e, item.href);
-          sidebarOpen = false;
-        }}>{item.label}</DsLink
-      >
-    {/each}
-  </nav>
 {/snippet}
 
 <div class="dv-shell">
-  <AppHeader
-    {compact}
-    menuOpen={sidebarOpen}
-    onMenuToggle={() => (sidebarOpen = !sidebarOpen)}
-    menuLabel="Menu"
-    logo={brand}
-    nav={topNav}
-    actions={headerActions}
-    {drawer}
-  />
+  <div use:chromeRouting>
+    <AppChrome
+      brandName="Sentropic"
+      productName="dataviz"
+      logoSrc={`${import.meta.env.BASE_URL}SENT-logo-squared.svg`}
+      logoAlt="Sentropic"
+      brandHref={router.href('/')}
+      nav={chromeNav}
+      navLabel="Navigation principale"
+      colorMode={colorMode.value}
+      onColorModeChange={(m) => colorMode.set(m)}
+      colorModeLabels={COLOR_MODE_LABELS}
+      githubHref="https://github.com/rhanka/dataviz"
+      githubLabel="GitHub"
+      identity={showFwSwitch ? fwSwitch : undefined}
+      {mobileMenuOpen}
+      onMobileMenuToggle={() => (mobileMenuOpen = !mobileMenuOpen)}
+      menuLabel="Menu"
+    />
+  </div>
 
   {#if route.kind === 'home'}
     <main class="dv-content" style="max-width:none;margin:0 auto;">
