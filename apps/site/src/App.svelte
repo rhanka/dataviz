@@ -1,12 +1,12 @@
 <!--
   Site shell. Mirrors the design-system docs site: sticky header (brand + top
-  nav + palette / framework / color-mode switchers), a left sidebar, and a
-  router-driven content outlet. Themes/tokens are injected the same way the DS
-  site does it (compileTheme → managed <style> on :root), with palette overlays
-  and a dark token overlay layered on top.
+  nav + framework / color-mode switchers), a left sidebar, and a router-driven
+  content outlet. Themes/tokens are injected the same way the DS site does it
+  (compileTheme → managed <style> on :root), with a dark token overlay on top.
+  Chart colours come from the DS data-category tokens — no app-level palette.
 -->
 <script lang="ts">
-  import { Moon, Sun, Palette as PaletteIcon, Boxes, Github } from '@lucide/svelte';
+  import { Moon, Sun, Boxes, Github } from '@lucide/svelte';
   import {
     AppHeader,
     MenuTriggerButton,
@@ -17,8 +17,8 @@
     type MenuItem,
   } from '@sentropic/design-system-svelte';
   import { router, onLinkClick } from './lib/site/router.svelte';
-  import { colorMode, framework, palette, FRAMEWORKS } from './lib/site/stores.svelte';
-  import { PALETTES, baseThemeCss, paletteCss, darkModeCss } from './lib/site/theme';
+  import { colorMode, framework, FRAMEWORKS } from './lib/site/stores.svelte';
+  import { baseThemeCss, darkModeCss } from './lib/site/theme';
   import { findEntry, SECTION_META } from './lib/registry/index';
   import type { Section } from './lib/registry/types';
   import Sidebar from './lib/site/Sidebar.svelte';
@@ -31,22 +31,17 @@
   router.init();
   colorMode.init();
   framework.init();
-  palette.init();
 
   // ── Theme injection ──────────────────────────────────────────────────────
   // Base DS tokens (light) — static, injected once.
   const baseCss = baseThemeCss();
   const darkCss = darkModeCss();
-  // Palette overlay — reactive to the palette store.
-  const palCss = $derived(paletteCss(palette.value));
 
   // ── Header control state ─────────────────────────────────────────────────
-  // The palette + framework switchers are DS anchored menus
-  // (MenuTriggerButton -> MenuPopover -> Menu). Each needs its own open flag and
-  // a ref to its trigger button (MenuPopover anchors off the trigger element).
-  let isPaletteOpen = $state(false);
+  // The framework switcher is a DS anchored menu (MenuTriggerButton ->
+  // MenuPopover -> Menu): it needs an open flag and a ref to its trigger button
+  // (MenuPopover anchors off the trigger element).
   let isFwOpen = $state(false);
-  let paletteTrigger = $state<HTMLElement | null>(null);
   let fwTrigger = $state<HTMLElement | null>(null);
   let sidebarOpen = $state(false);
 
@@ -62,17 +57,10 @@
     return () => mq.removeEventListener('change', sync);
   });
 
-  // Palette / framework menus rendered as DS Menu items (text + value).
-  // NOTE: DS `Menu` items carry only label/value/icon — they cannot render the
-  // per-palette colour swatches the old hand-rolled menu showed. See summary
-  // (DS feature-request candidate: swatch/colour-preview menu items).
-  const paletteItems = $derived<MenuItem[]>(
-    PALETTES.map((p) => ({ label: p.label, value: p.id })),
-  );
+  // Framework menu rendered as DS Menu items (text + value).
   const frameworkItems = $derived<MenuItem[]>(
     FRAMEWORKS.map((f) => ({ label: f.label, value: f.id })),
   );
-  const paletteLabel = $derived(PALETTES.find((p) => p.id === palette.value)?.label ?? '');
   const frameworkLabel = $derived(
     FRAMEWORKS.find((f) => f.id === framework.value)?.label ?? '',
   );
@@ -125,7 +113,6 @@
 <svelte:head>
   {@html `<style data-dv-base>${baseCss}</style>`}
   {@html `<style data-dv-dark>${darkCss}</style>`}
-  {@html `<style data-dv-palette>${palCss}</style>`}
 </svelte:head>
 
 <svelte:window
@@ -182,34 +169,6 @@
       onselect={(value) => {
         framework.set(value as typeof framework.value);
         isFwOpen = false;
-      }}
-    />
-  </MenuPopover>
-
-  <!-- Palette switcher — DS anchored menu. -->
-  <span class="dv-menu-anchor" bind:this={paletteTrigger}>
-    <MenuTriggerButton
-      aria-label="Changer la palette"
-      expanded={isPaletteOpen}
-      variant="ghost"
-      onclick={() => (isPaletteOpen = !isPaletteOpen)}
-    >
-      <PaletteIcon size={14} aria-hidden="true" />
-      <span>{paletteLabel}</span>
-    </MenuTriggerButton>
-  </span>
-  <MenuPopover
-    bind:open={isPaletteOpen}
-    trigger={paletteTrigger}
-    placement="bottom-end"
-    label="Palette"
-  >
-    <DsMenu
-      label="Palette"
-      items={paletteItems}
-      onselect={(value) => {
-        palette.set(value);
-        isPaletteOpen = false;
       }}
     />
   </MenuPopover>

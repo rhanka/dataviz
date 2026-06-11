@@ -1,10 +1,9 @@
 /**
  * Shared reactive stores (Svelte 5 runes singletons), mirroring the DS docs
- * site: color mode (light/dark/auto), framework (svelte/react/vue) and the
- * active chart palette. Each persists to localStorage.
+ * site: color mode (light/dark/auto) and framework (svelte/react/vue). Each
+ * persists to localStorage. Chart colours come from the DS theme tokens — there
+ * is no app-level palette store.
  */
-import { PALETTES, DEFAULT_PALETTE_ID } from './theme';
-
 const browser = typeof window !== 'undefined';
 
 // ── Color mode ───────────────────────────────────────────────────────────────
@@ -64,20 +63,3 @@ class FrameworkStore {
   }
 }
 export const framework = new FrameworkStore();
-
-// ── Palette ──────────────────────────────────────────────────────────────────
-const PAL_KEY = 'dv-site-palette';
-
-class PaletteStore {
-  value = $state<string>(DEFAULT_PALETTE_ID);
-  init(): void {
-    if (!browser) return;
-    const stored = localStorage.getItem(PAL_KEY);
-    if (stored && PALETTES.some((p) => p.id === stored)) this.value = stored;
-  }
-  set(id: string): void {
-    this.value = id;
-    if (browser) localStorage.setItem(PAL_KEY, id);
-  }
-}
-export const palette = new PaletteStore();
