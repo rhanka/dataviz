@@ -20,11 +20,27 @@ export function CHART_ENTRIES(ChartDemo: Demo, GeoDemo: Demo): DemoEntry[] {
       slug: 'area', name: 'AreaChart', group: 'Catégoriels & combo', kind: 'area', hasControls: true,
       tagline: 'Aire empilable sur axe catégoriel, avec lissage optionnel.',
       useCase:
-        "Suivre l'évolution d'une mesure (revenu, marge, unités) à travers une dimension catégorielle. Idéal pour visualiser une tendance par mois ou comparer des parts cumulées.\n\nLe lissage (`smooth`) adoucit la courbe pour les rapports exécutifs ; la mesure et la dimension sont commutables ci-dessous.",
+        "Suivre l'évolution d'une mesure (revenu, marge, unités) à travers une dimension catégorielle. Idéal pour visualiser une tendance par mois ou comparer des parts cumulées.\n\nLe lissage (`smooth`) adoucit la courbe pour les rapports exécutifs ; la mesure et la dimension sont commutables ci-dessous.\n\nLes `annotations` ajoutent une ligne objectif et une bande cible directement en coordonnées de données ; `dataLabels` formate les valeurs avec un formateur Intl (ici devise CAD).",
       code: storeCode(['AreaChart'], {
-        svelte: `<AreaChart {store} viewId="c" category="category" measure="revenue" label="Revenu par catégorie" smooth />`,
-        react: `<AreaChart store={store} viewId="c" category="category" measure="revenue" label="Revenu par catégorie" smooth />`,
-        vue: `<AreaChart :store="store" viewId="c" category="category" measure="revenue" label="Revenu par catégorie" smooth />`,
+        svelte: `<!-- Import makeFormatter from @sentropic/dataviz-core for the dataLabels format fn -->
+<AreaChart {store} viewId="c" category="category" measure="revenue" label="Revenu par catégorie" smooth
+  annotations={[
+    { kind: 'line', axis: 'y', value: 400000, label: 'Objectif' },
+    { kind: 'region', axis: 'y', from: 350000, to: 500000, label: 'Zone cible' },
+  ]}
+  dataLabels={{ format: (v) => new Intl.NumberFormat('fr-CA', { style: 'currency', currency: 'CAD', maximumFractionDigits: 0 }).format(v) }} />`,
+        react: `<AreaChart store={store} viewId="c" category="category" measure="revenue" label="Revenu par catégorie" smooth
+  annotations={[
+    { kind: 'line', axis: 'y', value: 400000, label: 'Objectif' },
+    { kind: 'region', axis: 'y', from: 350000, to: 500000, label: 'Zone cible' },
+  ]}
+  dataLabels={{ format: (v) => new Intl.NumberFormat('fr-CA', { style: 'currency', currency: 'CAD', maximumFractionDigits: 0 }).format(v) }} />`,
+        vue: `<AreaChart :store="store" viewId="c" category="category" measure="revenue" label="Revenu par catégorie" smooth
+  :annotations="[
+    { kind: 'line', axis: 'y', value: 400000, label: 'Objectif' },
+    { kind: 'region', axis: 'y', from: 350000, to: 500000, label: 'Zone cible' },
+  ]"
+  :dataLabels="{ format: (v) => new Intl.NumberFormat('fr-CA', { style: 'currency', currency: 'CAD', maximumFractionDigits: 0 }).format(v) }" />`,
       }),
     }, ChartDemo),
     chart({
@@ -51,11 +67,35 @@ export function CHART_ENTRIES(ChartDemo: Demo, GeoDemo: Demo): DemoEntry[] {
       slug: 'stacked-bar', name: 'StackedBarChart', group: 'Catégoriels & combo', kind: 'stacked', hasControls: true,
       tagline: 'Barres empilées ou 100 %, segmentées par série.',
       useCase:
-        "Décomposer une mesure par une seconde dimension (ici le canal de vente) à l'intérieur de chaque catégorie. Passez en mode 100 % pour comparer des compositions plutôt que des volumes absolus.",
+        "Décomposer une mesure par une seconde dimension (ici le canal de vente) à l'intérieur de chaque catégorie. Passez en mode 100 % pour comparer des compositions plutôt que des volumes absolus.\n\n`hiddenSeries` + `onToggleSeries` activent un toggle de légende contrôlé : cliquer une série dans la légende la masque ou la révèle instantanément.",
       code: storeCode(['StackedBarChart'], {
-        svelte: `<StackedBarChart {store} viewId="c" category="category" series="channel" measure="revenue" mode="stacked" label="Par catégorie et canal" />`,
-        react: `<StackedBarChart store={store} viewId="c" category="category" series="channel" measure="revenue" mode="stacked" label="Par catégorie et canal" />`,
-        vue: `<StackedBarChart :store="store" viewId="c" category="category" series="channel" measure="revenue" mode="stacked" label="Par catégorie et canal" />`,
+        svelte: `<!-- hiddenSeries + onToggleSeries : toggle de légende contrôlé -->
+<StackedBarChart {store} viewId="c" category="category" series="channel" measure="revenue" mode="stacked"
+  label="Par catégorie et canal" {hiddenSeries} {onToggleSeries} />
+
+<!-- Dans le <script> parent :
+  let hiddenSeries = $state<string[]>([]);
+  const onToggleSeries = (id: string) => {
+    hiddenSeries = hiddenSeries.includes(id)
+      ? hiddenSeries.filter((s) => s !== id) : [...hiddenSeries, id];
+  }; -->`,
+        react: `<StackedBarChart store={store} viewId="c" category="category" series="channel" measure="revenue" mode="stacked"
+  label="Par catégorie et canal" hiddenSeries={hiddenSeries} onToggleSeries={onToggleSeries} />
+
+{/* Wiring dans le composant parent :
+  const [hiddenSeries, setHiddenSeries] = useState<string[]>([]);
+  const onToggleSeries = (id: string) =>
+    setHiddenSeries((prev) =>
+      prev.includes(id) ? prev.filter((s) => s !== id) : [...prev, id]); */}`,
+        vue: `<StackedBarChart :store="store" viewId="c" category="category" series="channel" measure="revenue" mode="stacked"
+  label="Par catégorie et canal" :hiddenSeries="hiddenSeries" :onToggleSeries="onToggleSeries" />
+
+<!-- Dans <script setup> :
+  const hiddenSeries = ref<string[]>([]);
+  const onToggleSeries = (id: string) => {
+    hiddenSeries.value = hiddenSeries.value.includes(id)
+      ? hiddenSeries.value.filter((s) => s !== id) : [...hiddenSeries.value, id];
+  }; -->`,
       }),
     }, ChartDemo),
     chart({

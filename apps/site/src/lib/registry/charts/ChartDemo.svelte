@@ -38,6 +38,7 @@
     AnalyticsClusterPlot,
   } from '@sentropic/dataviz-svelte';
   import { ContentSwitcher } from '@sentropic/design-system-svelte';
+  import { lineAnnotation, regionAnnotation, makeFormatter } from '@sentropic/dataviz-core';
   import { makeStore } from '../../data/store';
 
   let { kind, controls = true }: { kind: string; controls?: boolean } = $props();
@@ -67,6 +68,21 @@
     ].includes(kind),
   );
   const showMeasure = $derived(kind !== 'gauge' && kind !== 'box' && kind !== 'histogram');
+
+  // ── AreaChart: annotations + data-labels ──────────────────────────────────
+  const areaAnnotations = [
+    lineAnnotation('y', 400000, { label: 'Objectif' }),
+    regionAnnotation('y', 350000, 500000, { label: 'Zone cible' }),
+  ];
+  const areaDataLabels = { format: makeFormatter({ style: 'currency', currency: 'CAD', maximumFractionDigits: 0 }) };
+
+  // ── StackedBarChart: legend toggle ────────────────────────────────────────
+  let hiddenSeries = $state<string[]>([]);
+  function onToggleSeries(seriesId: string) {
+    hiddenSeries = hiddenSeries.includes(seriesId)
+      ? hiddenSeries.filter((id) => id !== seriesId)
+      : [...hiddenSeries, seriesId];
+  }
 </script>
 
 {#if controls}
@@ -88,13 +104,15 @@
 
 <div class="stage">
   {#if kind === 'area'}
-    <AreaChart {store} viewId="c" category={dimension} {measure} label="Revenu par {dimension}" smooth />
+    <AreaChart {store} viewId="c" category={dimension} {measure} label="Revenu par {dimension}" smooth
+      annotations={areaAnnotations} dataLabels={areaDataLabels} />
   {:else if kind === 'combo'}
     <ComboChart {store} viewId="c" category="category"
       measures={[{ measure: 'revenue', mode: 'bar', label: 'Revenu' }, { measure: 'units', mode: 'line', label: 'Unités' }]}
       leftAxisLabel="Revenu (€)" rightAxisLabel="Unités" label="Revenu & unités par catégorie" legend />
   {:else if kind === 'stacked'}
-    <StackedBarChart {store} viewId="c" category={dimension} series="channel" {measure} mode="stacked" label="Par {dimension} et canal" />
+    <StackedBarChart {store} viewId="c" category={dimension} series="channel" {measure} mode="stacked" label="Par {dimension} et canal"
+      {hiddenSeries} {onToggleSeries} />
   {:else if kind === 'lollipop'}
     <LollipopChart {store} viewId="c" category={dimension} {measure} label="Lollipop" orientation="horizontal" />
   {:else if kind === 'step'}
