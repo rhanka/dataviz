@@ -391,3 +391,7 @@ export {
   serializeState,
   deserializeState,
 } from './serialize.js';
+
+// Hover channel (ephemeral cross-panel crosshair state — not serialised)
+export type { HoverChannel } from './hover.js';
+export { createHoverChannel, hoverKeyOf } from './hover.js';
