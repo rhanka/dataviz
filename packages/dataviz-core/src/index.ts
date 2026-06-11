@@ -260,6 +260,41 @@ export {
   updateMarkerFormat,
 } from './format.js';
 
+// Annotations
+export type {
+  AnnotationCoordinate,
+  AnnotationMarker,
+  AnnotationAnchor,
+  AnnotationAxis,
+  AnnotationPoint,
+  PointAnnotation,
+  LabelAnnotation,
+  LineAnnotation,
+  RegionAnnotation,
+  ShapeAnnotation,
+  ChartAnnotation,
+} from './annotations.js';
+export {
+  isChartAnnotation,
+  pointAnnotation,
+  labelAnnotation,
+  lineAnnotation,
+  regionAnnotation,
+  shapeAnnotation,
+  annotation,
+  serializeAnnotations,
+  deserializeAnnotations,
+} from './annotations.js';
+
+// Value formatting (Intl)
+export type {
+  FormatValueStyle,
+  FormatValueNotation,
+  FormatValueDateStyle,
+  FormatValueOptions,
+} from './format-value.js';
+export { formatValue, makeFormatter, FORMAT_VALUE_FALLBACK } from './format-value.js';
+
 // Calculations / expressions
 export type {
   CalculationVariable,
