@@ -3,7 +3,7 @@ import {
   AreaChart as DsAreaChart,
   type AreaChartTone,
 } from '@sentropic/design-system-vue';
-import type { DashboardStore } from '@sentropic/dataviz-core';
+import type { ChartAnnotation, DashboardStore } from '@sentropic/dataviz-core';
 import { useDashboard } from '../adapter.js';
 import {
   buildSimpleCategoricalSeries,
@@ -20,6 +20,7 @@ export type AreaChartProps = {
   width?: number;
   height?: number;
   label: string;
+  annotations?: ChartAnnotation[];
   class?: string;
 };
 
@@ -35,6 +36,7 @@ export const AreaChart = defineComponent({
     width: { type: Number, default: undefined },
     height: { type: Number, default: undefined },
     label: { type: String, required: true },
+    annotations: { type: Array as PropType<ChartAnnotation[]>, default: undefined },
     class: { type: String, default: undefined },
   },
   setup(props) {
@@ -55,6 +57,7 @@ export const AreaChart = defineComponent({
         smooth: props.smooth,
         width: props.width,
         height: props.height,
+        annotations: props.annotations,
         class: props.class,
       });
     };

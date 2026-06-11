@@ -1,5 +1,5 @@
 <script lang="ts" module>
-  import type { DashboardStore } from '@sentropic/dataviz-core';
+  import type { ChartAnnotation, DashboardStore } from '@sentropic/dataviz-core';
   import type { AreaChartTone } from '@sentropic/design-system-svelte';
 
   export type AreaChartProps = {
@@ -12,6 +12,7 @@
     width?: number;
     height?: number;
     label: string;
+    annotations?: ChartAnnotation[];
     class?: string;
   };
 </script>
@@ -34,6 +35,7 @@
     width,
     height,
     label,
+    annotations,
     class: className,
   }: AreaChartProps = $props();
 
@@ -45,4 +47,4 @@
   });
 </script>
 
-<DsAreaChart {data} {label} {tone} {smooth} {width} {height} class={className} />
+<DsAreaChart {data} {label} {tone} {smooth} {width} {height} {annotations} class={className} />

@@ -1,5 +1,5 @@
 <script lang="ts" module>
-  import type { DashboardStore } from '@sentropic/dataviz-core';
+  import type { ChartAnnotation, DashboardStore } from '@sentropic/dataviz-core';
 
   export type TrendLineChartProps = {
     store: DashboardStore;
@@ -9,6 +9,7 @@
     width?: number;
     height?: number;
     label: string;
+    annotations?: ChartAnnotation[];
     class?: string;
   };
 </script>
@@ -26,6 +27,7 @@
     width = 360,
     height = 220,
     label,
+    annotations,
     class: className,
   }: TrendLineChartProps = $props();
 
@@ -38,4 +40,4 @@
   const classes = $derived(['st-trendLineChart', className].filter(Boolean).join(' '));
 </script>
 
-<DsLineChart {data} {width} {height} {label} trend={true} class={classes} />
+<DsLineChart {data} {width} {height} {label} {annotations} trend={true} class={classes} />

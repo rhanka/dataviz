@@ -2,7 +2,7 @@ import {
   AreaChart as DsAreaChart,
   type AreaChartTone,
 } from '@sentropic/design-system-react';
-import type { DashboardStore } from '@sentropic/dataviz-core';
+import type { ChartAnnotation, DashboardStore } from '@sentropic/dataviz-core';
 import { useDashboard } from '../adapter.js';
 import {
   buildSimpleCategoricalSeries,
@@ -19,6 +19,7 @@ export type AreaChartProps = {
   width?: number;
   height?: number;
   label: string;
+  annotations?: ChartAnnotation[];
   className?: string;
 };
 
@@ -32,6 +33,7 @@ export function AreaChart({
   width,
   height,
   label,
+  annotations,
   className,
 }: AreaChartProps) {
   const state = useDashboard(store);
@@ -40,5 +42,5 @@ export function AreaChart({
   const seriesModel = buildSimpleCategoricalSeries(store.model, store.applyCrossfilter(viewId), category, measure);
   const data = toSimpleCategoricalPoints(seriesModel);
 
-  return <DsAreaChart data={data} label={label} tone={tone} smooth={smooth} width={width} height={height} className={className} />;
+  return <DsAreaChart data={data} label={label} tone={tone} smooth={smooth} width={width} height={height} annotations={annotations} className={className} />;
 }
