@@ -152,3 +152,16 @@ export {
   printElement,
 } from './lib/chart-export.js';
 export type { SerializeSvgOptions, RasterizeOptions, ChartExportFormat } from './lib/chart-export.js';
+export {
+  stateToQuery,
+  queryToState,
+  applyStateToStore,
+  readStateFromUrl,
+  writeStateToUrl,
+  readLocationSearch,
+  DEFAULT_URL_SYNC_PARAM,
+} from './lib/url-sync.js';
+export type { UrlSyncOptions } from './lib/url-sync.js';
+export { useUrlSync } from './lib/useUrlSync.js';
+export { default as UrlSync } from './lib/UrlSync.svelte';
+export type { UrlSyncProps } from './lib/UrlSync.svelte';
