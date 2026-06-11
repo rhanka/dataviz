@@ -111,13 +111,13 @@ document.head.appendChild(style);`,
   </section>
 
   <section class="dv-section">
-    <h2>Thème &amp; palettes</h2>
+    <h2>Thème &amp; couleurs</h2>
     <p>
       Aucune couleur n'est codée en dur : chaque visuel lit des
-      <b>tokens du design system</b>. Injectez un thème une fois ; changez de
-      palette en surchargeant les tokens <code>--st-semantic-data-categoryN</code>,
-      et le mode sombre via <code>data-color-mode="dark"</code>. C'est exactement
-      ce que fait le sélecteur de l'en-tête de ce site.
+      <b>tokens du design system</b>. Le thème Sentropic est injecté une fois et
+      fournit les 8 couleurs de séries via <code>--st-semantic-data-categoryN</code> ;
+      le mode sombre s'active via <code>data-color-mode="dark"</code>. Aucune
+      palette « maison » : les couleurs sont exactement celles du design system.
     </p>
     <CodeBlock code={theme} />
   </section>

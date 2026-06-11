@@ -47,8 +47,8 @@
     <h2>Tableau de bord en direct</h2>
     <p>
       Cliquez une barre : la sélection filtre les autres vues et la table. Tout
-      l'état vit dans <code>dataviz-core</code>. Changez la palette / le mode
-      sombre dans l'en-tête.
+      l'état vit dans <code>dataviz-core</code>. Basculez le mode sombre dans
+      l'en-tête — les couleurs viennent des tokens du design system.
     </p>
     <div class="dv-demo">
       <BiDemo kind="crossfilter" />

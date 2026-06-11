@@ -8,9 +8,8 @@
     store + props as the Svelte demo. Switching framework in the header switcher
     swaps the rendered framework; the previous island is torn down cleanly.
 
-  Charts read their colours from the active design-system palette tokens, so the
-  global palette / dark switchers restyle the live demo instantly without
-  remounting.
+  Charts read their colours from the design-system data-category tokens, so the
+  dark-mode switcher restyles the live demo instantly without remounting.
 -->
 <script lang="ts">
   import type { DemoEntry } from '../registry/types';

@@ -24,9 +24,8 @@
   <section class="dv-section">
     <h2>Démo interactive</h2>
     <p class="dv-prose" style="margin-bottom:0.75rem;">
-      Données réalistes et déterministes (~700 commandes). Changez le thème /
-      la palette / le mode sombre dans l'en-tête : la présentation vient à 100 %
-      du design system.
+      Données réalistes et déterministes (~700 commandes). Basculez le mode
+      sombre dans l'en-tête : la présentation vient à 100 % du design system.
     </p>
     <LiveDemo {entry} />
   </section>
