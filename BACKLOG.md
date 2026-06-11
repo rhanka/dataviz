@@ -1,27 +1,54 @@
-# dataviz — Backlog « classe Highcharts » (capacités transverses) + plan
+# dataviz — Backlog « classe Highcharts » (capacités transverses)
 
-Le gap des **types** de charts est traité par **WP19** (DS = composants SVG ; `codex:dataviz` = wrappers + modèles core). Le vrai manque = **capacités transverses**, absentes partout (ni DS, ni core, ni consumer). Inventaire différentiel Opus/Fable, 2026-06-10 (dataviz v0.4.19, 61 composants, BI 100%).
+Audit différentiel rafraîchi le 2026-06-11. Le store de vérité est `track` (workspace `dataviz`) ; ce fichier en est le reflet lisible. Statut = `done` / `partial` / `missing`. Priorité = P0 (bloquant valeur) → P2.
 
-## Par propriétaire
+## Déjà livré (DONE)
 
-### DS chart-feature — `claude:sent-tech-design-system`
-Annotations (layer rendu) · Data labels (prop uniforme tous charts) · Zoom/pan/brush (API extremes contrôlée) · Boost/large-data (seuil canvas) · Tooltip formatter + shared tooltip · Legend toggle série · Clavier-dans-les-points (a11y) · Palette couleurs (cat/seq/div) · Pattern fills · ⚠️ **BUG i18n** : `Référence:`/`Objectif:` en dur dans BarChart/LineChart (bloque non-FR).
+Capacités confirmées présentes et expédiées — ne plus les lister comme manquantes :
 
-### DS grid (DataTable → Grid Lite/Pro)
-Virtualisation lignes · resize/reorder colonnes · filtres par colonne · colonnes épinglées · multi-tri · édition cellule.
+- **Cross-filter** (sélection inter-charts) — done
+- **Drilldown généralisé** (tous types de charts) — done
+- **Bookmarks** (états sauvegardés) — done
+- **URL state sync** (deep-linking de l'état dashboard) — done
+- **Export PNG / SVG / print / CSV** (ChartExport + helpers, 3 frameworks) — done
+- **Calculated fields** (champs calculés) — done
+- **Small multiples** — done
+- **Header AppChrome + sélecteur de thème** (composant DS, golden rule) — done
+- Site docs/galerie (apps/site), deep-links SPA (fix 404 Pages), switch framework React/Vue live, domaine custom dataviz.sent-tech.ca, logo sent-tech — done
 
-### core — `codex:dataviz` / partagé
-Modèle annotations (coords data, sérialisable) · downsampling LTTB/min-max · canal extremes-sync · undo/redo · API append/streaming · data connectors/pool · sérialisation dashboard COMPLET (pas que filtres) · règles conditional-format · formatteur locale (Intl).
+## Gaps restants — par propriétaire
 
-### dataviz-consumer — `claude:dataviz` (MOI)
-Tooltips/crosshair synchronisés · **Export PNG/SVG/PDF** (🛠️ agent en cours) · Canvas dashboard + edit-mode (drag-resize) · color-palette picker · URL state sync · multi-pages · focus mode · drilldown généralisé · **Site docs/galerie** (🛠️ agent en cours).
+### dataviz-consumer — `claude:dataviz`
 
-## MVP-12 transverse (ordre de valeur)
-1. Annotations (DS+core) · 2. Data labels (DS) · 3. Zoom/pan/brush (DS) · 4. Tooltips synchronisés (consumer) · 5. **Export PNG/SVG/PDF** (consumer) · 6. Boost/large-data (DS) · 7. Downsampling (core) · 8. Grid virtualisation (DS) · 9. Grid resize/filtres (DS) · 10. Dashboard canvas/edit-mode (consumer) · 11. Palette couleurs (DS + picker consumer) · 12. Formatteur locale + fix i18n (core+DS).
+- **[P1] Crosshair / tooltip synchronisés multi-panneaux** — missing (canal hover à câbler côté consumer + rendu DS)
+- **[P1] Légende interactive : toggle visibilité de série** — missing (interactivité consumer + état core)
+- **[P1] Palettes / picker de couleur (consumer)** — missing (UI picker ; voir scales DS)
+  - _Note : l'item track « Color-palette picker (consumer) » (`01KTSSEWPC3PGTVFYN16Z690C4`) recouvre partiellement le nouvel item « Palettes/échelles de couleur » (`01KTV6JKT40ZPJ58JJBMSZV1N9`). Les deux sont conservés : le 1er = UI picker consumer, le 2nd = scales DS + picker. À fusionner ultérieurement._
+- **[P1] Dashboard canvas / edit-mode (drag-resize)** — partial : layout existe mais `serialize.ts` ne couvre que filtres / sélections / drill → sérialisation complète du layout manquante
+- **[golden-rule] apps/site : adopter DS Badge / Card / Breadcrumb / CodeSnippet** — in-progress (actuellement hand-rollés)
+- **[régression mobile] sidebar catalogue inatteignable post-AppChrome** — in-progress : `sidebarOpen` jamais mis à `true` → fix consumer ou FR slot sidebar AppChrome
 
-## Exécution
-- **Site `dataviz.sent-tech.ca`** : mappé sur le site du design-system, cas d'usage **réalistes** + contrôles interactifs (style highcharts.com/docs), thèmes/palettes (sortir du monochrome). Déploiement GitHub Pages + `CNAME dataviz.sent-tech.ca` (DNS = repo owner DS). **Vérification du rendu live via Playwright (CDN)**.
-- **/loop** : ≥2 agents background (1 = site docs/galerie ; 2 = capacités consumer prioritaires). Intégration + `npm run verify` + push + CI verte + bump npm assurés par le superviseur (discipline gate-before-push). Tag lockstep pré-autorisé.
-- **track** : items dataviz à organiser avec le design-system (WP20 « capacités transverses » proposé via h2a). Le store track canonique est dans le repo DS.
+### dataviz-core — `codex:dataviz` / partagé
 
-_Source détaillée : inventaire différentiel (≈70 items, owners, statut PRESENT/PARTIAL/MISSING) produit le 2026-06-10._
+- **[P0] Modèle d'annotations sérialisable** (coords data) — missing (FR-DS déposée pour le rendu)
+- **[P1] Formatage localisé Intl** (nombre / devise / % / date) — missing ; + fix chaînes FR en dur (ex. ChartExport « Imprimer »)
+- **[P1] Conditional formatting** (moteur de règles seuil → couleur / icône) — missing ; à appliquer pivot / table / KPI
+- **[P1] Sérialisation complète du dashboard** — partial : `serialize.ts` limité aux filtres / sélections / drill (lié au canvas consumer)
+- Canal hover / extremes-sync (support du crosshair synchronisé) — missing
+
+### DS-feature-request — `claude:sent-tech-design-system`
+
+- **[P0] Annotations de chart (rendu)** — FR-DS déposée (modèle côté core)
+- **[P0] Data labels uniformes sur tous les charts** (prop DS + formatter) — FR-DS déposée
+- **[P1] Échelles / palettes de couleur** (catégoriel / séquentiel / divergent) — missing (scales DS, alimente le picker consumer)
+- **[P1] Légende interactive** (toggle série, côté rendu DS) — missing
+- **[golden-rule] Rose / Chord / PackedBubble : consommer les composants DS** — in-progress (agent dédié)
+- Slot sidebar dans AppChrome (alternative à la FR pour la régression mobile) — à évaluer
+
+## Hors-priorité
+
+- **[P2] PDF vectoriel natif** — missing (aujourd'hui : impression navigateur uniquement)
+
+---
+
+_Synthèse : tout l'axe « interaction & navigation » (cross-filter, drilldown, bookmarks, URL-sync, export, calculated fields, small-multiples, AppChrome+thème) est livré. Les gaps restants sont concentrés sur (1) l'enrichissement visuel des charts (annotations, data labels, palettes, légende interactive, conditional formatting), (2) la localisation (Intl + FR en dur), (3) la sérialisation/édition complète du dashboard, et (4) la discipline golden-rule (consommer le DS partout). Deux régressions/chantiers golden-rule sont actifs (Rose/Chord/PackedBubble, apps/site DS, sidebar mobile)._
