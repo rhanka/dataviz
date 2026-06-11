@@ -166,6 +166,23 @@ export function toWaterfallData(model: WaterfallModel) {
   );
 }
 
+export function toRoseData(model: RoseModel) {
+  return model.sectors.map((sector) => ({ label: sector.label, value: sector.value }));
+}
+
+export function toPackedBubbleData(model: PackedBubbleModel) {
+  return model.bubbles.map((bubble) => ({ label: bubble.label, value: bubble.value }));
+}
+
+export function toFlowData(model: FlowModel) {
+  const labels: Record<string, string> = {};
+  for (const node of model.nodes) {
+    labels[node.id] = node.label;
+  }
+  const data = model.links.map((link) => ({ from: link.source, to: link.target, value: link.value }));
+  return { data, labels };
+}
+
 export function toRadarAxes(model: RadarModel): string[] {
   return model.axes.map((axis) => axis.label);
 }

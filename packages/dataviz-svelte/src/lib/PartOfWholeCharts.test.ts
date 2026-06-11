@@ -128,9 +128,9 @@ describe('part-of-whole charts', () => {
     expect(chord.getByRole('img', { name: 'Revenue chord' })).toBeTruthy();
     expect(rose.getByRole('img', { name: 'Revenue rose' })).toBeTruthy();
     expect(packed.getByRole('img', { name: 'Revenue packed' })).toBeTruthy();
-    expect(chord.container.querySelectorAll('.st-chordChart__ribbon')).toHaveLength(3);
+    expect(chord.container.querySelectorAll('.st-chordDiagram__ribbon')).toHaveLength(3);
     expect(rose.container.querySelectorAll('.st-roseChart__sector')).toHaveLength(2);
-    expect(packed.container.querySelectorAll('.st-packedBubbleChart__bubble')).toHaveLength(2);
+    expect(packed.container.querySelectorAll('.st-packedBubblesChart__bubble')).toHaveLength(2);
     expect(chord.container.textContent).toContain('Lead -> Qualified: 70');
     expect(rose.container.textContent).toContain('North: 60');
     expect(packed.container.textContent).toContain('South: 40');
