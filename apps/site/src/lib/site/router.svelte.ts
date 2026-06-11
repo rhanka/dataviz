@@ -27,11 +27,17 @@ class RouterStore {
     });
   }
 
-  /** Resolve an app path ("/charts/area") to a real href under the base. */
+  /**
+   * Resolve an app path ("/charts/area") to a real href under the base. ALWAYS
+   * returns an ABSOLUTE path (leading slash). A relative href ("./charts")
+   * resolves against the current URL, so any click not intercepted by the SPA
+   * router would APPEND the segment (/charts → /charts/charts → …); absolute
+   * hrefs navigate correctly even on a full page load.
+   */
   href(appPath: string): string {
     const base = import.meta.env.BASE_URL.replace(/\/$/, '');
     const clean = appPath.startsWith('/') ? appPath : '/' + appPath;
-    if (!base || base === '.') return '.' + clean;
+    if (!base || base === '.') return clean;
     return base + clean;
   }
 
