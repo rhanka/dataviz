@@ -165,3 +165,7 @@ export type { UrlSyncOptions } from './lib/url-sync.js';
 export { useUrlSync } from './lib/useUrlSync.js';
 export { default as UrlSync } from './lib/UrlSync.svelte';
 export type { UrlSyncProps } from './lib/UrlSync.svelte';
+export { default as DrillChart } from './lib/DrillChart.svelte';
+export type { DrillChartProps, DrillChartKind } from './lib/DrillChart.svelte';
+export { drillLevel, onDrillSelect, drillDepth } from './lib/drill.js';
+export type { DrillLevel, DrillDatum } from './lib/drill.js';
