@@ -1,9 +1,12 @@
 /**
  * Shared reactive stores (Svelte 5 runes singletons), mirroring the DS docs
- * site: color mode (light/dark/auto) and framework (svelte/react/vue). Each
- * persists to localStorage. Chart colours come from the DS theme tokens — there
- * is no app-level palette store.
+ * site: color mode (light/dark/auto), framework (svelte/react/vue) and the
+ * active tenant theme (sent-tech/dsfr/carbon/airbus). Each persists to
+ * localStorage. Chart colours come from the active theme's DS tokens — there is
+ * no app-level palette store.
  */
+import { THEMES, DEFAULT_THEME_ID } from './theme';
+
 const browser = typeof window !== 'undefined';
 
 // ── Color mode ───────────────────────────────────────────────────────────────
@@ -63,3 +66,20 @@ class FrameworkStore {
   }
 }
 export const framework = new FrameworkStore();
+
+// ── Theme (tenant) ───────────────────────────────────────────────────────────
+const THEME_KEY = 'dv-site-theme';
+
+class ThemeStore {
+  value = $state<string>(DEFAULT_THEME_ID);
+  init(): void {
+    if (!browser) return;
+    const stored = localStorage.getItem(THEME_KEY);
+    if (stored && THEMES.some((t) => t.id === stored)) this.value = stored;
+  }
+  set(id: string): void {
+    this.value = id;
+    if (browser) localStorage.setItem(THEME_KEY, id);
+  }
+}
+export const theme = new ThemeStore();

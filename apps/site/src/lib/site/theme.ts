@@ -2,20 +2,42 @@
  * Theme + dark-mode token layer.
  *
  * Golden rule: presentation comes from the design system. We never hand-roll
- * component visuals — we only re-emit design-system *tokens*:
+ * component visuals — we only re-emit design-system *tokens*. The site mirrors
+ * the DS docs site's theme switcher: the official tenant themes are compiled to
+ * `:root` tokens via `compileTheme`, switchable at runtime.
  *
- *  1. BASE — `compileTheme(sentTechTheme)` injects the full DS token set on
- *            `:root` (surfaces, text, spacing, motion, and the 8
- *            `--st-semantic-data-categoryN` chart colours), exactly like the DS
- *            docs site. Charts read their colours straight from these official
- *            DS category tokens — there is no app-level "palette" concept.
- *  2. DARK — a token overlay applied under `[data-color-mode="dark"]` (and the
- *            `prefers-color-scheme` media query) that re-maps the neutral
- *            surface/text/border tokens, mirroring the DS site's
- *            `compileThemeModes` mechanism (the bundled themes@0.11 ship no
- *            `tokensDark`, so we provide the dark token map here).
+ *  - THEME : `compileTheme(activeTheme, { selector: ':root' })` — the full DS
+ *            token set for the chosen tenant (sent-tech / dsfr / carbon / airbus),
+ *            including its brand font (`--st-font-sans`) and the 8
+ *            `--st-semantic-data-categoryN` chart colours. There is no app-level
+ *            "palette" concept; chart colours come straight from these tokens.
+ *  - DARK  : a neutral token overlay applied under `[data-color-mode="dark"]`
+ *            (and the `prefers-color-scheme` query) re-mapping the surface/text/
+ *            border tokens. It is theme-agnostic, so every tenant gets a
+ *            consistent dark surface while keeping its own accent/data colours.
  */
-import { compileTheme, sentTechTheme } from '@sentropic/design-system-themes';
+import { compileTheme, sentTechTheme, type TenantTheme } from '@sentropic/design-system-themes';
+import { dsfrTheme } from '@sentropic/design-system-theme-dsfr';
+import { carbonTheme } from '@sentropic/design-system-theme-carbon';
+import { airbusTheme } from '@sentropic/design-system-theme-airbus';
+
+export interface ThemeOption {
+  id: string;
+  label: string;
+  theme: TenantTheme;
+}
+
+// The official tenant themes offered in the switcher — the same set the DS docs
+// site exposes (forge / entropic are internal demo tenants and are excluded).
+// Each theme's own brand font is loaded globally in index.html.
+export const THEMES: ThemeOption[] = [
+  { id: sentTechTheme.id, label: 'Sent Tech', theme: sentTechTheme },
+  { id: dsfrTheme.id, label: 'DSFR', theme: dsfrTheme },
+  { id: carbonTheme.id, label: 'Carbon', theme: carbonTheme },
+  { id: airbusTheme.id, label: 'Airbus', theme: airbusTheme },
+];
+
+export const DEFAULT_THEME_ID = sentTechTheme.id;
 
 // Dark token overlay: re-maps the neutral DS tokens for a comfortable dark
 // surface. The DS data-category colours carry across unchanged (they already
@@ -44,9 +66,10 @@ function darkBlock(selector: string): string {
   return `${selector} {\n  color-scheme: dark;\n${lines}\n}`;
 }
 
-/** Full base-theme CSS (light) — the DS token set on :root. */
-export function baseThemeCss(): string {
-  return `${compileTheme(sentTechTheme, { selector: ':root' })}\n:root { color-scheme: light; }`;
+/** Full theme CSS (light) for a tenant — the DS token set injected on :root. */
+export function themeCss(themeId: string): string {
+  const opt = THEMES.find((t) => t.id === themeId) ?? THEMES[0];
+  return `${compileTheme(opt.theme, { selector: ':root' })}\n:root { color-scheme: light; }`;
 }
 
 /** Dark-mode token overlay: explicit toggle + auto via prefers-color-scheme. */
