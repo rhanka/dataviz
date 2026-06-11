@@ -1,6 +1,6 @@
 import { defineComponent, h, type PropType } from 'vue';
 import { buildErrorBarsModel, type ChartAnnotation, type DashboardStore } from '@sentropic/dataviz-core';
-import { BarChart, type BarChartDatum } from '@sentropic/design-system-vue';
+import { BarChart, type BarChartDatum, type DataLabelsProp as ChartDataLabels } from '@sentropic/design-system-vue';
 import { useDashboard } from '../adapter.js';
 
 export type ErrorBarsChartProps = {
@@ -13,6 +13,7 @@ export type ErrorBarsChartProps = {
   height?: number;
   label: string;
   annotations?: ChartAnnotation[];
+  dataLabels?: ChartDataLabels;
   class?: string;
 };
 
@@ -28,6 +29,7 @@ export const ErrorBarsChart = defineComponent({
     height: { type: Number, default: 240 },
     label: { type: String, required: true },
     annotations: { type: Array as PropType<ChartAnnotation[]>, default: undefined },
+    dataLabels: { type: [Boolean, Object] as PropType<ChartDataLabels>, default: undefined },
     class: { type: String, default: undefined },
   },
   setup(props) {
@@ -52,6 +54,7 @@ export const ErrorBarsChart = defineComponent({
         height: props.height,
         label: props.label,
         annotations: props.annotations,
+        dataLabels: props.dataLabels,
         class: ['st-errorBarsChart', props.class].filter(Boolean).join(' '),
       });
     };

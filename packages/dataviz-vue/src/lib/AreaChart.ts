@@ -2,6 +2,7 @@ import { defineComponent, h, type PropType } from 'vue';
 import {
   AreaChart as DsAreaChart,
   type AreaChartTone,
+  type DataLabelsProp as ChartDataLabels,
 } from '@sentropic/design-system-vue';
 import type { ChartAnnotation, DashboardStore } from '@sentropic/dataviz-core';
 import { useDashboard } from '../adapter.js';
@@ -21,6 +22,7 @@ export type AreaChartProps = {
   height?: number;
   label: string;
   annotations?: ChartAnnotation[];
+  dataLabels?: ChartDataLabels;
   class?: string;
 };
 
@@ -37,6 +39,7 @@ export const AreaChart = defineComponent({
     height: { type: Number, default: undefined },
     label: { type: String, required: true },
     annotations: { type: Array as PropType<ChartAnnotation[]>, default: undefined },
+    dataLabels: { type: [Boolean, Object] as PropType<ChartDataLabels>, default: undefined },
     class: { type: String, default: undefined },
   },
   setup(props) {
@@ -58,6 +61,7 @@ export const AreaChart = defineComponent({
         width: props.width,
         height: props.height,
         annotations: props.annotations,
+        dataLabels: props.dataLabels,
         class: props.class,
       });
     };

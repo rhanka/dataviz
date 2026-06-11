@@ -1,6 +1,7 @@
 import {
   DonutChart as DsDonutChart,
   type DonutChartDatum,
+  type DataLabelsProp as ChartDataLabels,
 } from '@sentropic/design-system-react';
 import type { DashboardStore, PartWholeSort } from '@sentropic/dataviz-core';
 import { useDashboard } from '../adapter.js';
@@ -16,6 +17,7 @@ export type DonutChartProps = {
   thickness?: number;
   centerLabel?: string | null;
   label: string;
+  dataLabels?: ChartDataLabels;
   className?: string;
 };
 
@@ -29,6 +31,7 @@ export function DonutChart({
   thickness,
   centerLabel,
   label,
+  dataLabels,
   className,
 }: DonutChartProps) {
   const state = useDashboard(store);
@@ -44,6 +47,7 @@ export function DonutChart({
       size={size}
       thickness={thickness}
       centerLabel={centerLabel}
+      dataLabels={dataLabels}
       className={className}
     />
   );
