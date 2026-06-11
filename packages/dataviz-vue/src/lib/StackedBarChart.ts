@@ -20,6 +20,8 @@ export type StackedBarChartProps = {
   height?: number;
   label: string;
   dataLabels?: ChartDataLabels;
+  hiddenSeries?: string[];
+  onToggleSeries?: (seriesId: string) => void;
   class?: string;
 };
 
@@ -37,6 +39,8 @@ export const StackedBarChart = defineComponent({
     height: { type: Number, default: undefined },
     label: { type: String, required: true },
     dataLabels: { type: [Boolean, Object] as PropType<ChartDataLabels>, default: undefined },
+    hiddenSeries: { type: Array as PropType<string[]>, default: undefined },
+    onToggleSeries: { type: Function as PropType<(seriesId: string) => void>, default: undefined },
     class: { type: String, default: undefined },
   },
   setup(props) {
@@ -56,6 +60,8 @@ export const StackedBarChart = defineComponent({
         width: props.width,
         height: props.height,
         dataLabels: props.dataLabels,
+        hiddenSeries: props.hiddenSeries,
+        onToggleSeries: props.onToggleSeries,
         class: props.class,
       });
     };

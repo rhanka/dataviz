@@ -21,6 +21,8 @@ export type ComboChartProps = {
   leftAxisLabel?: string;
   rightAxisLabel?: string;
   legend?: boolean;
+  hiddenSeries?: string[];
+  onToggleSeries?: (seriesId: string) => void;
   width?: number;
   height?: number;
   label: string;
@@ -37,6 +39,8 @@ export function ComboChart({
   leftAxisLabel,
   rightAxisLabel,
   legend = true,
+  hiddenSeries,
+  onToggleSeries,
   width,
   height,
   label,
@@ -66,6 +70,8 @@ export function ComboChart({
       leftAxisLabel={leftAxisLabel}
       rightAxisLabel={rightAxisLabel}
       legend={legend}
+      hiddenSeries={hiddenSeries}
+      onToggleSeries={onToggleSeries}
       width={width}
       height={height}
       label={label}

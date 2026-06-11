@@ -15,6 +15,8 @@
     leftAxisLabel?: string;
     rightAxisLabel?: string;
     legend?: boolean;
+    hiddenSeries?: string[];
+    onToggleSeries?: (seriesId: string) => void;
     width?: number;
     height?: number;
     label: string;
@@ -41,6 +43,8 @@
     leftAxisLabel,
     rightAxisLabel,
     legend = true,
+    hiddenSeries,
+    onToggleSeries,
     width,
     height,
     label,
@@ -78,6 +82,8 @@
   {leftAxisLabel}
   {rightAxisLabel}
   {legend}
+  {hiddenSeries}
+  {onToggleSeries}
   {width}
   {height}
   {label}

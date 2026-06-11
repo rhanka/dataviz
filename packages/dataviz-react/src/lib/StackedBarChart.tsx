@@ -19,6 +19,8 @@ export type StackedBarChartProps = {
   height?: number;
   label: string;
   dataLabels?: ChartDataLabels;
+  hiddenSeries?: string[];
+  onToggleSeries?: (seriesId: string) => void;
   className?: string;
 };
 
@@ -34,6 +36,8 @@ export function StackedBarChart({
   height,
   label,
   dataLabels,
+  hiddenSeries,
+  onToggleSeries,
   className,
 }: StackedBarChartProps) {
   const state = useDashboard(store);
@@ -55,6 +59,8 @@ export function StackedBarChart({
       width={width}
       height={height}
       dataLabels={dataLabels}
+      hiddenSeries={hiddenSeries}
+      onToggleSeries={onToggleSeries}
       className={className}
     />
   );

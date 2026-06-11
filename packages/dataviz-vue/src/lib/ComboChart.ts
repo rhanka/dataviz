@@ -22,6 +22,8 @@ export type ComboChartProps = {
   leftAxisLabel?: string;
   rightAxisLabel?: string;
   legend?: boolean;
+  hiddenSeries?: string[];
+  onToggleSeries?: (seriesId: string) => void;
   width?: number;
   height?: number;
   label: string;
@@ -40,6 +42,8 @@ export const ComboChart = defineComponent({
     leftAxisLabel: { type: String, default: undefined },
     rightAxisLabel: { type: String, default: undefined },
     legend: { type: Boolean, default: true },
+    hiddenSeries: { type: Array as PropType<string[]>, default: undefined },
+    onToggleSeries: { type: Function as PropType<(seriesId: string) => void>, default: undefined },
     width: { type: Number, default: undefined },
     height: { type: Number, default: undefined },
     label: { type: String, required: true },
@@ -69,6 +73,8 @@ export const ComboChart = defineComponent({
         leftAxisLabel: props.leftAxisLabel,
         rightAxisLabel: props.rightAxisLabel,
         legend: props.legend,
+        hiddenSeries: props.hiddenSeries,
+        onToggleSeries: props.onToggleSeries,
         width: props.width,
         height: props.height,
         label: props.label,
