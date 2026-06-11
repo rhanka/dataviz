@@ -7,7 +7,7 @@
   /* Matches the DS AppHeader bar height (st-appHeader__bar = 3.5rem) so the
      sticky sidebar / mobile overlay align under the real DS header. */
   --dv-header-h: 3.5rem;
-  --dv-sidebar-w: 18rem;
+  --dv-sidebar-w: 19.5rem;
   --dv-ink: var(--st-semantic-text-primary, #0f172a);
   --dv-muted: var(--st-semantic-text-secondary, #475569);
   --dv-line: var(--st-semantic-border-subtle, #e2e8f0);
@@ -37,6 +37,41 @@ button, select, input { font: inherit; }
 /* ── Shell ──────────────────────────────────────────────────────────────── */
 .dv-shell { min-height: 100vh; }
 
+/* Skip link — visually hidden until focused (WCAG 2.4.1). */
+.dv-skip-link {
+  background: var(--st-semantic-feedback-info, #0043ce);
+  border-radius: 0 0 0.375rem 0.375rem;
+  clip: rect(0 0 0 0);
+  clip-path: inset(100%);
+  color: #fff;
+  font-size: 0.875rem;
+  font-weight: 650;
+  left: 1rem;
+  overflow: hidden;
+  padding: 0.6rem 1.25rem;
+  position: fixed;
+  top: 0;
+  white-space: nowrap;
+  width: 1px;
+  z-index: 9999;
+}
+.dv-skip-link:focus-visible {
+  clip: auto;
+  clip-path: none;
+  overflow: visible;
+  width: auto;
+  height: auto;
+  text-decoration: none;
+}
+
+/* App-shell wrapper for AppChrome — sticky positioning only; the component
+   renders its own internals. Do NOT add visual styling here. */
+.dv-chrome {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+}
+
 /* The header is the DS `AppChrome` component end-to-end (brand, nav, controls,
    mobile drawer) — there is ZERO hand-rolled chrome styling here. All header
    presentation lives in @sentropic/design-system (the st-appChrome and
@@ -47,6 +82,8 @@ button, select, input { font: inherit; }
   display: grid;
   grid-template-columns: var(--dv-sidebar-w) minmax(0, 1fr);
   align-items: start;
+  max-width: 104rem;
+  margin: 0 auto;
 }
 
 .dv-sidebar {
@@ -60,11 +97,11 @@ button, select, input { font: inherit; }
 }
 .dv-sidebar h2 {
   margin: 1.25rem 0 0.4rem;
-  font-size: 0.7rem;
-  font-weight: 700;
+  font-size: 0.75rem;
+  font-weight: 750;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  color: var(--dv-muted);
+  color: var(--dv-ink);
 }
 .dv-sidebar h2:first-child { margin-top: 0; }
 .dv-side-group { margin-bottom: 0.35rem; }
@@ -81,49 +118,35 @@ button, select, input { font: inherit; }
 .dv-side-group > summary:hover { background: var(--dv-surface-subtle); }
 .dv-side-link {
   display: block;
-  padding: 0.35rem 0.5rem 0.35rem 0.9rem;
-  border-radius: 0.4rem;
+  padding: 0.3rem 0.5rem;
+  border-radius: 0.375rem;
+  border-left: 3px solid transparent;
   color: var(--dv-ink);
-  font-size: 0.84rem;
+  font-size: 1rem;
+  min-height: 2rem;
+  line-height: 1.35;
 }
 .dv-side-link:hover { background: var(--dv-surface-subtle); text-decoration: none; }
 .dv-side-link[aria-current="page"] {
-  background: color-mix(in srgb, var(--st-semantic-data-category1, #4E79A7) 16%, transparent);
-  font-weight: 700;
+  background: var(--st-semantic-surface-subtle);
+  border-left: 3px solid var(--st-semantic-border-interactive);
+  border-radius: 0;
+  color: var(--dv-ink);
+  font-weight: 650;
+  padding-left: 0.65rem;
 }
 
 .dv-content {
   min-width: 0;
-  padding: 1.75rem clamp(1rem, 4vw, 3rem) 4rem;
-  max-width: 1080px;
+  padding: 2.5rem 3rem 6rem;
 }
-
-.dv-breadcrumb {
-  font-size: 0.78rem;
-  color: var(--dv-muted);
-  margin-bottom: 0.75rem;
-}
-.dv-breadcrumb a { color: var(--dv-muted); }
 
 /* ── Page primitives ────────────────────────────────────────────────────── */
 .dv-h1 { font-size: clamp(1.5rem, 3vw, 2rem); margin: 0 0 0.35rem; }
 .dv-lead { color: var(--dv-muted); font-size: 1rem; margin: 0 0 1.5rem; max-width: 60ch; }
 .dv-section { margin-bottom: 2.25rem; }
-.dv-section h2 { font-size: 1.2rem; margin: 0 0 0.75rem; }
+.dv-section h2 { font-size: 1.375rem; margin: 0 0 0.75rem; }
 .dv-prose p { color: var(--dv-muted); line-height: 1.6; margin: 0 0 0.75rem; max-width: 65ch; }
-
-.dv-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.3rem;
-  padding: 0.15rem 0.5rem;
-  border-radius: 999px;
-  font-size: 0.7rem;
-  font-weight: 700;
-  background: var(--dv-surface-subtle);
-  color: var(--dv-muted);
-  border: 1px solid var(--dv-line);
-}
 
 /* Live demo surface */
 .dv-demo {
@@ -169,25 +192,11 @@ button, select, input { font: inherit; }
   margin: -0.25rem 0 0;
 }
 
-/* Catalogue cards */
+/* Catalogue cards grid — DS Tile handles the card surface */
 .dv-cards {
   display: grid;
   gap: 1rem;
   grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-}
-.dv-card {
-  display: block;
-  background: var(--dv-surface);
-  border: 1px solid var(--dv-line);
-  border-radius: var(--dv-radius);
-  padding: 1rem 1.1rem;
-  color: var(--dv-ink);
-  transition: border-color 120ms ease, transform 120ms ease;
-}
-.dv-card:hover {
-  text-decoration: none;
-  border-color: var(--st-semantic-data-category1, #4E79A7);
-  transform: translateY(-1px);
 }
 .dv-card__name { font-weight: 700; margin: 0 0 0.2rem; }
 .dv-card__tag { color: var(--dv-muted); font-size: 0.82rem; margin: 0; }
@@ -211,7 +220,7 @@ button, select, input { font: inherit; }
 .dv-hero__stat span { color: var(--dv-muted); font-size: 0.8rem; }
 
 /* Mobile */
-@media (max-width: 860px) {
+@media (max-width: 920px) {
   .dv-body { grid-template-columns: 1fr; }
   .dv-sidebar {
     position: fixed;

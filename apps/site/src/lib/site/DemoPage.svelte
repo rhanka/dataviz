@@ -3,6 +3,7 @@
   use-case writeup, and copy-paste code tabs for the three frameworks.
 -->
 <script lang="ts">
+  import { Breadcrumb } from '@sentropic/design-system-svelte';
   import type { DemoEntry } from '../registry/types';
   import { SECTION_META } from '../registry/index';
   import LiveDemo from './LiveDemo.svelte';
@@ -10,13 +11,15 @@
 
   let { entry }: { entry: DemoEntry } = $props();
   const paras = $derived(entry.useCase.split('\n\n'));
+
+  const breadcrumbItems = $derived([
+    { label: SECTION_META[entry.section].label },
+    { label: entry.group, current: true },
+  ]);
 </script>
 
 <article class="dv-prose">
-  <p class="dv-breadcrumb">
-    <span>{SECTION_META[entry.section].label}</span> ›
-    <span>{entry.group}</span>
-  </p>
+  <Breadcrumb items={breadcrumbItems} label="Fil d'Ariane" />
 
   <h1 class="dv-h1">{entry.name}</h1>
   <p class="dv-lead">{entry.tagline}</p>

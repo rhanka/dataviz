@@ -4,7 +4,7 @@
   blocks + the live island, exactly like the DS docs site).
 -->
 <script lang="ts">
-  import { ContentSwitcher } from '@sentropic/design-system-svelte';
+  import { ContentSwitcher, Button } from '@sentropic/design-system-svelte';
   import { framework, FRAMEWORKS, type FrameworkId } from './stores.svelte';
   import type { CodeTabs } from '../registry/types';
 
@@ -35,8 +35,8 @@
       onchange={(v) => framework.set(v as FrameworkId)}
     />
   </div>
-  <button class="dv-ctrl dv-copy" type="button" onclick={copy}>
+  <Button variant="ghost" size="sm" class="dv-copy" type="button" onclick={copy}>
     {copied ? 'Copié ✓' : 'Copier'}
-  </button>
+  </Button>
   <pre><code>{snippet}</code></pre>
 </div>

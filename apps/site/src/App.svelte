@@ -178,7 +178,8 @@
 {/snippet}
 
 <div class="dv-shell">
-  <div use:chromeRouting>
+  <a class="dv-skip-link" href="#main-content">Aller au contenu</a>
+  <div class="dv-chrome" use:chromeRouting>
     <AppChrome
       brandName="Sentropic"
       productName="dataviz"
@@ -204,13 +205,13 @@
   </div>
 
   {#if route.kind === 'home'}
-    <main class="dv-content" style="max-width:none;margin:0 auto;">
+    <main id="main-content" class="dv-content" style="max-width:none;margin:0 auto;">
       <LandingPage />
     </main>
   {:else}
     <div class="dv-body">
       <Sidebar open={sidebarOpen} />
-      <main class="dv-content">
+      <main id="main-content" class="dv-content">
         {#if route.kind === 'guides'}
           <GuidesPage />
         {:else if route.kind === 'catalogue'}
