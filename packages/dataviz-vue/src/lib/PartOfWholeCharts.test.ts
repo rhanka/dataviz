@@ -128,9 +128,9 @@ describe('part-of-whole charts (vue)', () => {
     expect(chord.find('[role="img"]').attributes('aria-label')).toBe('Revenue chord');
     expect(rose.find('[role="img"]').attributes('aria-label')).toBe('Revenue rose');
     expect(packed.find('[role="img"]').attributes('aria-label')).toBe('Revenue packed');
-    expect(chord.findAll('.st-chordChart__ribbon')).toHaveLength(3);
+    expect(chord.findAll('.st-chordDiagram__ribbon')).toHaveLength(3);
     expect(rose.findAll('.st-roseChart__sector')).toHaveLength(2);
-    expect(packed.findAll('.st-packedBubbleChart__bubble')).toHaveLength(2);
+    expect(packed.findAll('.st-packedBubblesChart__bubble')).toHaveLength(2);
     expect(chord.text()).toContain('Lead -> Qualified: 70');
     expect(rose.text()).toContain('North: 60');
     expect(packed.text()).toContain('South: 40');

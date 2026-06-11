@@ -129,12 +129,12 @@ describe('part-of-whole charts (react)', () => {
     expect(screen.getByRole('img', { name: 'Revenue chord' })).toBeTruthy();
     expect(screen.getByRole('img', { name: 'Revenue rose' })).toBeTruthy();
     expect(screen.getByRole('img', { name: 'Revenue packed' })).toBeTruthy();
-    expect(container.querySelectorAll('.st-chordChart__ribbon')).toHaveLength(3);
+    expect(container.querySelectorAll('.st-chordDiagram__ribbon')).toHaveLength(3);
     expect(container.querySelectorAll('.st-roseChart__sector')).toHaveLength(2);
-    expect(container.querySelectorAll('.st-packedBubbleChart__bubble')).toHaveLength(2);
-    expect(container.querySelector('.st-chordChart')?.textContent).toContain('Lead -> Qualified: 70');
+    expect(container.querySelectorAll('.st-packedBubblesChart__bubble')).toHaveLength(2);
+    expect(container.querySelector('.st-chordDiagram')?.textContent).toContain('Lead -> Qualified: 70');
     expect(container.querySelector('.st-roseChart')?.textContent).toContain('North: 60');
-    expect(container.querySelector('.st-packedBubbleChart')?.textContent).toContain('South: 40');
+    expect(container.querySelector('.st-packedBubblesChart')?.textContent).toContain('South: 40');
   });
 
   it('rebuilds part-whole aggregates from this view cross-filter scope', () => {
