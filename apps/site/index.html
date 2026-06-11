@@ -6,7 +6,19 @@
     <title>Sentropic dataviz — documentation &amp; galerie</title>
     <meta
       name="description"
-      content="Documentation et galerie interactive de @sentropic/dataviz : charts, dashboards BI et grilles, bâtis sur le design system Sent Tech."
+      content="Documentation et galerie interactive de @sentropic/dataviz : charts, tableaux de bord BI et grilles, bâtis sur le design system Sentropic."
+    />
+    <link rel="icon" href="/SENT-logo-squared.svg" type="image/svg+xml" />
+    <!--
+      Police de marque du design system Sentropic. Le thème sentTech déclare
+      `--st-font-sans: Inter, …` ; sans la charger, :root (app.css) retombe sur
+      system-ui et tout le chrome (boutons/typo) paraît « cassé ».
+    -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
     />
     <!--
       Anti-FOUC : restaure data-color-mode sur <html> AVANT le premier paint,
