@@ -15,6 +15,8 @@
     height?: number;
     label: string;
     dataLabels?: ChartDataLabels;
+    hiddenSeries?: string[];
+    onToggleSeries?: (seriesId: string) => void;
     class?: string;
   };
 </script>
@@ -36,6 +38,8 @@
     height,
     label,
     dataLabels,
+    hiddenSeries,
+    onToggleSeries,
     class: className,
   }: StackedBarChartProps = $props();
 
@@ -52,4 +56,4 @@
   const data = $derived(toStackedCategoricalData(seriesModel));
 </script>
 
-<DsStackedBarChart {data} {label} {showLegend} {width} {height} {dataLabels} class={className} />
+<DsStackedBarChart {data} {label} {showLegend} {width} {height} {dataLabels} {hiddenSeries} {onToggleSeries} class={className} />
