@@ -1,5 +1,6 @@
 <script lang="ts" module>
   import type { DashboardStore, PartWholeSort } from '@sentropic/dataviz-core';
+  import type { DataLabelsProp as ChartDataLabels } from '@sentropic/design-system-svelte';
 
   export type DonutChartProps = {
     store: DashboardStore;
@@ -11,6 +12,7 @@
     thickness?: number;
     centerLabel?: string | null;
     label: string;
+    dataLabels?: ChartDataLabels;
     class?: string;
   };
 </script>
@@ -30,6 +32,7 @@
     thickness,
     centerLabel,
     label,
+    dataLabels,
     class: className,
   }: DonutChartProps = $props();
 
@@ -41,4 +44,4 @@
   });
 </script>
 
-<DsDonutChart {data} {label} {size} {thickness} {centerLabel} class={className} />
+<DsDonutChart {data} {label} {size} {thickness} {centerLabel} {dataLabels} class={className} />

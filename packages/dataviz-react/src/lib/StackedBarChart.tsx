@@ -1,4 +1,4 @@
-import { StackedBarChart as DsStackedBarChart } from '@sentropic/design-system-react';
+import { StackedBarChart as DsStackedBarChart, type DataLabelsProp as ChartDataLabels } from '@sentropic/design-system-react';
 import type { DashboardStore } from '@sentropic/dataviz-core';
 import { useDashboard } from '../adapter.js';
 import {
@@ -18,6 +18,7 @@ export type StackedBarChartProps = {
   width?: number;
   height?: number;
   label: string;
+  dataLabels?: ChartDataLabels;
   className?: string;
 };
 
@@ -32,6 +33,7 @@ export function StackedBarChart({
   width,
   height,
   label,
+  dataLabels,
   className,
 }: StackedBarChartProps) {
   const state = useDashboard(store);
@@ -52,6 +54,7 @@ export function StackedBarChart({
       showLegend={showLegend}
       width={width}
       height={height}
+      dataLabels={dataLabels}
       className={className}
     />
   );

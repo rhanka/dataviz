@@ -1,5 +1,6 @@
 <script lang="ts" module>
   import type { DashboardStore } from '@sentropic/dataviz-core';
+  import type { DataLabelsProp as ChartDataLabels } from '@sentropic/design-system-svelte';
   import type { StackedMode } from './categoricalData.js';
 
   export type StackedBarChartProps = {
@@ -13,6 +14,7 @@
     width?: number;
     height?: number;
     label: string;
+    dataLabels?: ChartDataLabels;
     class?: string;
   };
 </script>
@@ -33,6 +35,7 @@
     width,
     height,
     label,
+    dataLabels,
     class: className,
   }: StackedBarChartProps = $props();
 
@@ -49,4 +52,4 @@
   const data = $derived(toStackedCategoricalData(seriesModel));
 </script>
 
-<DsStackedBarChart {data} {label} {showLegend} {width} {height} class={className} />
+<DsStackedBarChart {data} {label} {showLegend} {width} {height} {dataLabels} class={className} />

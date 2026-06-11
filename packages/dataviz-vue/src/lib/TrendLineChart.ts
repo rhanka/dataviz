@@ -1,6 +1,6 @@
 import { defineComponent, h, type PropType } from 'vue';
 import { buildTrendLineModel, type ChartAnnotation, type DashboardStore } from '@sentropic/dataviz-core';
-import { LineChart, type LineChartDatum } from '@sentropic/design-system-vue';
+import { LineChart, type LineChartDatum, type DataLabelsProp as ChartDataLabels } from '@sentropic/design-system-vue';
 import { useDashboard } from '../adapter.js';
 
 export type TrendLineChartProps = {
@@ -12,6 +12,7 @@ export type TrendLineChartProps = {
   height?: number;
   label: string;
   annotations?: ChartAnnotation[];
+  dataLabels?: ChartDataLabels;
   class?: string;
 };
 
@@ -26,6 +27,7 @@ export const TrendLineChart = defineComponent({
     height: { type: Number, default: 220 },
     label: { type: String, required: true },
     annotations: { type: Array as PropType<ChartAnnotation[]>, default: undefined },
+    dataLabels: { type: [Boolean, Object] as PropType<ChartDataLabels>, default: undefined },
     class: { type: String, default: undefined },
   },
   setup(props) {
@@ -44,6 +46,7 @@ export const TrendLineChart = defineComponent({
         height: props.height,
         label: props.label,
         annotations: props.annotations,
+        dataLabels: props.dataLabels,
         trend: true,
         class: ['st-trendLineChart', props.class].filter(Boolean).join(' '),
       });

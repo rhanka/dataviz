@@ -1,5 +1,5 @@
 import { defineComponent, h, type PropType } from 'vue';
-import { StackedBarChart as DsStackedBarChart } from '@sentropic/design-system-vue';
+import { StackedBarChart as DsStackedBarChart, type DataLabelsProp as ChartDataLabels } from '@sentropic/design-system-vue';
 import type { DashboardStore } from '@sentropic/dataviz-core';
 import { useDashboard } from '../adapter.js';
 import {
@@ -19,6 +19,7 @@ export type StackedBarChartProps = {
   width?: number;
   height?: number;
   label: string;
+  dataLabels?: ChartDataLabels;
   class?: string;
 };
 
@@ -35,6 +36,7 @@ export const StackedBarChart = defineComponent({
     width: { type: Number, default: undefined },
     height: { type: Number, default: undefined },
     label: { type: String, required: true },
+    dataLabels: { type: [Boolean, Object] as PropType<ChartDataLabels>, default: undefined },
     class: { type: String, default: undefined },
   },
   setup(props) {
@@ -53,6 +55,7 @@ export const StackedBarChart = defineComponent({
         showLegend: props.showLegend,
         width: props.width,
         height: props.height,
+        dataLabels: props.dataLabels,
         class: props.class,
       });
     };

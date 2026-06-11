@@ -1,5 +1,6 @@
 <script lang="ts" module>
   import type { ChartAnnotation, DashboardStore } from '@sentropic/dataviz-core';
+  import type { DataLabelsProp as ChartDataLabels } from '@sentropic/design-system-svelte';
 
   export type ErrorBarsChartProps = {
     store: DashboardStore;
@@ -11,6 +12,7 @@
     height?: number;
     label: string;
     annotations?: ChartAnnotation[];
+    dataLabels?: ChartDataLabels;
     class?: string;
   };
 </script>
@@ -30,6 +32,7 @@
     height = 240,
     label,
     annotations,
+    dataLabels,
     class: className,
   }: ErrorBarsChartProps = $props();
 
@@ -50,4 +53,4 @@
   const classes = $derived(['st-errorBarsChart', className].filter(Boolean).join(' '));
 </script>
 
-<DsBarChart {data} {width} {height} {label} {annotations} class={classes} />
+<DsBarChart {data} {width} {height} {label} {annotations} {dataLabels} class={classes} />
