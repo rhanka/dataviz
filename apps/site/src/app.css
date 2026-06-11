@@ -37,37 +37,10 @@ button, select, input { font: inherit; }
 /* ── Shell ──────────────────────────────────────────────────────────────── */
 .dv-shell { min-height: 100vh; }
 
-/* The header is the DS <AppHeader> + DS control components — it carries no
-   hand-rolled chrome styling. The only rules below style the brand CONTENT
-   (logo mark + product subtitle) and the compact drawer's nav list, mirroring
-   how the DS docs site styles its own `logo` snippet content. */
-.dv-brand {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.6rem;
-  color: var(--dv-ink);
-  font-weight: 700;
-}
-.dv-brand:hover { text-decoration: none; }
-.dv-brand__mark {
-  width: 2rem;
-  height: 2rem;
-  object-fit: contain;
-}
-.dv-brand__copy { display: grid; line-height: 1.1; }
-.dv-brand__name { font-size: 0.95rem; font-weight: 780; }
-.dv-brand__product { font-size: 0.7rem; font-weight: 650; color: var(--dv-muted); }
-
-.dv-drawer-nav {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-  padding: 1rem;
-}
-
-/* Tight wrapper so MenuPopover can anchor off a real DOM element; carries no
-   visual styling of its own (the DS MenuTriggerButton provides the appearance). */
-.dv-menu-anchor { display: inline-flex; }
+/* The header is the DS `AppChrome` component end-to-end (brand, nav, controls,
+   mobile drawer) — there is ZERO hand-rolled chrome styling here. All header
+   presentation lives in @sentropic/design-system (the st-appChrome and
+   st-appHeader class families), identical to the DS docs site. */
 
 /* ── Body: sidebar + content ────────────────────────────────────────────── */
 .dv-body {
