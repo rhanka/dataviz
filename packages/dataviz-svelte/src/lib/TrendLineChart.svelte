@@ -12,6 +12,9 @@
     label: string;
     annotations?: ChartAnnotation[];
     dataLabels?: ChartDataLabels;
+    hoverKey?: string | null;
+    onHoverKeyChange?: (key: string | null) => void;
+    onSelectKey?: (key: string | null) => void;
     class?: string;
   };
 </script>
@@ -31,6 +34,9 @@
     label,
     annotations,
     dataLabels,
+    hoverKey,
+    onHoverKeyChange,
+    onSelectKey,
     class: className,
   }: TrendLineChartProps = $props();
 
@@ -43,4 +49,4 @@
   const classes = $derived(['st-trendLineChart', className].filter(Boolean).join(' '));
 </script>
 
-<DsLineChart {data} {width} {height} {label} {annotations} {dataLabels} trend={true} class={classes} />
+<DsLineChart {data} {width} {height} {label} {annotations} {dataLabels} trend={true} {hoverKey} {onHoverKeyChange} {onSelectKey} class={classes} />

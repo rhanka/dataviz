@@ -26,6 +26,9 @@
     orientation?: 'vertical' | 'horizontal';
     width?: number;
     height?: number;
+    hoverKey?: string | null;
+    onHoverKeyChange?: (key: string | null) => void;
+    onSelectKey?: (key: string | null) => void;
     class?: string;
   };
 </script>
@@ -47,6 +50,9 @@
     orientation = 'vertical',
     width,
     height,
+    hoverKey,
+    onHoverKeyChange,
+    onSelectKey,
     class: className,
   }: CrossfilteredBarChartProps = $props();
 
@@ -77,4 +83,7 @@
   class={className}
   selectedKeys={selectable ? selectedKeys : []}
   onSelect={selectable ? (key) => store.toggleSelection(viewId, key) : undefined}
+  {hoverKey}
+  {onHoverKeyChange}
+  {onSelectKey}
 />

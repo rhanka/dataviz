@@ -14,6 +14,9 @@
     label: string;
     annotations?: ChartAnnotation[];
     dataLabels?: ChartDataLabels;
+    hoverKey?: string | null;
+    onHoverKeyChange?: (key: string | null) => void;
+    onSelectKey?: (key: string | null) => void;
     class?: string;
   };
 </script>
@@ -38,6 +41,9 @@
     label,
     annotations,
     dataLabels,
+    hoverKey,
+    onHoverKeyChange,
+    onSelectKey,
     class: className,
   }: AreaChartProps = $props();
 
@@ -49,4 +55,4 @@
   });
 </script>
 
-<DsAreaChart {data} {label} {tone} {smooth} {width} {height} {annotations} {dataLabels} class={className} />
+<DsAreaChart {data} {label} {tone} {smooth} {width} {height} {annotations} {dataLabels} {hoverKey} {onHoverKeyChange} {onSelectKey} class={className} />

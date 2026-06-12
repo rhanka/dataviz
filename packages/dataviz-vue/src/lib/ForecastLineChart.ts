@@ -14,6 +14,9 @@ export type ForecastLineChartProps = {
   width?: number;
   height?: number;
   label: string;
+  hoverKey?: string | null;
+  onHoverKeyChange?: (key: string | null) => void;
+  onSelectKey?: (key: string | null) => void;
   class?: string;
 };
 
@@ -29,6 +32,9 @@ export const ForecastLineChart = defineComponent({
     width: { type: Number, default: 360 },
     height: { type: Number, default: 220 },
     label: { type: String, required: true },
+    hoverKey: { type: [String, null] as unknown as PropType<string | null>, default: undefined },
+    onHoverKeyChange: { type: Function as PropType<(key: string | null) => void>, default: undefined },
+    onSelectKey: { type: Function as PropType<(key: string | null) => void>, default: undefined },
     class: { type: String, default: undefined },
   },
   setup(props) {
@@ -47,6 +53,9 @@ export const ForecastLineChart = defineComponent({
         width: props.width,
         height: props.height,
         label: props.label,
+        hoverKey: props.hoverKey,
+        onHoverKeyChange: props.onHoverKeyChange,
+        onSelectKey: props.onSelectKey,
         class: ['st-forecastLineChart', props.class].filter(Boolean).join(' '),
       });
     };

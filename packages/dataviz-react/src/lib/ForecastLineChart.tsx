@@ -13,6 +13,9 @@ export type ForecastLineChartProps = {
   width?: number;
   height?: number;
   label: string;
+  hoverKey?: string | null;
+  onHoverKeyChange?: (key: string | null) => void;
+  onSelectKey?: (key: string | null) => void;
   className?: string;
 };
 
@@ -26,6 +29,9 @@ export function ForecastLineChart({
   width = 360,
   height = 220,
   label,
+  hoverKey,
+  onHoverKeyChange,
+  onSelectKey,
   className,
 }: ForecastLineChartProps) {
   const state = useDashboard(store);
@@ -38,6 +44,9 @@ export function ForecastLineChart({
       width={width}
       height={height}
       label={label}
+      hoverKey={hoverKey}
+      onHoverKeyChange={onHoverKeyChange}
+      onSelectKey={onSelectKey}
       className={['st-forecastLineChart', className].filter(Boolean).join(' ') || undefined}
     />
   );

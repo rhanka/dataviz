@@ -11,6 +11,9 @@
     width?: number;
     height?: number;
     label: string;
+    hoverKey?: string | null;
+    onHoverKeyChange?: (key: string | null) => void;
+    onSelectKey?: (key: string | null) => void;
     class?: string;
   };
 </script>
@@ -30,6 +33,9 @@
     width = 360,
     height = 220,
     label,
+    hoverKey,
+    onHoverKeyChange,
+    onSelectKey,
     class: className,
   }: ForecastLineChartProps = $props();
 
@@ -41,4 +47,4 @@
   const classes = $derived(['st-forecastLineChart', className].filter(Boolean).join(' '));
 </script>
 
-<DsLineChart data={model} {width} {height} {label} class={classes} />
+<DsLineChart data={model} {width} {height} {label} {hoverKey} {onHoverKeyChange} {onSelectKey} class={classes} />
