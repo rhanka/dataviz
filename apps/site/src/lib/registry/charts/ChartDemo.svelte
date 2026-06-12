@@ -37,16 +37,19 @@
     ErrorBarsChart,
     AnalyticsClusterPlot,
     ScatterPlot,
+    CandlestickChart,
     Sparkline,
     ScoreCard,
   } from '@sentropic/dataviz-svelte';
   import { ContentSwitcher } from '@sentropic/design-system-svelte';
   import { lineAnnotation, regionAnnotation, makeFormatter } from '@sentropic/dataviz-core';
   import { makeStore } from '../../data/store';
+  import { makeOhlcStore } from '../../data/ohlc-store';
 
   let { kind, controls = true }: { kind: string; controls?: boolean } = $props();
 
   const store = makeStore();
+  const ohlcStore = makeOhlcStore();
 
   let measure = $state<'revenue' | 'units' | 'margin'>('revenue');
   const measureItems = [
@@ -172,6 +175,8 @@
     <AnalyticsClusterPlot {store} viewId="c" fields={['price', 'marginRate']} k={3} label="Clusters prix/marge" />
   {:else if kind === 'scatter'}
     <ScatterPlot {store} viewId="c" x="revenue" y="units" series="category" labelField="category" label="Revenu vs unités par catégorie" />
+  {:else if kind === 'candlestick'}
+    <CandlestickChart store={ohlcStore} viewId="ohlc" label_field="session" open="open" high="high" low="low" close="close" label="Cours boursiers (28 séances)" />
   {:else if kind === 'sparkline'}
     <Sparkline {store} viewId="c" dimension="month" measure="revenue" area label="Tendance mensuelle du revenu" />
   {:else if kind === 'scorecard'}
