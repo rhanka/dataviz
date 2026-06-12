@@ -13,6 +13,7 @@ import type { DemoEntry, Section, SectionGroup } from './types';
 import ChartDemo from './charts/ChartDemo.svelte';
 import GeoDemo from './charts/GeoDemo.svelte';
 import BiDemo from './dashboards/BiDemo.svelte';
+import FullDashboardDemo from './dashboards/FullDashboardDemo.svelte';
 import GridDemo from './grids/GridDemo.svelte';
 import { CHART_ENTRIES } from './entries/charts';
 import { DASHBOARD_ENTRIES } from './entries/dashboards';
@@ -20,7 +21,7 @@ import { GRID_ENTRIES } from './entries/grids';
 
 export const ENTRIES: DemoEntry[] = [
   ...CHART_ENTRIES(ChartDemo, GeoDemo),
-  ...DASHBOARD_ENTRIES(BiDemo),
+  ...DASHBOARD_ENTRIES(BiDemo, FullDashboardDemo),
   ...GRID_ENTRIES(GridDemo),
 ];
 

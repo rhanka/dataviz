@@ -12,8 +12,83 @@ function bi(
   return { ...rest, section: 'dashboards', demo: Comp, demoProps: { kind } };
 }
 
-export function DASHBOARD_ENTRIES(BiDemo: Demo): DemoEntry[] {
+export function DASHBOARD_ENTRIES(BiDemo: Demo, FullDashboard: Demo): DemoEntry[] {
   return [
+    // ── Tableau de bord complet ──────────────────────────────────────────
+    {
+      slug: 'full-dashboard',
+      section: 'dashboards',
+      name: 'Tableau de bord complet',
+      group: 'Tableaux de bord',
+      tagline: 'Dashboard BI complet : KPI + tendance + barres + donut + table, tout cross-filtré.',
+      hasControls: true,
+      useCase:
+        "Un seul `createDashboardStore` relie quatre vues — KPI, graphique en aires, barres cross-filtrées par catégorie, donut part-of-whole par canal, et table d'enregistrements — en un tableau de bord BI opérationnel.\n\nCliquer une barre ou un segment du donut applique `applyCrossfilter` dans le store, et toutes les autres vues (KPI, tendance, table) se recalculent instantanément sans aucune logique de filtrage custom.\n\n`DashboardFilterBar` résume les filtres actifs sous forme de chips et permet de tout effacer d'un clic. `SelectionLegend` rappelle quelles valeurs sont sélectionnées par vue.\n\nLa présentation vient à 100 % des surfaces du design system via les composants dataviz : aucun markup de chart ou de table n'est écrit à la main. La grille CSS utilise uniquement des tokens DS (`--st-spacing-*`, `--st-semantic-*`, `--st-radius-*`).",
+      demo: FullDashboard,
+      demoProps: {},
+      code: storeCode(
+        ['DashboardFilterBar', 'SelectionLegend', 'KpiCardGroup', 'CrossfilteredBarChart', 'AreaChart', 'DonutChart', 'RecordsTable'],
+        {
+          svelte: `<DashboardFilterBar {store} />
+<SelectionLegend {store} labels={{ byCat: 'Catégorie', byChan: 'Canal' }} />
+
+<!-- Bandeau KPI (recalculé à chaque cross-filter) -->
+<KpiCardGroup {store} configs={[
+  { id: 'revenue', measure: 'revenue', label: 'Revenu total' },
+  { id: 'units',   measure: 'units',   label: 'Unités vendues' },
+  { id: 'margin',  measure: 'margin',  label: 'Marge brute (€)' },
+]} />
+
+<!-- Tendance mensuelle (aire) -->
+<AreaChart {store} viewId="trend" category="month" measure="revenue"
+  label="Tendance mensuelle du revenu" smooth={true} />
+
+<!-- Barres cross-filtrées par catégorie -->
+<CrossfilteredBarChart {store} viewId="byCat" dimension="category"
+  measure="revenue" label="Revenu par catégorie" />
+
+<!-- Donut part-of-whole par canal -->
+<DonutChart {store} viewId="byChan" category="channel" measure="revenue"
+  centerLabel="Canal" label="Répartition par canal" />
+
+<!-- Table d'enregistrements cross-filtrés -->
+<RecordsTable {store} pageSize={8}
+  fields={['region', 'category', 'product', 'channel', 'revenue', 'units', 'margin']} />`,
+          react: `<>
+  <DashboardFilterBar store={store} />
+  <SelectionLegend store={store} labels={{ byCat: 'Catégorie', byChan: 'Canal' }} />
+  <KpiCardGroup store={store} configs={[
+    { id: 'revenue', measure: 'revenue', label: 'Revenu total' },
+    { id: 'units',   measure: 'units',   label: 'Unités vendues' },
+    { id: 'margin',  measure: 'margin',  label: 'Marge brute (€)' },
+  ]} />
+  <AreaChart store={store} viewId="trend" category="month" measure="revenue"
+    label="Tendance mensuelle du revenu" smooth />
+  <CrossfilteredBarChart store={store} viewId="byCat" dimension="category"
+    measure="revenue" label="Revenu par catégorie" />
+  <DonutChart store={store} viewId="byChan" category="channel" measure="revenue"
+    centerLabel="Canal" label="Répartition par canal" />
+  <RecordsTable store={store} pageSize={8}
+    fields={['region', 'category', 'product', 'channel', 'revenue', 'units', 'margin']} />
+</>`,
+          vue: `<DashboardFilterBar :store="store" />
+<SelectionLegend :store="store" :labels="{ byCat: 'Catégorie', byChan: 'Canal' }" />
+<KpiCardGroup :store="store" :configs="[
+  { id: 'revenue', measure: 'revenue', label: 'Revenu total' },
+  { id: 'units',   measure: 'units',   label: 'Unités vendues' },
+  { id: 'margin',  measure: 'margin',  label: 'Marge brute (€)' },
+]" />
+<AreaChart :store="store" viewId="trend" category="month" measure="revenue"
+  label="Tendance mensuelle du revenu" :smooth="true" />
+<CrossfilteredBarChart :store="store" viewId="byCat" dimension="category"
+  measure="revenue" label="Revenu par catégorie" />
+<DonutChart :store="store" viewId="byChan" category="channel" measure="revenue"
+  centerLabel="Canal" label="Répartition par canal" />
+<RecordsTable :store="store" :pageSize="8"
+  :fields="['region', 'category', 'product', 'channel', 'revenue', 'units', 'margin']" />`,
+        },
+      ),
+    },
     // ── Cross-filter & exploration ───────────────────────────────────────
     bi({
       slug: 'crossfilter', name: 'CrossfilteredBarChart', group: 'Cross-filter & exploration', kind: 'crossfilter', hasControls: true,
