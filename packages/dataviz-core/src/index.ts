@@ -203,6 +203,10 @@ export {
 export type { ScatterDatum, ScatterConfig, ScatterModel, ScatterTone } from './scatter.js';
 export { buildScatterModel } from './scatter.js';
 
+// Candlestick chart model
+export type { CandlestickDatum, CandlestickConfig } from './candlestick.js';
+export { buildCandlestickData } from './candlestick.js';
+
 // Geographic models
 export type {
   GeoCoordinate,
