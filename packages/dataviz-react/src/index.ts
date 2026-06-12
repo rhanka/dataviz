@@ -114,6 +114,8 @@ export { AdvancedPivotDataTable } from './lib/AdvancedPivotDataTable.js';
 export type { AdvancedPivotDataTableProps } from './lib/AdvancedPivotDataTable.js';
 export { KpiCardGroup } from './lib/KpiCardGroup.js';
 export type { KpiCardGroupProps } from './lib/KpiCardGroup.js';
+export { ScoreCard } from './lib/ScoreCard.js';
+export type { ScoreCardProps } from './lib/ScoreCard.js';
 export { RecordsTable } from './lib/RecordsTable.js';
 export type { RecordsTableProps } from './lib/RecordsTable.js';
 export { DrillBarChart } from './lib/DrillBarChart.js';

@@ -118,6 +118,8 @@ export { default as AdvancedPivotDataTable } from './lib/AdvancedPivotDataTable.
 export type { AdvancedPivotDataTableProps } from './lib/AdvancedPivotDataTable.svelte';
 export { default as KpiCardGroup } from './lib/KpiCardGroup.svelte';
 export type { KpiCardGroupProps } from './lib/KpiCardGroup.svelte';
+export { default as ScoreCard } from './lib/ScoreCard.svelte';
+export type { ScoreCardProps } from './lib/ScoreCard.svelte';
 export { default as RecordsTable } from './lib/RecordsTable.svelte';
 export type { RecordsTableProps } from './lib/RecordsTable.svelte';
 export { default as DrillBarChart } from './lib/DrillBarChart.svelte';
