@@ -23,6 +23,9 @@ export type ScoreCardProps = {
   comparisonData?: readonly Row[];
   format?: KpiCardFormat;
   deltaFormat?: KpiCardDeltaFormat;
+  unit?: string;
+  currency?: string;
+  locale?: string;
   size?: KpiCardSize;
   tone?: KpiCardTone;
   class?: string;
@@ -44,6 +47,9 @@ export const ScoreCard = defineComponent({
     comparisonData: { type: Array as unknown as PropType<readonly Row[]>, default: undefined },
     format: { type: String as PropType<KpiCardFormat>, default: undefined },
     deltaFormat: { type: String as PropType<KpiCardDeltaFormat>, default: 'percent' },
+    unit: { type: String, default: undefined },
+    currency: { type: String, default: undefined },
+    locale: { type: String, default: undefined },
     size: { type: String as PropType<KpiCardSize>, default: undefined },
     tone: { type: String as PropType<KpiCardTone>, default: undefined },
     class: { type: String, default: undefined },
@@ -63,6 +69,9 @@ export const ScoreCard = defineComponent({
         label: card!.label,
         delta: finite(props.deltaFormat === 'absolute' ? card!.delta : card!.deltaPercent),
         deltaFormat: props.deltaFormat,
+        unit: props.unit,
+        currency: props.currency,
+        locale: props.locale,
         format: props.format,
         size: props.size,
         tone: props.tone,

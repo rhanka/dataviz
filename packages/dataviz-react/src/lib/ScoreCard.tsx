@@ -22,6 +22,9 @@ export type ScoreCardProps = {
   comparisonData?: readonly Row[];
   format?: KpiCardFormat;
   deltaFormat?: KpiCardDeltaFormat;
+  unit?: string;
+  currency?: string;
+  locale?: string;
   size?: KpiCardSize;
   tone?: KpiCardTone;
   className?: string;
@@ -41,6 +44,9 @@ export function ScoreCard({
   comparisonData,
   format,
   deltaFormat = 'percent',
+  unit,
+  currency,
+  locale,
   size,
   tone,
   className,
@@ -60,6 +66,9 @@ export function ScoreCard({
       label={card!.label}
       delta={finite(deltaFormat === 'absolute' ? card!.delta : card!.deltaPercent)}
       deltaFormat={deltaFormat}
+      unit={unit}
+      currency={currency}
+      locale={locale}
       format={format}
       size={size}
       tone={tone}
