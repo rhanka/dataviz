@@ -405,6 +405,41 @@ export function CHART_ENTRIES(ChartDemo: Demo, GeoDemo: Demo): DemoEntry[] {
       }),
     }, ChartDemo),
 
+    // ── Indicateurs ──────────────────────────────────────────────────────
+    chart({
+      slug: 'scatter', name: 'ScatterPlot', group: 'Indicateurs', kind: 'scatter', hasControls: false,
+      tagline: 'Nuage de points (x/y) avec tones catégorielles optionnelles.',
+      useCase:
+        "Comparer deux mesures numériques (revenu vs unités) point à point. La propriété `series` colore les points par dimension catégorielle (ici la catégorie produit), révélant des groupes sans clustering.\n\nContrairement à `AnalyticsClusterPlot` (k-means), `ScatterPlot` est une lecture directe sans transformation statistique : chaque ligne du dataset devient un point.",
+      code: storeCode(['ScatterPlot'], {
+        svelte: `<ScatterPlot {store} viewId="c" x="revenue" y="units" series="category" labelField="category" label="Revenu vs unités" />`,
+        react: `<ScatterPlot store={store} viewId="c" x="revenue" y="units" series="category" labelField="category" label="Revenu vs unités" />`,
+        vue: `<ScatterPlot :store="store" viewId="c" x="revenue" y="units" series="category" labelField="category" label="Revenu vs unités" />`,
+      }),
+    }, ChartDemo),
+    chart({
+      slug: 'sparkline', name: 'Sparkline', group: 'Indicateurs', kind: 'sparkline', hasControls: false,
+      tagline: 'Mini-courbe de tendance inline.',
+      useCase:
+        "Intégrer une tendance compacte dans un tableau de bord ou une fiche KPI. `dimension` ordonne les points (ex. 'month'), `measure` fournit les valeurs. `area` ajoute un remplissage semi-transparent pour améliorer la lisibilité.",
+      code: storeCode(['Sparkline'], {
+        svelte: `<Sparkline {store} viewId="c" dimension="month" measure="revenue" area label="Tendance mensuelle" />`,
+        react: `<Sparkline store={store} viewId="c" dimension="month" measure="revenue" area label="Tendance mensuelle" />`,
+        vue: `<Sparkline :store="store" viewId="c" dimension="month" measure="revenue" area label="Tendance mensuelle" />`,
+      }),
+    }, ChartDemo),
+    chart({
+      slug: 'scorecard', name: 'ScoreCard', group: 'Indicateurs', kind: 'scorecard', hasControls: false,
+      tagline: 'Carte KPI unique avec delta, sparkline et objectif.',
+      useCase:
+        "Afficher un indicateur clé isolé — valeur agrégée, variation par rapport à une période précédente (`comparisonData`), objectif de progression (`goal`) et mini-sparkline. Variante single-card de `KpiCardGroup` : même moteur `buildKpiCards`, un seul slot.",
+      code: storeCode(['ScoreCard'], {
+        svelte: `<ScoreCard {store} viewId="c" measure="revenue" sparklineDimension="month" format="currency" tone="category1" label="Revenu total" />`,
+        react: `<ScoreCard store={store} viewId="c" measure="revenue" sparklineDimension="month" format="currency" tone="category1" label="Revenu total" />`,
+        vue: `<ScoreCard :store="store" viewId="c" measure="revenue" sparklineDimension="month" format="currency" tone="category1" label="Revenu total" />`,
+      }),
+    }, ChartDemo),
+
     // ── Cartographie géo ─────────────────────────────────────────────────
     geo({
       slug: 'geo-point', name: 'GeoPointMap', kind: 'point', hasControls: true,

@@ -36,6 +36,9 @@
     ForecastLineChart,
     ErrorBarsChart,
     AnalyticsClusterPlot,
+    ScatterPlot,
+    Sparkline,
+    ScoreCard,
   } from '@sentropic/dataviz-svelte';
   import { ContentSwitcher } from '@sentropic/design-system-svelte';
   import { lineAnnotation, regionAnnotation, makeFormatter } from '@sentropic/dataviz-core';
@@ -167,6 +170,12 @@
     <ErrorBarsChart {store} viewId="c" category="category" value="price" interval="stdev" label="Prix moyen ± écart-type" />
   {:else if kind === 'cluster'}
     <AnalyticsClusterPlot {store} viewId="c" fields={['price', 'marginRate']} k={3} label="Clusters prix/marge" />
+  {:else if kind === 'scatter'}
+    <ScatterPlot {store} viewId="c" x="revenue" y="units" series="category" labelField="category" label="Revenu vs unités par catégorie" />
+  {:else if kind === 'sparkline'}
+    <Sparkline {store} viewId="c" dimension="month" measure="revenue" area label="Tendance mensuelle du revenu" />
+  {:else if kind === 'scorecard'}
+    <ScoreCard {store} viewId="c" measure="revenue" sparklineDimension="month" format="currency" label="Revenu total" tone="category1" />
   {/if}
 </div>
 
