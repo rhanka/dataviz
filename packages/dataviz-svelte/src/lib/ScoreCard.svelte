@@ -22,6 +22,9 @@
     comparisonData?: readonly Row[];
     format?: KpiCardFormat;
     deltaFormat?: KpiCardDeltaFormat;
+    unit?: string;
+    currency?: string;
+    locale?: string;
     size?: KpiCardSize;
     tone?: KpiCardTone;
     class?: string;
@@ -43,6 +46,9 @@
     comparisonData,
     format,
     deltaFormat = 'percent',
+    unit,
+    currency,
+    locale,
     size,
     tone,
     class: className,
@@ -69,6 +75,9 @@
   label={card.label}
   delta={finite(deltaFormat === 'absolute' ? card.delta : card.deltaPercent)}
   {deltaFormat}
+  {unit}
+  {currency}
+  {locale}
   {format}
   {size}
   {tone}
