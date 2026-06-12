@@ -15,6 +15,51 @@ function grid(
 export function GRID_ENTRIES(GridDemo: Demo): DemoEntry[] {
   return [
     grid({
+      slug: 'conditional-format', name: 'Conditional Formatting', kind: 'conditional-format', hasControls: false,
+      tagline: 'Mise en forme conditionnelle : règles seuil → décoration DS.',
+      useCase:
+        "FR-6 : le moteur de règles `dataviz-core` (`rule('gt', X, 'positive')`) produit des décorations sémantiques (`ConditionalDecoration`) qui sont transmises au `DataTable` du design system via la prop `decorations`. Ici, le revenu est coloré vert au-delà de 50 000 €, rouge sous 10 000 €, et le taux de marge déclenche un avertissement sous 25 %.",
+      code: storeCode(['RecordsTable'], {
+        svelte: `<script lang="ts">
+  import { rule } from '@sentropic/dataviz-core';
+  const revenueFormat = [
+    rule('gt', 50000, 'positive', { icon: 'trending-up' }),
+    rule('lt', 10000, 'negative', { icon: 'trending-down' }),
+  ];
+  const marginRateFormat = [
+    rule('gte', 0.40, 'positive'),
+    rule('lt', 0.25, 'warning'),
+  ];
+</script>
+<RecordsTable
+  {store}
+  fields={['region', 'category', 'channel', 'revenue', 'margin', 'marginRate']}
+  conditionalFormat={{ revenue: revenueFormat, marginRate: marginRateFormat }}
+  pageSize={15}
+  caption="Mise en forme conditionnelle" />`,
+        react: `const revenueFormat = [
+  rule('gt', 50000, 'positive', { icon: 'trending-up' }),
+  rule('lt', 10000, 'negative', { icon: 'trending-down' }),
+];
+const marginRateFormat = [
+  rule('gte', 0.40, 'positive'),
+  rule('lt', 0.25, 'warning'),
+];
+<RecordsTable
+  store={store}
+  fields={['region', 'category', 'channel', 'revenue', 'margin', 'marginRate']}
+  conditionalFormat={{ revenue: revenueFormat, marginRate: marginRateFormat }}
+  pageSize={15}
+  caption="Mise en forme conditionnelle" />`,
+        vue: `<RecordsTable
+  :store="store"
+  :fields="['region', 'category', 'channel', 'revenue', 'margin', 'marginRate']"
+  :conditionalFormat="{ revenue: revenueFormat, marginRate: marginRateFormat }"
+  :pageSize="15"
+  caption="Mise en forme conditionnelle" />`,
+      }),
+    }, GridDemo),
+    grid({
       slug: 'records-table', name: 'RecordsTable', kind: 'records', hasControls: false,
       tagline: 'Table des enregistrements cross-filtrés, paginée.',
       useCase:

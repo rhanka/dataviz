@@ -9,12 +9,24 @@
     AdvancedPivotDataTable,
     RecordsTable,
   } from '@sentropic/dataviz-svelte';
+  import { rule } from '@sentropic/dataviz-core';
   import { makeStore } from '../../data/store';
 
   let { kind }: { kind: string; controls?: boolean } = $props();
   const store = makeStore();
 
   let collapsed = $state<string[]>([]);
+
+  // FR-6 conditional formatting rules: revenue = green if high, red if low
+  const revenueFormat = [
+    rule('gt', 50000, 'positive', { icon: 'trending-up' }),
+    rule('lt', 10000, 'negative', { icon: 'trending-down' }),
+  ];
+  // margin rate: warning below 25%, positive above 40%
+  const marginRateFormat = [
+    rule('gte', 0.40, 'positive'),
+    rule('lt', 0.25, 'warning'),
+  ];
 </script>
 
 <div class="stage">
@@ -43,6 +55,14 @@
           ? collapsed.filter((c) => c !== id)
           : [...collapsed, id])}
       caption="Pivot avancé — sous-totaux, heat & sparkline"
+    />
+  {:else if kind === 'conditional-format'}
+    <RecordsTable
+      {store}
+      fields={['region', 'category', 'channel', 'revenue', 'margin', 'marginRate']}
+      conditionalFormat={{ revenue: revenueFormat, marginRate: marginRateFormat }}
+      pageSize={15}
+      caption="Mise en forme conditionnelle — revenu & taux de marge"
     />
   {/if}
 </div>
