@@ -1,9 +1,11 @@
 <script lang="ts" module>
   import type {
+    ChartAnnotation,
     CategoricalMeasureInput,
     CategoricalMode,
     DashboardStore,
   } from '@sentropic/dataviz-core';
+  import type { DataLabelsProp } from '@sentropic/design-system-svelte';
 
   export type ComboChartProps = {
     store: DashboardStore;
@@ -17,6 +19,11 @@
     legend?: boolean;
     hiddenSeries?: string[];
     onToggleSeries?: (seriesId: string) => void;
+    annotations?: ChartAnnotation[];
+    dataLabels?: DataLabelsProp;
+    hoverKey?: string | null;
+    onHoverKeyChange?: (key: string | null) => void;
+    onSelectKey?: (key: string | null) => void;
     width?: number;
     height?: number;
     label: string;
@@ -45,6 +52,11 @@
     legend = true,
     hiddenSeries,
     onToggleSeries,
+    annotations,
+    dataLabels,
+    hoverKey,
+    onHoverKeyChange,
+    onSelectKey,
     width,
     height,
     label,
@@ -84,6 +96,11 @@
   {legend}
   {hiddenSeries}
   {onToggleSeries}
+  {annotations}
+  {dataLabels}
+  {hoverKey}
+  {onHoverKeyChange}
+  {onSelectKey}
   {width}
   {height}
   {label}
