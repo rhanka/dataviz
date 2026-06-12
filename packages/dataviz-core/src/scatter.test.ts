@@ -25,8 +25,8 @@ describe('buildScatterModel', () => {
     expect(result.data[0]).toEqual({ x: 100, y: 10 });
     expect(result.data[1]).toEqual({ x: 200, y: 20 });
     expect(result.data[2]).toEqual({ x: 50, y: 5 });
-    expect(result.xLabel).toBe('revenue');
-    expect(result.yLabel).toBe('units');
+    expect(result.xLabel).toBe('Revenu');
+    expect(result.yLabel).toBe('Unités');
   });
 
   it('skips rows where x or y is not a finite number', () => {
