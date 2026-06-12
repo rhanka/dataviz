@@ -407,7 +407,7 @@ export function CHART_ENTRIES(ChartDemo: Demo, GeoDemo: Demo): DemoEntry[] {
 
     // ── Indicateurs ──────────────────────────────────────────────────────
     chart({
-      slug: 'scatter', name: 'ScatterPlot', group: 'Indicateurs', kind: 'scatter', hasControls: false,
+      slug: 'scatter', name: 'ScatterPlot', group: 'Couche analytique', kind: 'scatter', hasControls: false,
       tagline: 'Nuage de points (x/y) avec tones catégorielles optionnelles.',
       useCase:
         "Comparer deux mesures numériques (revenu vs unités) point à point. La propriété `series` colore les points par dimension catégorielle (ici la catégorie produit), révélant des groupes sans clustering.\n\nContrairement à `AnalyticsClusterPlot` (k-means), `ScatterPlot` est une lecture directe sans transformation statistique : chaque ligne du dataset devient un point.",
@@ -425,7 +425,7 @@ export function CHART_ENTRIES(ChartDemo: Demo, GeoDemo: Demo): DemoEntry[] {
       code: storeCode(['Sparkline'], {
         svelte: `<Sparkline {store} viewId="c" dimension="month" measure="revenue" area label="Tendance mensuelle" />`,
         react: `<Sparkline store={store} viewId="c" dimension="month" measure="revenue" area label="Tendance mensuelle" />`,
-        vue: `<Sparkline :store="store" viewId="c" dimension="month" measure="revenue" area label="Tendance mensuelle" />`,
+        vue: `<Sparkline :store="store" viewId="c" dimension="month" measure="revenue" :area="true" label="Tendance mensuelle" />`,
       }),
     }, ChartDemo),
     chart({
