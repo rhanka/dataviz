@@ -12,8 +12,140 @@ function bi(
   return { ...rest, section: 'dashboards', demo: Comp, demoProps: { kind } };
 }
 
-export function DASHBOARD_ENTRIES(BiDemo: Demo, FullDashboard: Demo): DemoEntry[] {
+export function DASHBOARD_ENTRIES(BiDemo: Demo, FullDashboard: Demo, DataExplorer: Demo): DemoEntry[] {
   return [
+    // ── Explorateur de données ───────────────────────────────────────────
+    {
+      slug: 'data-explorer',
+      section: 'dashboards',
+      name: 'Explorateur de données',
+      group: 'Tableaux de bord',
+      tagline: 'Surface BI exploration : dimension/mesure dynamiques + cross-filter + slicers + table.',
+      hasControls: false,
+      useCase:
+        "Un seul `createDashboardStore` alimente une surface d'exploration BI complète en libre-service.\n\nDeux `ContentSwitcher` DS permettent de choisir à la volée la **dimension** (catégorie, région, canal, segment) et la **mesure** (revenu, unités, marge) à visualiser. Le `CrossfilteredBarChart` se recompose instantanément à chaque changement.\n\nCliquer une barre applique `applyCrossfilter` dans le store : la `RecordsTable` et les slicers (`TopNFilter`, `ValueSlicer`) se recalculent en temps réel sans aucune logique custom.\n\n`DashboardFilterBar` résume les filtres actifs sous forme de chips effaçables ; `SelectionLegend` indique quelles valeurs sont sélectionnées dans la vue principale.\n\nMiroir de la vue DS « data-explorer » : presentation 100 % composants dataviz/DS, tokens CSS uniquement.",
+      demo: DataExplorer,
+      demoProps: {},
+      code: storeCode(
+        ['DashboardFilterBar', 'SelectionLegend', 'CrossfilteredBarChart', 'RecordsTable', 'TopNFilter', 'ValueSlicer'],
+        {
+          svelte: `<!-- Sélecteurs DS ContentSwitcher pour dimension + mesure -->
+<script>
+  import { ContentSwitcher } from '@sentropic/design-system-svelte';
+  let dimension = $state('category');
+  let measure = $state('revenue');
+<\/script>
+
+<DashboardFilterBar {store} />
+<SelectionLegend {store} labels={{ main: 'Dimension active' }} />
+
+<ContentSwitcher size="sm" label="Dimension"
+  items={[
+    { value: 'category', label: 'Catégorie' },
+    { value: 'region',   label: 'Région' },
+    { value: 'channel',  label: 'Canal' },
+  ]}
+  value={dimension}
+  onchange={(v) => (dimension = v)}
+/>
+<ContentSwitcher size="sm" label="Mesure"
+  items={[
+    { value: 'revenue', label: 'Revenu (€)' },
+    { value: 'units',   label: 'Unités' },
+    { value: 'margin',  label: 'Marge (€)' },
+  ]}
+  value={measure}
+  onchange={(v) => (measure = v)}
+/>
+
+<!-- Graphique cross-filtré piloté par le choix dimension/mesure -->
+<CrossfilteredBarChart {store} viewId="main" {dimension} {measure}
+  label="Résultat par dimension" />
+
+<!-- Slicers -->
+<TopNFilter {store} dimension="product" {measure} defaultN={5} label="Top N produits" />
+<ValueSlicer {store} dimension="channel" />
+
+<!-- Table cross-filtrée -->
+<RecordsTable {store} pageSize={8}
+  fields={[dimension, 'product', 'channel', 'region', 'revenue', 'units', 'margin']} />`,
+          react: `import { useState, useMemo } from 'react';
+import { ContentSwitcher } from '@sentropic/design-system-react';
+
+export function DataExplorer() {
+  const store = useMemo(() => createDashboardStore({ model, data }), []);
+  const [dimension, setDimension] = useState('category');
+  const [measure, setMeasure]     = useState('revenue');
+  return (
+    <>
+      <DashboardFilterBar store={store} />
+      <SelectionLegend store={store} labels={{ main: 'Dimension active' }} />
+      <ContentSwitcher size="sm" label="Dimension"
+        items={[
+          { value: 'category', label: 'Catégorie' },
+          { value: 'region',   label: 'Région' },
+          { value: 'channel',  label: 'Canal' },
+        ]}
+        value={dimension}
+        onchange={setDimension}
+      />
+      <ContentSwitcher size="sm" label="Mesure"
+        items={[
+          { value: 'revenue', label: 'Revenu (€)' },
+          { value: 'units',   label: 'Unités' },
+          { value: 'margin',  label: 'Marge (€)' },
+        ]}
+        value={measure}
+        onchange={setMeasure}
+      />
+      <CrossfilteredBarChart store={store} viewId="main" dimension={dimension} measure={measure}
+        label="Résultat par dimension" />
+      <TopNFilter store={store} dimension="product" measure={measure} defaultN={5} label="Top N produits" />
+      <ValueSlicer store={store} dimension="channel" />
+      <RecordsTable store={store} pageSize={8}
+        fields={[dimension, 'product', 'channel', 'region', 'revenue', 'units', 'margin']} />
+    </>
+  );
+}`,
+          vue: `<script setup lang="ts">
+import { ref } from 'vue';
+import { ContentSwitcher } from '@sentropic/design-system-vue';
+const store = createDashboardStore({ model, data });
+const dimension = ref('category');
+const measure   = ref('revenue');
+<\/script>
+
+<template>
+  <DashboardFilterBar :store="store" />
+  <SelectionLegend :store="store" :labels="{ main: 'Dimension active' }" />
+  <ContentSwitcher size="sm" label="Dimension"
+    :items="[
+      { value: 'category', label: 'Catégorie' },
+      { value: 'region',   label: 'Région' },
+      { value: 'channel',  label: 'Canal' },
+    ]"
+    :value="dimension"
+    @change="(v) => (dimension = v)"
+  />
+  <ContentSwitcher size="sm" label="Mesure"
+    :items="[
+      { value: 'revenue', label: 'Revenu (€)' },
+      { value: 'units',   label: 'Unités' },
+      { value: 'margin',  label: 'Marge (€)' },
+    ]"
+    :value="measure"
+    @change="(v) => (measure = v)"
+  />
+  <CrossfilteredBarChart :store="store" viewId="main" :dimension="dimension" :measure="measure"
+    label="Résultat par dimension" />
+  <TopNFilter :store="store" dimension="product" :measure="measure" :defaultN="5" label="Top N produits" />
+  <ValueSlicer :store="store" dimension="channel" />
+  <RecordsTable :store="store" :pageSize="8"
+    :fields="[dimension, 'product', 'channel', 'region', 'revenue', 'units', 'margin']" />
+</template>`,
+        },
+      ),
+    },
     // ── Tableau de bord complet ──────────────────────────────────────────
     {
       slug: 'full-dashboard',
