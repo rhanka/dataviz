@@ -151,8 +151,9 @@
   }}
 />
 
-<!-- Framework switcher mounted in AppChrome's right-hand identity slot (DS Menu
-     pieces only — no hand-rolled control). -->
+<!-- Framework switcher mounted in AppChrome's native `extraSelectors` utility slot
+     (DS Menu pieces only — no hand-rolled control), placed inline with the DS
+     theme/color-mode/GitHub controls instead of the far-right identity zone. -->
 {#snippet fwSwitch()}
   <span style="display:inline-flex" bind:this={fwTrigger}>
     <MenuTriggerButton
@@ -197,7 +198,7 @@
       theme={theme.value}
       onThemeChange={(id) => theme.set(id)}
       themeLabel="Changer de thème"
-      identity={showFwSwitch ? fwSwitch : undefined}
+      extraSelectors={showFwSwitch ? fwSwitch : undefined}
       {mobileMenuOpen}
       onMobileMenuToggle={() => (mobileMenuOpen = !mobileMenuOpen)}
       menuLabel="Menu"
