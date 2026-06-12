@@ -86,6 +86,8 @@ export { ErrorBarsChart } from './lib/ErrorBarsChart.js';
 export type { ErrorBarsChartProps } from './lib/ErrorBarsChart.js';
 export { AnalyticsClusterPlot } from './lib/AnalyticsClusterPlot.js';
 export type { AnalyticsClusterPlotProps } from './lib/AnalyticsClusterPlot.js';
+export { ScatterPlot } from './lib/ScatterPlot.js';
+export type { ScatterPlotProps } from './lib/ScatterPlot.js';
 export { GeoPointMap } from './lib/GeoPointMap.js';
 export type { GeoPointMapProps } from './lib/GeoPointMap.js';
 export { ChoroplethMap } from './lib/ChoroplethMap.js';

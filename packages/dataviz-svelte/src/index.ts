@@ -90,6 +90,8 @@ export { default as ErrorBarsChart } from './lib/ErrorBarsChart.svelte';
 export type { ErrorBarsChartProps } from './lib/ErrorBarsChart.svelte';
 export { default as AnalyticsClusterPlot } from './lib/AnalyticsClusterPlot.svelte';
 export type { AnalyticsClusterPlotProps } from './lib/AnalyticsClusterPlot.svelte';
+export { default as ScatterPlot } from './lib/ScatterPlot.svelte';
+export type { ScatterPlotProps } from './lib/ScatterPlot.svelte';
 export { default as GeoPointMap } from './lib/GeoPointMap.svelte';
 export type { GeoPointMapProps } from './lib/GeoPointMap.svelte';
 export { default as ChoroplethMap } from './lib/ChoroplethMap.svelte';
