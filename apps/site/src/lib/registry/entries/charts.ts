@@ -405,6 +405,19 @@ export function CHART_ENTRIES(ChartDemo: Demo, GeoDemo: Demo): DemoEntry[] {
       }),
     }, ChartDemo),
 
+    // ── Finance ──────────────────────────────────────────────────────────
+    chart({
+      slug: 'candlestick', name: 'CandlestickChart', group: 'Finance', kind: 'candlestick', hasControls: false,
+      tagline: 'Bougies OHLC pour visualiser des cours financiers.',
+      useCase:
+        "Afficher l\'évolution d\'un titre sur une série de séances boursières. Chaque bougie encode l\'ouverture, le plus haut, le plus bas et la clôture. Les bougies vertes signalent une hausse (close > open), les rouges une baisse.\n\nLa prop `label_field` désigne la dimension de session (date ou libellé) et les quatre champs `open`/`high`/`low`/`close` pointent les mesures correspondantes du modèle.",
+      code: storeCode(['CandlestickChart'], {
+        svelte: `<CandlestickChart {store} viewId="ohlc" label_field="session" open="open" high="high" low="low" close="close" label="Cours boursiers (28 séances)" />`,
+        react: `<CandlestickChart store={store} viewId="ohlc" label_field="session" open="open" high="high" low="low" close="close" label="Cours boursiers (28 séances)" />`,
+        vue: `<CandlestickChart :store="store" viewId="ohlc" label_field="session" open="open" high="high" low="low" close="close" label="Cours boursiers (28 séances)" />`,
+      }),
+    }, ChartDemo),
+
     // ── Indicateurs ──────────────────────────────────────────────────────
     chart({
       slug: 'scatter', name: 'ScatterPlot', group: 'Couche analytique', kind: 'scatter', hasControls: false,
