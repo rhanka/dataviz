@@ -88,6 +88,8 @@ export { AnalyticsClusterPlot } from './lib/AnalyticsClusterPlot.js';
 export type { AnalyticsClusterPlotProps } from './lib/AnalyticsClusterPlot.js';
 export { ScatterPlot } from './lib/ScatterPlot.js';
 export type { ScatterPlotProps } from './lib/ScatterPlot.js';
+export { CandlestickChart } from './lib/CandlestickChart.js';
+export type { CandlestickChartProps } from './lib/CandlestickChart.js';
 export { Sparkline } from './lib/Sparkline.js';
 export type { SparklineProps, SparklineTone } from './lib/Sparkline.js';
 export { GeoPointMap } from './lib/GeoPointMap.js';
