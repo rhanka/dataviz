@@ -92,6 +92,8 @@ export { default as AnalyticsClusterPlot } from './lib/AnalyticsClusterPlot.svel
 export type { AnalyticsClusterPlotProps } from './lib/AnalyticsClusterPlot.svelte';
 export { default as ScatterPlot } from './lib/ScatterPlot.svelte';
 export type { ScatterPlotProps } from './lib/ScatterPlot.svelte';
+export { default as CandlestickChart } from './lib/CandlestickChart.svelte';
+export type { CandlestickChartProps } from './lib/CandlestickChart.svelte';
 export { default as Sparkline } from './lib/Sparkline.svelte';
 export type { SparklineProps, SparklineTone } from './lib/Sparkline.svelte';
 export { default as GeoPointMap } from './lib/GeoPointMap.svelte';
