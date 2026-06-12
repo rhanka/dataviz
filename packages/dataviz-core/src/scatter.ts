@@ -9,6 +9,8 @@
  * dropped silently (mirrors the null-handling pattern in analyticsDsData.ts).
  */
 
+import { type DataModel, type Row, findMeasure, findDimension } from './model.js';
+
 const SCATTER_TONES = [
   'category1',
   'category2',
@@ -47,6 +49,7 @@ export interface ScatterModel {
 }
 
 function toFiniteNumber(value: unknown): number | undefined {
+  if (typeof value === 'boolean') return value ? 1 : 0;
   if (typeof value === 'number') return Number.isFinite(value) ? value : undefined;
   if (typeof value === 'string' && value.trim() !== '') {
     const parsed = Number(value);
@@ -55,16 +58,20 @@ function toFiniteNumber(value: unknown): number | undefined {
   return undefined;
 }
 
+function fieldLabel(model: DataModel, fieldId: string): string {
+  return findMeasure(model, fieldId)?.label ?? findDimension(model, fieldId)?.label ?? fieldId;
+}
+
 /**
  * Build scatter-plot data from raw rows by mapping two numeric fields to x/y.
  *
- * @param _model  DataModel (reserved for future measure-label lookup)
+ * @param _model  DataModel — used for measure/dimension label lookup
  * @param rows    Filtered rows from `store.applyCrossfilter(viewId)`
  * @param config  { x, y, series?, labelField? }
  */
 export function buildScatterModel(
-  _model: unknown,
-  rows: readonly Record<string, unknown>[],
+  _model: DataModel,
+  rows: readonly Row[],
   config: ScatterConfig,
 ): ScatterModel {
   // Build tone map lazily: series value → tone (stable across rows)
@@ -101,7 +108,7 @@ export function buildScatterModel(
 
   return {
     data,
-    xLabel: config.x,
-    yLabel: config.y,
+    xLabel: fieldLabel(_model, config.x),
+    yLabel: fieldLabel(_model, config.y),
   };
 }
