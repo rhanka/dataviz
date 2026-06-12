@@ -395,3 +395,23 @@ export {
 // Hover channel (ephemeral cross-panel crosshair state — not serialised)
 export type { HoverChannel } from './hover.js';
 export { createHoverChannel, hoverKeyOf } from './hover.js';
+
+// Conditional formatting (serialisable rule engine; presentation-free)
+export type {
+  ConditionalComparator,
+  ConditionalIntent,
+  ComparatorCondition,
+  RankCondition,
+  ConditionalCondition,
+  ConditionalRule,
+  ConditionalFormat,
+  ConditionalDecoration,
+} from './conditional-format.js';
+export {
+  isConditionalRule,
+  isConditionalFormat,
+  evaluateConditionalFormat,
+  applyConditionalFormat,
+  rule,
+  rankRule,
+} from './conditional-format.js';
