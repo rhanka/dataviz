@@ -36,6 +36,9 @@ export type CrossfilteredBarChartProps = {
   orientation?: 'vertical' | 'horizontal';
   width?: number;
   height?: number;
+  hoverKey?: string | null;
+  onHoverKeyChange?: (key: string | null) => void;
+  onSelectKey?: (key: string | null) => void;
   class?: string;
 };
 
@@ -58,6 +61,9 @@ export const CrossfilteredBarChart = defineComponent({
     orientation: { type: String as PropType<'vertical' | 'horizontal'>, default: 'vertical' },
     width: { type: Number, default: undefined },
     height: { type: Number, default: undefined },
+    hoverKey: { type: [String, null] as unknown as PropType<string | null>, default: undefined },
+    onHoverKeyChange: { type: Function as PropType<(key: string | null) => void>, default: undefined },
+    onSelectKey: { type: Function as PropType<(key: string | null) => void>, default: undefined },
     class: { type: String, default: undefined },
   },
   setup(props) {
@@ -84,6 +90,9 @@ export const CrossfilteredBarChart = defineComponent({
         onSelect: props.selectable
           ? (key: string) => props.store.toggleSelection(props.viewId, key)
           : undefined,
+        hoverKey: props.hoverKey,
+        onHoverKeyChange: props.onHoverKeyChange,
+        onSelectKey: props.onSelectKey,
       });
     };
   },

@@ -13,6 +13,9 @@ export type TrendLineChartProps = {
   label: string;
   annotations?: ChartAnnotation[];
   dataLabels?: ChartDataLabels;
+  hoverKey?: string | null;
+  onHoverKeyChange?: (key: string | null) => void;
+  onSelectKey?: (key: string | null) => void;
   class?: string;
 };
 
@@ -28,6 +31,9 @@ export const TrendLineChart = defineComponent({
     label: { type: String, required: true },
     annotations: { type: Array as PropType<ChartAnnotation[]>, default: undefined },
     dataLabels: { type: [Boolean, Object] as PropType<ChartDataLabels>, default: undefined },
+    hoverKey: { type: [String, null] as unknown as PropType<string | null>, default: undefined },
+    onHoverKeyChange: { type: Function as PropType<(key: string | null) => void>, default: undefined },
+    onSelectKey: { type: Function as PropType<(key: string | null) => void>, default: undefined },
     class: { type: String, default: undefined },
   },
   setup(props) {
@@ -48,6 +54,9 @@ export const TrendLineChart = defineComponent({
         annotations: props.annotations,
         dataLabels: props.dataLabels,
         trend: true,
+        hoverKey: props.hoverKey,
+        onHoverKeyChange: props.onHoverKeyChange,
+        onSelectKey: props.onSelectKey,
         class: ['st-trendLineChart', props.class].filter(Boolean).join(' '),
       });
     };

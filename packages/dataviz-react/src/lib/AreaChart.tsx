@@ -22,6 +22,9 @@ export type AreaChartProps = {
   label: string;
   annotations?: ChartAnnotation[];
   dataLabels?: ChartDataLabels;
+  hoverKey?: string | null;
+  onHoverKeyChange?: (key: string | null) => void;
+  onSelectKey?: (key: string | null) => void;
   className?: string;
 };
 
@@ -37,6 +40,9 @@ export function AreaChart({
   label,
   annotations,
   dataLabels,
+  hoverKey,
+  onHoverKeyChange,
+  onSelectKey,
   className,
 }: AreaChartProps) {
   const state = useDashboard(store);
@@ -45,5 +51,5 @@ export function AreaChart({
   const seriesModel = buildSimpleCategoricalSeries(store.model, store.applyCrossfilter(viewId), category, measure);
   const data = toSimpleCategoricalPoints(seriesModel);
 
-  return <DsAreaChart data={data} label={label} tone={tone} smooth={smooth} width={width} height={height} annotations={annotations} dataLabels={dataLabels} className={className} />;
+  return <DsAreaChart data={data} label={label} tone={tone} smooth={smooth} width={width} height={height} annotations={annotations} dataLabels={dataLabels} hoverKey={hoverKey} onHoverKeyChange={onHoverKeyChange} onSelectKey={onSelectKey} className={className} />;
 }

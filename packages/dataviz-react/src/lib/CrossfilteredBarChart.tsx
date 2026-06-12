@@ -35,6 +35,9 @@ export type CrossfilteredBarChartProps = {
   orientation?: 'vertical' | 'horizontal';
   width?: number;
   height?: number;
+  hoverKey?: string | null;
+  onHoverKeyChange?: (key: string | null) => void;
+  onSelectKey?: (key: string | null) => void;
   className?: string;
 };
 
@@ -55,6 +58,9 @@ export function CrossfilteredBarChart({
   orientation = 'vertical',
   width,
   height,
+  hoverKey,
+  onHoverKeyChange,
+  onSelectKey,
   className,
 }: CrossfilteredBarChartProps) {
   const state = useDashboard(store);
@@ -77,6 +83,9 @@ export function CrossfilteredBarChart({
       className={className}
       selectedKeys={selectable ? (state.selections[viewId] ?? []) : []}
       onSelect={selectable ? (key) => store.toggleSelection(viewId, key) : undefined}
+      hoverKey={hoverKey}
+      onHoverKeyChange={onHoverKeyChange}
+      onSelectKey={onSelectKey}
     />
   );
 }

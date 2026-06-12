@@ -15,6 +15,9 @@ export type ReferenceLineChartProps = {
   width?: number;
   height?: number;
   label: string;
+  hoverKey?: string | null;
+  onHoverKeyChange?: (key: string | null) => void;
+  onSelectKey?: (key: string | null) => void;
   class?: string;
 };
 
@@ -38,6 +41,9 @@ export const ReferenceLineChart = defineComponent({
     width: { type: Number, default: 360 },
     height: { type: Number, default: 96 },
     label: { type: String, required: true },
+    hoverKey: { type: [String, null] as unknown as PropType<string | null>, default: undefined },
+    onHoverKeyChange: { type: Function as PropType<(key: string | null) => void>, default: undefined },
+    onSelectKey: { type: Function as PropType<(key: string | null) => void>, default: undefined },
     class: { type: String, default: undefined },
   },
   setup(props) {
@@ -62,6 +68,9 @@ export const ReferenceLineChart = defineComponent({
         height: props.height,
         label: props.label,
         referenceLines: [{ axis: 'x', value: model.value, label: model.label, tone: 'info' }],
+        hoverKey: props.hoverKey,
+        onHoverKeyChange: props.onHoverKeyChange,
+        onSelectKey: props.onSelectKey,
         class: ['st-referenceLineChart', props.class].filter(Boolean).join(' '),
       });
     };

@@ -31,7 +31,7 @@
   },
   "dependencies": {
     "@sentropic/dataviz-core": "0.4.25",
-    "@sentropic/design-system-svelte": "0.34.26",
+    "@sentropic/design-system-svelte": "0.34.27",
     "@sentropic/design-system-themes": "0.11.0"
   },
   "peerDependencies": {

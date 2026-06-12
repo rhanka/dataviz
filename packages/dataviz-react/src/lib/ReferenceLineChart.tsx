@@ -14,6 +14,9 @@ export type ReferenceLineChartProps = {
   width?: number;
   height?: number;
   label: string;
+  hoverKey?: string | null;
+  onHoverKeyChange?: (key: string | null) => void;
+  onSelectKey?: (key: string | null) => void;
   className?: string;
 };
 
@@ -35,6 +38,9 @@ export function ReferenceLineChart({
   width = 360,
   height = 96,
   label,
+  hoverKey,
+  onHoverKeyChange,
+  onSelectKey,
   className,
 }: ReferenceLineChartProps) {
   const state = useDashboard(store);
@@ -58,6 +64,9 @@ export function ReferenceLineChart({
       height={height}
       label={label}
       referenceLines={[{ axis: 'x', value: model.value, label: model.label, tone: 'info' }]}
+      hoverKey={hoverKey}
+      onHoverKeyChange={onHoverKeyChange}
+      onSelectKey={onSelectKey}
       className={['st-referenceLineChart', className].filter(Boolean).join(' ') || undefined}
     />
   );

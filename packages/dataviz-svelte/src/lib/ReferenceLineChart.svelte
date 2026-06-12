@@ -13,6 +13,9 @@
     width?: number;
     height?: number;
     label: string;
+    hoverKey?: string | null;
+    onHoverKeyChange?: (key: string | null) => void;
+    onSelectKey?: (key: string | null) => void;
     class?: string;
   };
 </script>
@@ -34,6 +37,9 @@
     width = 360,
     height = 96,
     label,
+    hoverKey,
+    onHoverKeyChange,
+    onSelectKey,
     class: className,
   }: ReferenceLineChartProps = $props();
 
@@ -62,4 +68,4 @@
   const classes = $derived(['st-referenceLineChart', className].filter(Boolean).join(' '));
 </script>
 
-<DsLineChart {data} {width} {height} {label} {referenceLines} class={classes} />
+<DsLineChart {data} {width} {height} {label} {referenceLines} {hoverKey} {onHoverKeyChange} {onSelectKey} class={classes} />

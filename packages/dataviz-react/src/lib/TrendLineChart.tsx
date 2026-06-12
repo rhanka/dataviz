@@ -12,10 +12,13 @@ export type TrendLineChartProps = {
   label: string;
   annotations?: ChartAnnotation[];
   dataLabels?: ChartDataLabels;
+  hoverKey?: string | null;
+  onHoverKeyChange?: (key: string | null) => void;
+  onSelectKey?: (key: string | null) => void;
   className?: string;
 };
 
-export function TrendLineChart({ store, viewId, x, y, width = 360, height = 220, label, annotations, dataLabels, className }: TrendLineChartProps) {
+export function TrendLineChart({ store, viewId, x, y, width = 360, height = 220, label, annotations, dataLabels, hoverKey, onHoverKeyChange, onSelectKey, className }: TrendLineChartProps) {
   const state = useDashboard(store);
   void state;
   const model = buildTrendLineModel(store.model, store.applyCrossfilter(viewId), { x, y });
@@ -30,6 +33,9 @@ export function TrendLineChart({ store, viewId, x, y, width = 360, height = 220,
       annotations={annotations}
       dataLabels={dataLabels}
       trend
+      hoverKey={hoverKey}
+      onHoverKeyChange={onHoverKeyChange}
+      onSelectKey={onSelectKey}
       className={['st-trendLineChart', className].filter(Boolean).join(' ') || undefined}
     />
   );

@@ -23,6 +23,9 @@ export type AreaChartProps = {
   label: string;
   annotations?: ChartAnnotation[];
   dataLabels?: ChartDataLabels;
+  hoverKey?: string | null;
+  onHoverKeyChange?: (key: string | null) => void;
+  onSelectKey?: (key: string | null) => void;
   class?: string;
 };
 
@@ -40,6 +43,9 @@ export const AreaChart = defineComponent({
     label: { type: String, required: true },
     annotations: { type: Array as PropType<ChartAnnotation[]>, default: undefined },
     dataLabels: { type: [Boolean, Object] as PropType<ChartDataLabels>, default: undefined },
+    hoverKey: { type: [String, null] as unknown as PropType<string | null>, default: undefined },
+    onHoverKeyChange: { type: Function as PropType<(key: string | null) => void>, default: undefined },
+    onSelectKey: { type: Function as PropType<(key: string | null) => void>, default: undefined },
     class: { type: String, default: undefined },
   },
   setup(props) {
@@ -62,6 +68,9 @@ export const AreaChart = defineComponent({
         height: props.height,
         annotations: props.annotations,
         dataLabels: props.dataLabels,
+        hoverKey: props.hoverKey,
+        onHoverKeyChange: props.onHoverKeyChange,
+        onSelectKey: props.onSelectKey,
         class: props.class,
       });
     };
