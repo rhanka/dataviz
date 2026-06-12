@@ -415,3 +415,19 @@ export {
   rule,
   rankRule,
 } from './conditional-format.js';
+
+// Dashboard layout (serialisable grid panel layout; presentation-free)
+export type { PanelLayout, DashboardLayout, LayoutState } from './layout.js';
+export {
+  isPanelLayout,
+  isDashboardLayout,
+  createLayout,
+  addPanel,
+  removePanel,
+  movePanel,
+  resizePanel,
+  normalizeLayout,
+  serializeLayout,
+  deserializeLayout,
+  createLayoutState,
+} from './layout.js';
