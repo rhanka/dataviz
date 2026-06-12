@@ -199,6 +199,10 @@ export {
   buildAnalyticsClusterModel,
 } from './analytics.js';
 
+// Scatter plot model
+export type { ScatterDatum, ScatterConfig, ScatterModel, ScatterTone } from './scatter.js';
+export { buildScatterModel } from './scatter.js';
+
 // Geographic models
 export type {
   GeoCoordinate,
