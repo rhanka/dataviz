@@ -2,8 +2,10 @@ import {
   ComboChart as DsComboChart,
   type ComboChartBarSeries,
   type ComboChartLineSeries,
+  type DataLabelsProp,
 } from '@sentropic/design-system-react';
 import type {
+  ChartAnnotation,
   CategoricalMeasureInput,
   CategoricalMode,
   DashboardStore,
@@ -23,6 +25,11 @@ export type ComboChartProps = {
   legend?: boolean;
   hiddenSeries?: string[];
   onToggleSeries?: (seriesId: string) => void;
+  annotations?: ChartAnnotation[];
+  dataLabels?: DataLabelsProp;
+  hoverKey?: string | null;
+  onHoverKeyChange?: (key: string | null) => void;
+  onSelectKey?: (key: string | null) => void;
   width?: number;
   height?: number;
   label: string;
@@ -41,6 +48,11 @@ export function ComboChart({
   legend = true,
   hiddenSeries,
   onToggleSeries,
+  annotations,
+  dataLabels,
+  hoverKey,
+  onHoverKeyChange,
+  onSelectKey,
   width,
   height,
   label,
@@ -72,6 +84,11 @@ export function ComboChart({
       legend={legend}
       hiddenSeries={hiddenSeries}
       onToggleSeries={onToggleSeries}
+      annotations={annotations}
+      dataLabels={dataLabels}
+      hoverKey={hoverKey}
+      onHoverKeyChange={onHoverKeyChange}
+      onSelectKey={onSelectKey}
       width={width}
       height={height}
       label={label}
