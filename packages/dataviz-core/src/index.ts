@@ -489,6 +489,10 @@ export { buildVariablePieData } from './variablePie.js';
 export type { ItemChartTone, ItemChartDatum, ItemChartConfig } from './itemChart.js';
 export { buildItemChartData } from './itemChart.js';
 
+// Column pyramid chart model
+export type { ColumnPyramidTone, ColumnPyramidDatum, ColumnPyramidConfig } from './columnPyramid.js';
+export { buildColumnPyramidData } from './columnPyramid.js';
+
 // Bell curve chart model
 export type { BellCurveConfig } from './bellCurve.js';
 export { buildBellCurveData } from './bellCurve.js';
