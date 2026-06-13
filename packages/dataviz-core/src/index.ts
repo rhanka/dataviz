@@ -476,3 +476,35 @@ export {
   deserializeLayout,
   createLayoutState,
 } from './layout.js';
+
+// Range chart models (AreaRange / AreaSplineRange / ColumnRange / Dumbbell)
+export type { AreaRangeDatum, AreaRangeConfig, ColumnRangeDatum, ColumnRangeConfig } from './range.js';
+export { buildAreaRangeData, buildColumnRangeData } from './range.js';
+
+// Variable pie chart model
+export type { VariablePieTone, VariablePieDatum, VariablePieConfig } from './variablePie.js';
+export { buildVariablePieData } from './variablePie.js';
+
+// Item chart model
+export type { ItemChartTone, ItemChartDatum, ItemChartConfig } from './itemChart.js';
+export { buildItemChartData } from './itemChart.js';
+
+// Bell curve chart model
+export type { BellCurveConfig } from './bellCurve.js';
+export { buildBellCurveData } from './bellCurve.js';
+
+// Hierarchy chart model (OrganizationChart / TreegraphChart)
+export type { HierarchyTone, HierarchyNode, HierarchyConfig } from './hierarchy.js';
+export { buildHierarchyData } from './hierarchy.js';
+
+// Word cloud chart model
+export type { WordCloudTone, WordCloudDatum, WordCloudConfig } from './wordCloud.js';
+export { buildWordCloudData } from './wordCloud.js';
+
+// Polygon chart model
+export type { PolygonPoint, PolygonConfig } from './polygon.js';
+export { buildPolygonData } from './polygon.js';
+
+// Venn chart model
+export type { VennArea, VennConfig } from './venn.js';
+export { buildVennData } from './venn.js';
