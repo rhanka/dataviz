@@ -118,6 +118,8 @@ export { VariablePieChart } from './lib/VariablePieChart.js';
 export type { VariablePieChartProps } from './lib/VariablePieChart.js';
 export { ItemChart } from './lib/ItemChart.js';
 export type { ItemChartProps } from './lib/ItemChart.js';
+export { ColumnPyramidChart } from './lib/ColumnPyramidChart.js';
+export type { ColumnPyramidChartProps } from './lib/ColumnPyramidChart.js';
 export { BellCurveChart } from './lib/BellCurveChart.js';
 export type { BellCurveChartProps } from './lib/BellCurveChart.js';
 export { OrganizationChart } from './lib/OrganizationChart.js';
