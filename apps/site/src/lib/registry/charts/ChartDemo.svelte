@@ -54,6 +54,7 @@
     DumbbellChart,
     VariablePieChart,
     ItemChart,
+    ColumnPyramidChart,
     BellCurveChart,
     OrganizationChart,
     TreegraphChart,
@@ -71,6 +72,7 @@
   import { makeTilemapStore } from '../../data/tilemap';
   import { makeRangeStore } from '../../data/range';
   import { makeVariablePieStore, makeItemStore } from '../../data/variablePie';
+  import { makeColumnPyramidStore } from '../../data/columnPyramid';
   import { makeBellCurveStore } from '../../data/bellCurve';
   import { makeHierarchyStore } from '../../data/hierarchy';
   import { makeWordCloudStore } from '../../data/wordCloud';
@@ -88,6 +90,7 @@
   const rangeStore = makeRangeStore();
   const variablePieStore = makeVariablePieStore();
   const itemStore = makeItemStore();
+  const columnPyramidStore = makeColumnPyramidStore();
   const bellCurveStore = makeBellCurveStore();
   const hierarchyStore = makeHierarchyStore();
   const wordCloudStore = makeWordCloudStore();
@@ -251,6 +254,8 @@
     <VariablePieChart store={variablePieStore} viewId="vp" label_field="party" value="votes" z="seats" label="Partis : voix (angle) × sièges (rayon)" />
   {:else if kind === 'item-chart'}
     <ItemChart store={itemStore} viewId="ic" label_field="party" value="seats" label="Répartition des sièges" />
+  {:else if kind === 'column-pyramid'}
+    <ColumnPyramidChart store={columnPyramidStore} viewId="cp" category="stage" value="users" label="Funnel d'acquisition" />
   {:else if kind === 'bell-curve'}
     <BellCurveChart store={bellCurveStore} viewId="bc" measure="score" label="Distribution des scores (/100)" />
   {:else if kind === 'organization'}
