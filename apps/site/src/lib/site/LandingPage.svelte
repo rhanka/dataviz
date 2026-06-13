@@ -23,7 +23,6 @@
     <div class="dv-hero__cta">
       <Button variant="primary" onclick={() => router.navigate('/charts')}>Explorer les charts →</Button>
       <Button variant="secondary" onclick={() => router.navigate('/dashboards')}>Voir le BI</Button>
-      <Button variant="secondary" onclick={() => router.navigate('/guides')}>Prise en main</Button>
     </div>
     <div class="dv-hero__stat">
       <div><b>{total}</b><span>composants documentés</span></div>

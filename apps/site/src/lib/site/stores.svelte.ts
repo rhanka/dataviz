@@ -1,7 +1,7 @@
 /**
  * Shared reactive stores (Svelte 5 runes singletons), mirroring the DS docs
  * site: color mode (light/dark/auto), framework (svelte/react/vue) and the
- * active tenant theme (sent-tech/dsfr/carbon/airbus). Each persists to
+ * active tenant theme (sent-tech/dsfr/carbon/airbus/canada/quebec). Each persists to
  * localStorage. Chart colours come from the active theme's DS tokens — there is
  * no app-level palette store.
  */

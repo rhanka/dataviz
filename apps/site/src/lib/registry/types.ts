@@ -1,6 +1,6 @@
 import type { Component } from 'svelte';
 
-export type Section = 'charts' | 'dashboards' | 'grids' | 'guides';
+export type Section = 'charts' | 'dashboards' | 'grids';
 
 export interface CodeTabs {
   svelte: string;
