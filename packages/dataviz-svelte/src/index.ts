@@ -122,6 +122,8 @@ export { default as VariablePieChart } from './lib/VariablePieChart.svelte';
 export type { VariablePieChartProps } from './lib/VariablePieChart.svelte';
 export { default as ItemChart } from './lib/ItemChart.svelte';
 export type { ItemChartProps } from './lib/ItemChart.svelte';
+export { default as ColumnPyramidChart } from './lib/ColumnPyramidChart.svelte';
+export type { ColumnPyramidChartProps } from './lib/ColumnPyramidChart.svelte';
 export { default as BellCurveChart } from './lib/BellCurveChart.svelte';
 export type { BellCurveChartProps } from './lib/BellCurveChart.svelte';
 export { default as OrganizationChart } from './lib/OrganizationChart.svelte';
