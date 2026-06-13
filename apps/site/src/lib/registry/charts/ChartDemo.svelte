@@ -48,6 +48,18 @@
     TileMapChart,
     Sparkline,
     ScoreCard,
+    AreaRangeChart,
+    AreaSplineRangeChart,
+    ColumnRangeChart,
+    DumbbellChart,
+    VariablePieChart,
+    ItemChart,
+    BellCurveChart,
+    OrganizationChart,
+    TreegraphChart,
+    VennChart,
+    WordCloudChart,
+    PolygonChart,
   } from '@sentropic/dataviz-svelte';
   import { ContentSwitcher } from '@sentropic/design-system-svelte';
   import { lineAnnotation, regionAnnotation, makeFormatter } from '@sentropic/dataviz-core';
@@ -57,6 +69,13 @@
   import { makeTimelineStore } from '../../data/timeline';
   import { makeStreamgraphStore } from '../../data/streamgraph';
   import { makeTilemapStore } from '../../data/tilemap';
+  import { makeRangeStore } from '../../data/range';
+  import { makeVariablePieStore, makeItemStore } from '../../data/variablePie';
+  import { makeBellCurveStore } from '../../data/bellCurve';
+  import { makeHierarchyStore } from '../../data/hierarchy';
+  import { makeWordCloudStore } from '../../data/wordCloud';
+  import { makePolygonStore } from '../../data/polygon';
+  import { vennAreas } from '../../data/venn';
 
   let { kind, controls = true }: { kind: string; controls?: boolean } = $props();
 
@@ -66,6 +85,13 @@
   const timelineStore = makeTimelineStore();
   const streamgraphStore = makeStreamgraphStore();
   const tilemapStore = makeTilemapStore();
+  const rangeStore = makeRangeStore();
+  const variablePieStore = makeVariablePieStore();
+  const itemStore = makeItemStore();
+  const bellCurveStore = makeBellCurveStore();
+  const hierarchyStore = makeHierarchyStore();
+  const wordCloudStore = makeWordCloudStore();
+  const polygonStore = makePolygonStore();
 
   let measure = $state<'revenue' | 'units' | 'margin'>('revenue');
   const measureItems = [
@@ -213,6 +239,30 @@
     <BumpChart {store} viewId="c" series="category" category="month" measure="revenue" label="Classement mensuel des catégories" />
   {:else if kind === 'parallel'}
     <ParallelCoordinatesChart {store} viewId="c" measures={['price', 'units', 'marginRate']} series="category" label="Profil multivarié (prix / unités / marge)" />
+  {:else if kind === 'area-range'}
+    <AreaRangeChart store={rangeStore} viewId="r" x_field="month" low="low" high="high" label="Températures min/max (°C)" />
+  {:else if kind === 'area-spline-range'}
+    <AreaSplineRangeChart store={rangeStore} viewId="r" x_field="month" low="low" high="high" label="Plage lissée min/max (°C)" />
+  {:else if kind === 'column-range'}
+    <ColumnRangeChart store={rangeStore} viewId="r" category="month" low="low" high="high" label="Amplitude mensuelle (°C)" />
+  {:else if kind === 'dumbbell'}
+    <DumbbellChart store={rangeStore} viewId="r" category="month" low="low" high="high" lowLabel="Min" highLabel="Max" label="Écart mensuel (°C)" />
+  {:else if kind === 'variable-pie'}
+    <VariablePieChart store={variablePieStore} viewId="vp" label_field="party" value="votes" z="seats" label="Partis : voix (angle) × sièges (rayon)" />
+  {:else if kind === 'item-chart'}
+    <ItemChart store={itemStore} viewId="ic" label_field="party" value="seats" label="Répartition des sièges" />
+  {:else if kind === 'bell-curve'}
+    <BellCurveChart store={bellCurveStore} viewId="bc" measure="score" label="Distribution des scores (/100)" />
+  {:else if kind === 'organization'}
+    <OrganizationChart store={hierarchyStore} viewId="org" id_field="id" parent_field="parentId" label_field="name" label="Organigramme" />
+  {:else if kind === 'treegraph'}
+    <TreegraphChart store={hierarchyStore} viewId="org" id_field="id" parent_field="parentId" label_field="name" label="Arbre hiérarchique" />
+  {:else if kind === 'venn'}
+    <VennChart areas={vennAreas} label="Compétences partagées (Dev / Data / Design)" />
+  {:else if kind === 'word-cloud'}
+    <WordCloudChart store={wordCloudStore} viewId="wc" word_field="keyword" weight="frequency" label="Mots-clés tech (fréquence)" />
+  {:else if kind === 'polygon'}
+    <PolygonChart store={polygonStore} viewId="pg" x="x" y="y" label="Plan d'étage simplifié (m)" />
   {/if}
 </div>
 

@@ -551,6 +551,177 @@ export function CHART_ENTRIES(ChartDemo: Demo, GeoDemo: Demo): DemoEntry[] {
       }),
     }, ChartDemo),
 
+    // ── Plages & intervalles ─────────────────────────────────────────────
+    chart({
+      slug: 'area-range', name: 'AreaRangeChart', group: 'Plages & intervalles', kind: 'area-range', hasControls: false,
+      tagline: 'Plage d\'aire entre une borne basse et haute sur axe continu.',
+      useCase:
+        "Représenter une fourchette de valeurs (ex. températures min/max mensuelles) comme une aire remplie entre deux courbes. Le champ `x_field` est l'axe X (dimension), `low` et `high` les bornes numériques.\n\nIdéal pour les intervalles de confiance, les plages de prix ou les variations climatiques saisonnières.",
+      code: storeCode(['AreaRangeChart'], {
+        svelte: `<AreaRangeChart {store} viewId="r" x_field="month" low="low" high="high" label="Températures min/max (°C)" />`,
+        react: `<AreaRangeChart store={store} viewId="r" x_field="month" low="low" high="high" label="Températures min/max (°C)" />`,
+        vue: `<AreaRangeChart :store="store" viewId="r" x_field="month" low="low" high="high" label="Températures min/max (°C)" />`,
+      }),
+    }, ChartDemo),
+    chart({
+      slug: 'area-spline-range', name: 'AreaSplineRangeChart', group: 'Plages & intervalles', kind: 'area-spline-range', hasControls: false,
+      tagline: 'Plage d\'aire lissée (spline) entre borne basse et haute.',
+      useCase:
+        "Variante lissée de l'AreaRangeChart : les courbes sont des splines cubiques pour un rendu plus fluide. Même mapping de champs : `x_field`, `low`, `high`.\n\nPréférer cette variante pour des données naturellement continues (météo, biologie, finance).",
+      code: storeCode(['AreaSplineRangeChart'], {
+        svelte: `<AreaSplineRangeChart {store} viewId="r" x_field="month" low="low" high="high" label="Plage lissée (°C)" />`,
+        react: `<AreaSplineRangeChart store={store} viewId="r" x_field="month" low="low" high="high" label="Plage lissée (°C)" />`,
+        vue: `<AreaSplineRangeChart :store="store" viewId="r" x_field="month" low="low" high="high" label="Plage lissée (°C)" />`,
+      }),
+    }, ChartDemo),
+    chart({
+      slug: 'column-range', name: 'ColumnRangeChart', group: 'Plages & intervalles', kind: 'column-range', hasControls: false,
+      tagline: 'Colonnes montrant l\'étendue entre minimum et maximum par catégorie.',
+      useCase:
+        "Comparer l'amplitude d'une plage de valeurs par catégorie. Chaque colonne s'étend de `low` à `high`. Orientation verticale ou horizontale.\n\n`category` désigne la dimension de regroupement, `low` et `high` les mesures de borne.",
+      code: storeCode(['ColumnRangeChart'], {
+        svelte: `<ColumnRangeChart {store} viewId="r" category="month" low="low" high="high" label="Amplitude mensuelle (°C)" />`,
+        react: `<ColumnRangeChart store={store} viewId="r" category="month" low="low" high="high" label="Amplitude mensuelle (°C)" />`,
+        vue: `<ColumnRangeChart :store="store" viewId="r" category="month" low="low" high="high" label="Amplitude mensuelle (°C)" />`,
+      }),
+    }, ChartDemo),
+    chart({
+      slug: 'dumbbell', name: 'DumbbellChart', group: 'Plages & intervalles', kind: 'dumbbell', hasControls: false,
+      tagline: 'Haltère reliant deux valeurs par catégorie (avant/après).',
+      useCase:
+        "Comparer deux états (minimum et maximum, avant et après, objectif vs réalisé) pour chaque catégorie. Les deux extrémités de la tige peuvent avoir des couleurs distinctes (`lowTone`/`highTone`) et des légendes (`lowLabel`/`highLabel`).\n\n`category` est la dimension, `low` et `high` les mesures des deux points.",
+      code: storeCode(['DumbbellChart'], {
+        svelte: `<DumbbellChart {store} viewId="r" category="month" low="low" high="high" lowLabel="Min" highLabel="Max" label="Écart mensuel (°C)" />`,
+        react: `<DumbbellChart store={store} viewId="r" category="month" low="low" high="high" lowLabel="Min" highLabel="Max" label="Écart mensuel (°C)" />`,
+        vue: `<DumbbellChart :store="store" viewId="r" category="month" low="low" high="high" lowLabel="Min" highLabel="Max" label="Écart mensuel (°C)" />`,
+      }),
+    }, ChartDemo),
+
+    // ── Proportions ──────────────────────────────────────────────────────
+    chart({
+      slug: 'variable-pie', name: 'VariablePieChart', group: 'Proportions', kind: 'variable-pie', hasControls: false,
+      tagline: 'Camembert à rayon variable encodant deux dimensions.',
+      useCase:
+        "Double encodage : l'angle de chaque secteur encode une mesure (part des voix) tandis que le rayon encode une seconde mesure (nombre de sièges). Idéal pour comparer à la fois la popularité et la représentation d'un ensemble d'entités.\n\n`label_field` est la dimension (libellé de chaque secteur), `value` l'angle, `z` le rayon.",
+      code: storeCode(['VariablePieChart'], {
+        svelte: `<VariablePieChart {store} viewId="vp" label_field="party" value="votes" z="seats" label="Partis : voix (angle) × sièges (rayon)" />`,
+        react: `<VariablePieChart store={store} viewId="vp" label_field="party" value="votes" z="seats" label="Partis : voix (angle) × sièges (rayon)" />`,
+        vue: `<VariablePieChart :store="store" viewId="vp" label_field="party" value="votes" z="seats" label="Partis : voix (angle) × sièges (rayon)" />`,
+      }),
+    }, ChartDemo),
+    chart({
+      slug: 'item-chart', name: 'ItemChart', group: 'Proportions', kind: 'item-chart', hasControls: false,
+      tagline: 'Hémicycle de sièges (pictogramme proportionnel).',
+      useCase:
+        "Visualiser la répartition de sièges parlementaires ou d'unités discrètes en hémicycle. Chaque point représente un siège ; les groupes sont colorés dans l'ordre fourni.\n\n`label_field` nomme chaque groupe, `value` donne le nombre de sièges.",
+      code: storeCode(['ItemChart'], {
+        svelte: `<ItemChart {store} viewId="ic" label_field="party" value="seats" label="Répartition des sièges" />`,
+        react: `<ItemChart store={store} viewId="ic" label_field="party" value="seats" label="Répartition des sièges" />`,
+        vue: `<ItemChart :store="store" viewId="ic" label_field="party" value="seats" label="Répartition des sièges" />`,
+      }),
+    }, ChartDemo),
+
+    // ── Distribution & statistique (bell curve) ──────────────────────────
+    chart({
+      slug: 'bell-curve', name: 'BellCurveChart', group: 'Distribution & statistique', kind: 'bell-curve', hasControls: false,
+      tagline: 'Courbe de Gauss tracée à partir d\'un échantillon numérique.',
+      useCase:
+        "Superposer la courbe de densité normale théorique à un échantillon de données. Pratique pour valider qu'une distribution est approximativement gaussienne, ou pour comparer plusieurs populations.\n\n`measure` désigne le champ numérique dont les valeurs brutes forment l'échantillon.",
+      code: storeCode(['BellCurveChart'], {
+        svelte: `<BellCurveChart {store} viewId="bc" measure="score" label="Distribution des scores (/100)" />`,
+        react: `<BellCurveChart store={store} viewId="bc" measure="score" label="Distribution des scores (/100)" />`,
+        vue: `<BellCurveChart :store="store" viewId="bc" measure="score" label="Distribution des scores (/100)" />`,
+      }),
+    }, ChartDemo),
+
+    // ── Hiérarchie ───────────────────────────────────────────────────────
+    chart({
+      slug: 'organization', name: 'OrganizationChart', group: 'Hiérarchie', kind: 'organization', hasControls: false,
+      tagline: 'Organigramme hiérarchique (nœuds plats parent → enfant).',
+      useCase:
+        "Représenter une hiérarchie d'organisation (entreprise, équipe, dossiers) sous forme d'arbre top-down. Les nœuds sont définis en format plat avec une relation `id`/`parentId`.\n\n`id_field` est la clé unique, `parent_field` la clé du parent (null = racine), `label_field` le libellé affiché.",
+      code: storeCode(['OrganizationChart'], {
+        svelte: `<OrganizationChart {store} viewId="org" id_field="id" parent_field="parentId" label_field="name" label="Organigramme" />`,
+        react: `<OrganizationChart store={store} viewId="org" id_field="id" parent_field="parentId" label_field="name" label="Organigramme" />`,
+        vue: `<OrganizationChart :store="store" viewId="org" id_field="id" parent_field="parentId" label_field="name" label="Organigramme" />`,
+      }),
+    }, ChartDemo),
+    chart({
+      slug: 'treegraph', name: 'TreegraphChart', group: 'Hiérarchie', kind: 'treegraph', hasControls: false,
+      tagline: 'Arbre hiérarchique en layout graphe (horizontal ou radial).',
+      useCase:
+        "Alternative à l'organigramme classique : disposition en arbre graphe pour des hiérarchies plus profondes ou plus larges. Même format de données plat (`id`/`parentId`/`label`).\n\nPréférer ce chart pour des arborescences de dossiers, de catégories imbriquées ou de thèmes de connaissances.",
+      code: storeCode(['TreegraphChart'], {
+        svelte: `<TreegraphChart {store} viewId="org" id_field="id" parent_field="parentId" label_field="name" label="Arbre hiérarchique" />`,
+        react: `<TreegraphChart store={store} viewId="org" id_field="id" parent_field="parentId" label_field="name" label="Arbre hiérarchique" />`,
+        vue: `<TreegraphChart :store="store" viewId="org" id_field="id" parent_field="parentId" label_field="name" label="Arbre hiérarchique" />`,
+      }),
+    }, ChartDemo),
+
+    // ── Ensembles ────────────────────────────────────────────────────────
+    chart({
+      slug: 'venn', name: 'VennChart', group: 'Ensembles', kind: 'venn', hasControls: false,
+      tagline: 'Diagramme de Venn pour visualiser des ensembles et leurs intersections.',
+      useCase:
+        "Montrer les recouvrements entre 2 ou 3 ensembles — compétences partagées entre équipes, audiences communes entre canaux, fonctionnalités couvertes par plusieurs produits.\n\nLa prop `areas` reçoit une liste d'objets `{sets: string[], value: number}` — un par sous-ensemble (singletons, paires, triplet). La taille de chaque zone encode le volume.",
+      code: storeCode(['VennChart'], {
+        svelte: `<!-- VennChart accepte les aires directement (structure ensembliste non dérivable de lignes tabulaires) -->
+<VennChart areas={[
+  { sets: ['Dev'],    value: 60 },
+  { sets: ['Data'],   value: 50 },
+  { sets: ['Design'], value: 45 },
+  { sets: ['Dev', 'Data'],    value: 20 },
+  { sets: ['Dev', 'Design'],  value: 15 },
+  { sets: ['Data', 'Design'], value: 12 },
+  { sets: ['Dev', 'Data', 'Design'], value: 8 },
+]} label="Compétences partagées" />`,
+        react: `<VennChart areas={[
+  { sets: ['Dev'],    value: 60 },
+  { sets: ['Data'],   value: 50 },
+  { sets: ['Design'], value: 45 },
+  { sets: ['Dev', 'Data'],    value: 20 },
+  { sets: ['Dev', 'Design'],  value: 15 },
+  { sets: ['Data', 'Design'], value: 12 },
+  { sets: ['Dev', 'Data', 'Design'], value: 8 },
+]} label="Compétences partagées" />`,
+        vue: `<VennChart :areas="[
+  { sets: ['Dev'],    value: 60 },
+  { sets: ['Data'],   value: 50 },
+  { sets: ['Design'], value: 45 },
+  { sets: ['Dev', 'Data'],    value: 20 },
+  { sets: ['Dev', 'Design'],  value: 15 },
+  { sets: ['Data', 'Design'], value: 12 },
+  { sets: ['Dev', 'Data', 'Design'], value: 8 },
+]" label="Compétences partagées" />`,
+      }),
+    }, ChartDemo),
+
+    // ── Texte & nuages ───────────────────────────────────────────────────
+    chart({
+      slug: 'word-cloud', name: 'WordCloudChart', group: 'Texte & nuages', kind: 'word-cloud', hasControls: false,
+      tagline: 'Nuage de mots proportionnel aux poids/fréquences.',
+      useCase:
+        "Visualiser la fréquence relative de termes (mots-clés, tags, thèmes) en faisant varier la taille de police proportionnellement au poids. Pratique pour des analyses de verbatim, des nuages de tags ou des rapports de fréquences lexicales.\n\n`word_field` désigne la dimension texte, `weight` la mesure numérique de fréquence ou d'importance.",
+      code: storeCode(['WordCloudChart'], {
+        svelte: `<WordCloudChart {store} viewId="wc" word_field="keyword" weight="frequency" label="Mots-clés tech (fréquence)" />`,
+        react: `<WordCloudChart store={store} viewId="wc" word_field="keyword" weight="frequency" label="Mots-clés tech (fréquence)" />`,
+        vue: `<WordCloudChart :store="store" viewId="wc" word_field="keyword" weight="frequency" label="Mots-clés tech (fréquence)" />`,
+      }),
+    }, ChartDemo),
+
+    // ── Formes ───────────────────────────────────────────────────────────
+    chart({
+      slug: 'polygon', name: 'PolygonChart', group: 'Formes', kind: 'polygon', hasControls: false,
+      tagline: 'Polygone arbitraire défini par une liste de points (x, y).',
+      useCase:
+        "Tracer un contour géométrique quelconque à partir de coordonnées numériques — plan d'étage simplifié, zone géographique en coordonnées locales, silhouette de données spatiales.\n\n`x` et `y` désignent les champs de coordonnées ; les points sont reliés dans l'ordre des lignes et le dernier point est connecté au premier.",
+      code: storeCode(['PolygonChart'], {
+        svelte: `<PolygonChart {store} viewId="pg" x="x" y="y" label="Plan d'étage simplifié" />`,
+        react: `<PolygonChart store={store} viewId="pg" x="x" y="y" label="Plan d'étage simplifié" />`,
+        vue: `<PolygonChart :store="store" viewId="pg" x="x" y="y" label="Plan d'étage simplifié" />`,
+      }),
+    }, ChartDemo),
+
     // ── Cartographie géo ─────────────────────────────────────────────────
     geo({
       slug: 'geo-point', name: 'GeoPointMap', kind: 'point', hasControls: true,
