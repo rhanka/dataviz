@@ -179,22 +179,22 @@
 {#snippet searchTrigger()}
   <button
     type="button"
-    class="st-appChrome__control st-appHeader__control docs-search-trigger"
+    class="docs-header-control docs-search-trigger"
     onclick={openSearch}
     aria-label={locale.value === 'fr' ? 'Rechercher dans la documentation' : 'Search the documentation'}
     aria-haspopup="dialog"
   >
-    <SearchIcon size={14} strokeWidth={2.1} aria-hidden="true" />
-    <span>{locale.value === 'fr' ? 'Rechercher...' : 'Search...'}</span>
+    <SearchIcon size={16} strokeWidth={2.1} aria-hidden="true" />
+    <span class="docs-search-trigger__label">{locale.value === 'fr' ? 'Rechercher…' : 'Search…'}</span>
     <kbd class="docs-search-trigger__kbd">/</kbd>
   </button>
 {/snippet}
 
 {#snippet frameworkSelector()}
-  <div class="docs-framework-wrapper st-appChrome__menuWrap">
+  <div class="docs-framework-wrapper">
     <button
       type="button"
-      class="st-appChrome__control st-appHeader__control"
+      class="docs-header-control docs-header-menuButton docs-locale-trigger docs-framework-trigger"
       onclick={() => (isFrameworkOpen = !isFrameworkOpen)}
       aria-expanded={isFrameworkOpen}
       aria-haspopup="true"
@@ -202,23 +202,23 @@
     >
       <Boxes size={14} aria-hidden="true" />
       <span>{frameworkLabel}</span>
-      <ChevronDown size={12} class="st-appChrome__chevron {isFrameworkOpen ? 'is-rotated' : ''}" aria-hidden="true" />
+      <ChevronDown size={12} class="docs-locale-trigger-chevron {isFrameworkOpen ? 'rotated' : ''}" aria-hidden="true" />
     </button>
 
     {#if isFrameworkOpen}
-      <div class="st-appChrome__menu" role="menu">
+      <div class="docs-locale-menu" role="menu">
         {#each FRAMEWORKS as option (option.id)}
           <button
             type="button"
-            class="st-appChrome__menuItem"
-            class:is-active={framework.value === option.id}
+            class="docs-locale-item"
+            class:active={framework.value === option.id}
             role="menuitem"
             onclick={() => {
               framework.set(option.id);
               isFrameworkOpen = false;
             }}
           >
-            <span class="st-appChrome__check" aria-hidden="true">{#if framework.value === option.id}✓{/if}</span>
+            <span class="locale-check">{#if framework.value === option.id}✓{/if}</span>
             <span>{option.label}</span>
           </button>
         {/each}
@@ -230,7 +230,7 @@
 {#snippet identityControl()}
   <button
     type="button"
-    class="st-appChrome__control st-appChrome__iconControl st-appHeader__control"
+    class="docs-header-control docs-header-menuButton docs-login-trigger"
     aria-label={locale.value === 'fr' ? 'Se connecter' : 'Sign in'}
   >
     <User size={16} strokeWidth={2.1} aria-hidden="true" />

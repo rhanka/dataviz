@@ -38,14 +38,18 @@ describe("dataviz navigation shell contract", () => {
     expect(css).toContain(".docs-search-overlay");
   });
 
-  it("styles search + framework as AppChrome controls, ordered first", () => {
+  it("reuses the source docs control classes for search/framework/login at parity", () => {
     const app = source("App.svelte");
     const css = source("app.css");
 
-    // recherche + switcher framework empruntent les classes de contrôle du DS
-    expect(app).toContain("st-appChrome__control");
-    expect(app).toContain("st-appChrome__menu");
-    // et sont remontés en tête des contrôles utilitaires (parité site source)
+    // recherche + framework + login réutilisent les classes du chrome source
+    // (pixel-parité exacte avec design-system.sent-tech.ca, police 14px incluse)
+    expect(app).toContain("docs-search-trigger");
+    expect(app).toContain("docs-search-trigger__label");
+    expect(app).toContain("docs-login-trigger");
+    // hauteur de contrôle alignée sur le DS source (36px), pas la dérive 2.75rem
+    expect(css).toContain("--docs-header-control-height: 2.25rem;");
+    // recherche + framework remontés en tête des contrôles utilitaires
     const extraRule = css.match(/\.st-appChrome__extraSelectors\s*\{[^}]+\}/)?.[0] ?? "";
     expect(extraRule).toContain("order: -1;");
   });
