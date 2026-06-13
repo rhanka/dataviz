@@ -207,6 +207,26 @@ export { buildScatterModel } from './scatter.js';
 export type { CandlestickDatum, CandlestickConfig } from './candlestick.js';
 export { buildCandlestickData } from './candlestick.js';
 
+// OHLC chart model
+export type { OhlcDatum, OhlcConfig } from './ohlc.js';
+export { buildOhlcData } from './ohlc.js';
+
+// Gantt chart model
+export type { GanttDatum, GanttConfig } from './gantt.js';
+export { buildGanttData } from './gantt.js';
+
+// Timeline chart model
+export type { TimelineTone, TimelineDatum, TimelineConfig } from './timeline.js';
+export { buildTimelineData } from './timeline.js';
+
+// Streamgraph chart model
+export type { StreamgraphTone, StreamgraphSeriesValue, StreamgraphDatum, StreamgraphConfig } from './streamgraph.js';
+export { buildStreamgraphData } from './streamgraph.js';
+
+// Tile map chart model
+export type { TileMapTile, TileMapConfig } from './tilemap.js';
+export { buildTileMapData } from './tilemap.js';
+
 // Violin chart model
 export type { ViolinDatum, ViolinConfig, ViolinModel, ViolinTone } from './violin.js';
 export { buildViolinModel } from './violin.js';
