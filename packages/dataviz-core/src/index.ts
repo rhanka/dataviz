@@ -207,6 +207,23 @@ export { buildScatterModel } from './scatter.js';
 export type { CandlestickDatum, CandlestickConfig } from './candlestick.js';
 export { buildCandlestickData } from './candlestick.js';
 
+// Violin chart model
+export type { ViolinDatum, ViolinConfig, ViolinModel, ViolinTone } from './violin.js';
+export { buildViolinModel } from './violin.js';
+
+// Bump chart model
+export type { BumpSeries, BumpConfig, BumpModel, BumpTone } from './bump.js';
+export { buildBumpModel } from './bump.js';
+
+// Parallel coordinates chart model
+export type {
+  ParallelAxisDef,
+  ParallelCoordinatesConfig,
+  ParallelCoordinatesModel,
+  ParallelTone,
+} from './parallelCoordinates.js';
+export { buildParallelCoordinatesModel } from './parallelCoordinates.js';
+
 // Geographic models
 export type {
   GeoCoordinate,
