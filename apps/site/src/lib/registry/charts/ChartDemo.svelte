@@ -38,6 +38,9 @@
     AnalyticsClusterPlot,
     ScatterPlot,
     CandlestickChart,
+    ViolinChart,
+    BumpChart,
+    ParallelCoordinatesChart,
     Sparkline,
     ScoreCard,
   } from '@sentropic/dataviz-svelte';
@@ -181,6 +184,12 @@
     <Sparkline {store} viewId="c" dimension="month" measure="revenue" area label="Tendance mensuelle du revenu" />
   {:else if kind === 'scorecard'}
     <ScoreCard {store} viewId="c" measure="revenue" sparklineDimension="month" format="currency" label="Revenu total" tone="category1" />
+  {:else if kind === 'violin'}
+    <ViolinChart {store} viewId="c" groupBy="category" measure="price" label="Distribution des prix par catégorie" />
+  {:else if kind === 'bump'}
+    <BumpChart {store} viewId="c" series="category" category="month" measure="revenue" label="Classement mensuel des catégories" />
+  {:else if kind === 'parallel'}
+    <ParallelCoordinatesChart {store} viewId="c" measures={['price', 'units', 'marginRate']} series="category" label="Profil multivarié (prix / unités / marge)" />
   {/if}
 </div>
 

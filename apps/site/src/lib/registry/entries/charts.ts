@@ -266,7 +266,31 @@ export function CHART_ENTRIES(ChartDemo: Demo, GeoDemo: Demo): DemoEntry[] {
       }),
     }, ChartDemo),
 
+    // ── Évolution & classements ──────────────────────────────────────────
+    chart({
+      slug: 'bump', name: 'BumpChart', group: 'Évolution & classements', kind: 'bump', hasControls: false,
+      tagline: 'Classements comparatifs dans le temps (bump chart).',
+      useCase:
+        "Suivre l'évolution des positions relatives de plusieurs séries sur une dimension ordonnée (ici les catégories produit classées par revenu mensuel). Les lignes qui se croisent révèlent des renversements de classement que les barres ne montrent pas.\n\n`series` définit les entités à classer, `category` l'axe temporel ou ordonné, `measure` la valeur sur laquelle le rang est calculé (rang 1 = valeur la plus haute par défaut).",
+      code: storeCode(['BumpChart'], {
+        svelte: `<BumpChart {store} viewId="c" series="category" category="month" measure="revenue" label="Classement mensuel des catégories" />`,
+        react: `<BumpChart store={store} viewId="c" series="category" category="month" measure="revenue" label="Classement mensuel des catégories" />`,
+        vue: `<BumpChart :store="store" viewId="c" series="category" category="month" measure="revenue" label="Classement mensuel des catégories" />`,
+      }),
+    }, ChartDemo),
+
     // ── Distribution & statistique ───────────────────────────────────────
+    chart({
+      slug: 'violin', name: 'ViolinChart', group: 'Distribution & statistique', kind: 'violin', hasControls: false,
+      tagline: 'Distribution en violon avec médiane et quartiles par groupe.',
+      useCase:
+        "Comparer la forme de la distribution d'une variable numérique entre plusieurs groupes. Contrairement au box plot, le violon révèle la densité locale : un ventre large indique un pic de concentration. Ici la distribution des prix unitaires par catégorie de produit.\n\n`groupBy` divise les données par groupe (une colonne par groupe), `measure` collecte les valeurs numériques. `quartiles` superpose médiane et boîte q1–q3.",
+      code: storeCode(['ViolinChart'], {
+        svelte: `<ViolinChart {store} viewId="c" groupBy="category" measure="price" label="Distribution des prix par catégorie" />`,
+        react: `<ViolinChart store={store} viewId="c" groupBy="category" measure="price" label="Distribution des prix par catégorie" />`,
+        vue: `<ViolinChart :store="store" viewId="c" groupBy="category" measure="price" label="Distribution des prix par catégorie" />`,
+      }),
+    }, ChartDemo),
     chart({
       slug: 'histogram', name: 'HistogramChart', group: 'Distribution & statistique', kind: 'histogram', hasControls: false,
       tagline: 'Distribution binée d\'une variable continue.',
@@ -402,6 +426,18 @@ export function CHART_ENTRIES(ChartDemo: Demo, GeoDemo: Demo): DemoEntry[] {
         svelte: `<AnalyticsClusterPlot {store} viewId="c" fields={['price', 'marginRate']} k={3} label="Clusters prix/marge" />`,
         react: `<AnalyticsClusterPlot store={store} viewId="c" fields={['price', 'marginRate']} k={3} label="Clusters prix/marge" />`,
         vue: `<AnalyticsClusterPlot :store="store" viewId="c" :fields="['price', 'marginRate']" :k="3" label="Clusters prix/marge" />`,
+      }),
+    }, ChartDemo),
+
+    chart({
+      slug: 'parallel-coordinates', name: 'ParallelCoordinatesChart', group: 'Couche analytique', kind: 'parallel', hasControls: false,
+      tagline: 'Axes verticaux parallèles pour comparer des profils multivariés.',
+      useCase:
+        "Visualiser simultanément plusieurs variables numériques sur un même graphique. Chaque polyligne est un enregistrement ; l'orientation commune révèle les corrélations et les groupes. Ici chaque transaction est tracée sur trois axes : prix unitaire, unités vendues et taux de marge.\n\nLa prop `measures` liste les champs mesure à exposer comme axes (de gauche à droite). `series` colore les lignes par dimension catégorielle.",
+      code: storeCode(['ParallelCoordinatesChart'], {
+        svelte: `<ParallelCoordinatesChart {store} viewId="c" measures={['price', 'units', 'marginRate']} series="category" label="Profil multivarié (prix / unités / marge)" />`,
+        react: `<ParallelCoordinatesChart store={store} viewId="c" measures={['price', 'units', 'marginRate']} series="category" label="Profil multivarié (prix / unités / marge)" />`,
+        vue: `<ParallelCoordinatesChart :store="store" viewId="c" :measures="['price', 'units', 'marginRate']" series="category" label="Profil multivarié (prix / unités / marge)" />`,
       }),
     }, ChartDemo),
 
