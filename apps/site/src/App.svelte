@@ -1,7 +1,11 @@
 <script lang="ts">
   import { tick } from 'svelte';
-  import { Boxes, ChevronDown, Github, Globe, Menu, Moon, Palette, Search as SearchIcon, Sun, User, X } from '@lucide/svelte';
-  import { Header } from '@sentropic/design-system-svelte';
+  import { Boxes, ChevronDown, Github, Search as SearchIcon, User, X } from '@lucide/svelte';
+  import {
+    AppChrome,
+    type AppChromeNavItem,
+    type AppChromeThemeOption,
+  } from '@sentropic/design-system-svelte';
   import { router, onLinkClick } from './lib/site/router.svelte';
   import { normalizeAppHref, isExternalHref } from './lib/site/route-utils';
   import { colorMode, framework, theme, FRAMEWORKS, type ColorMode } from './lib/site/stores.svelte';
@@ -21,11 +25,6 @@
   import CataloguePage from './lib/site/CataloguePage.svelte';
   import DemoPage from './lib/site/DemoPage.svelte';
   import DatavizSearch from './lib/site/search/DatavizSearch.svelte';
-  import ChromeAirbus from './lib/site/chrome/ChromeAirbus.svelte';
-  import ChromeCanada from './lib/site/chrome/ChromeCanada.svelte';
-  import ChromeCarbon from './lib/site/chrome/ChromeCarbon.svelte';
-  import ChromeDsfr from './lib/site/chrome/ChromeDsfr.svelte';
-  import ChromeQuebec from './lib/site/chrome/ChromeQuebec.svelte';
 
   router.init();
   colorMode.init();
@@ -69,7 +68,19 @@
   const breadcrumbs = $derived(resolveBreadcrumb(router.path, locale.value));
   const frameworkLabel = $derived(FRAMEWORKS.find((f) => f.id === framework.value)?.label ?? 'Svelte');
   const showFrameworkSwitcher = $derived(route.kind === 'demo' || route.kind === 'catalogue');
-  const useCustomChrome = $derived(['airbus', 'canada', 'carbon', 'dsfr', 'quebec'].includes(theme.value));
+
+  // ── Données pour le composant DS AppChrome (source de vérité du chrome) ──────
+  const appNavItems = $derived<AppChromeNavItem[]>(
+    topNavItems.map((item) => ({ label: item.label, href: item.href, active: isActive(item.href) })),
+  );
+  const appThemeOptions = $derived<AppChromeThemeOption[]>(
+    THEMES.map((option) => ({ id: option.id, label: option.label })),
+  );
+  const colorModeLabels = $derived(
+    locale.value === 'fr'
+      ? { light: 'Clair', dark: 'Sombre', auto: 'Auto' }
+      : { light: 'Light', dark: 'Dark', auto: 'Auto' },
+  );
 
   function isActive(href: string): boolean {
     const path = router.path;
@@ -165,50 +176,25 @@
   }}
 />
 
-{#snippet docsBrand()}
-  <a class="docs-brand" href={router.href('/')} aria-label="Sentropic dataviz">
-    <img
-      class="docs-brand-mark"
-      src={`${import.meta.env.BASE_URL}SENT-logo-squared.svg`}
-      alt=""
-      aria-hidden="true"
-    />
-    <span class="docs-brand-copy">
-      <span class="docs-brand-name">Sentropic</span>
-      <span class="docs-brand-product">dataviz</span>
-    </span>
-  </a>
-{/snippet}
-
-{#snippet docsTopNav()}
-  <nav class="docs-top-nav" aria-label="Navigation principale">
-    {#each topNavItems as item (item.href)}
-      <a href={item.href} aria-current={isActive(item.href) ? 'page' : undefined}>
-        {item.label}
-      </a>
-    {/each}
-  </nav>
-{/snippet}
-
 {#snippet searchTrigger()}
   <button
     type="button"
-    class="docs-header-control docs-search-trigger"
+    class="st-appChrome__control st-appHeader__control docs-search-trigger"
     onclick={openSearch}
     aria-label={locale.value === 'fr' ? 'Rechercher dans la documentation' : 'Search the documentation'}
     aria-haspopup="dialog"
   >
-    <SearchIcon size={16} strokeWidth={2.1} aria-hidden="true" />
-    <span class="docs-search-trigger__label">{locale.value === 'fr' ? 'Rechercher...' : 'Search...'}</span>
+    <SearchIcon size={14} strokeWidth={2.1} aria-hidden="true" />
+    <span>{locale.value === 'fr' ? 'Rechercher...' : 'Search...'}</span>
     <kbd class="docs-search-trigger__kbd">/</kbd>
   </button>
 {/snippet}
 
 {#snippet frameworkSelector()}
-  <div class="docs-framework-wrapper">
+  <div class="docs-framework-wrapper st-appChrome__menuWrap">
     <button
       type="button"
-      class="docs-header-control docs-header-menuButton docs-locale-trigger docs-framework-trigger"
+      class="st-appChrome__control st-appHeader__control"
       onclick={() => (isFrameworkOpen = !isFrameworkOpen)}
       aria-expanded={isFrameworkOpen}
       aria-haspopup="true"
@@ -216,27 +202,23 @@
     >
       <Boxes size={14} aria-hidden="true" />
       <span>{frameworkLabel}</span>
-      <ChevronDown
-        size={12}
-        class="docs-locale-trigger-chevron {isFrameworkOpen ? 'rotated' : ''}"
-        aria-hidden="true"
-      />
+      <ChevronDown size={12} class="st-appChrome__chevron {isFrameworkOpen ? 'is-rotated' : ''}" aria-hidden="true" />
     </button>
 
     {#if isFrameworkOpen}
-      <div class="docs-locale-menu" role="menu">
+      <div class="st-appChrome__menu" role="menu">
         {#each FRAMEWORKS as option (option.id)}
           <button
             type="button"
-            class="docs-locale-item"
-            class:active={framework.value === option.id}
+            class="st-appChrome__menuItem"
+            class:is-active={framework.value === option.id}
             role="menuitem"
             onclick={() => {
               framework.set(option.id);
               isFrameworkOpen = false;
             }}
           >
-            <span class="locale-check">{#if framework.value === option.id}✓{/if}</span>
+            <span class="st-appChrome__check" aria-hidden="true">{#if framework.value === option.id}✓{/if}</span>
             <span>{option.label}</span>
           </button>
         {/each}
@@ -245,158 +227,21 @@
   </div>
 {/snippet}
 
-{#snippet themeSelector()}
-  <div class="docs-theme-wrapper">
-    <button
-      type="button"
-      class="docs-header-control docs-header-menuButton docs-locale-trigger docs-theme-trigger"
-      onclick={() => (isThemeOpen = !isThemeOpen)}
-      aria-expanded={isThemeOpen}
-      aria-haspopup="true"
-      aria-label={locale.value === 'fr' ? 'Changer le thème' : 'Change theme'}
-    >
-      <Palette size={14} aria-hidden="true" />
-      <span>{activeTheme.label}</span>
-      <ChevronDown
-        size={12}
-        class="docs-locale-trigger-chevron {isThemeOpen ? 'rotated' : ''}"
-        aria-hidden="true"
-      />
-    </button>
-
-    {#if isThemeOpen}
-      <div class="docs-locale-menu" role="menu">
-        {#each THEMES as option (option.id)}
-          <button
-            type="button"
-            class="docs-locale-item"
-            class:active={theme.value === option.id}
-            role="menuitem"
-            onclick={() => {
-              theme.set(option.id);
-              isThemeOpen = false;
-            }}
-          >
-            <span class="locale-check">{#if theme.value === option.id}✓{/if}</span>
-            <span>{option.label}</span>
-          </button>
-        {/each}
-      </div>
-    {/if}
-  </div>
-{/snippet}
-
-{#snippet colorModeToggle()}
+{#snippet identityControl()}
   <button
     type="button"
-    class="docs-header-control docs-header-menuButton docs-header-iconLink docs-color-mode-toggle"
-    onclick={() => {
-      const next: ColorMode = colorMode.value === 'light' ? 'dark' : colorMode.value === 'dark' ? 'auto' : 'light';
-      colorMode.set(next);
-    }}
-    aria-label={
-      colorMode.value === 'light'
-        ? (locale.value === 'fr' ? 'Mode sombre' : 'Dark mode')
-        : colorMode.value === 'dark'
-          ? (locale.value === 'fr' ? 'Mode auto' : 'Auto mode')
-          : (locale.value === 'fr' ? 'Mode clair' : 'Light mode')
-    }
+    class="st-appChrome__control st-appChrome__iconControl st-appHeader__control"
+    aria-label={locale.value === 'fr' ? 'Se connecter' : 'Sign in'}
   >
-    {#if colorMode.value === 'dark'}
-      <Moon size={16} strokeWidth={2} aria-hidden="true" />
-    {:else if colorMode.value === 'light'}
-      <Sun size={16} strokeWidth={2} aria-hidden="true" />
-    {:else}
-      <Sun size={16} strokeWidth={1.5} aria-hidden="true" style="opacity: 0.65;" />
-    {/if}
+    <User size={16} strokeWidth={2.1} aria-hidden="true" />
   </button>
 {/snippet}
 
-{#snippet langSelector()}
-  <div class="docs-locale-wrapper">
-    <button
-      type="button"
-      class="docs-header-control docs-header-menuButton docs-locale-trigger"
-      onclick={() => (isLocaleOpen = !isLocaleOpen)}
-      aria-expanded={isLocaleOpen}
-      aria-haspopup="true"
-      aria-label={locale.value === 'fr' ? 'Changer la langue' : 'Change language'}
-    >
-      <Globe size={14} class="docs-locale-trigger-icon" aria-hidden="true" />
-      <span>{locale.value.toUpperCase()}</span>
-      <ChevronDown
-        size={12}
-        class="docs-locale-trigger-chevron {isLocaleOpen ? 'rotated' : ''}"
-        aria-hidden="true"
-      />
-    </button>
-
-    {#if isLocaleOpen}
-      <div class="docs-locale-menu" role="menu">
-        <button
-          type="button"
-          class="docs-locale-item"
-          class:active={locale.value === 'fr'}
-          role="menuitem"
-          onclick={() => {
-            locale.value = 'fr';
-            isLocaleOpen = false;
-          }}
-        >
-          <span class="locale-check">{#if locale.value === 'fr'}✓{/if}</span>
-          <span>Français</span>
-        </button>
-        <button
-          type="button"
-          class="docs-locale-item"
-          class:active={locale.value === 'en'}
-          role="menuitem"
-          onclick={() => {
-            locale.value = 'en';
-            isLocaleOpen = false;
-          }}
-        >
-          <span class="locale-check">{#if locale.value === 'en'}✓{/if}</span>
-          <span>English</span>
-        </button>
-      </div>
-    {/if}
-  </div>
-{/snippet}
-
-{#snippet emptySwitcher()}{/snippet}
-
-{#snippet docsUtilityNav()}
-  <nav class="docs-utility-nav" aria-label="Outils">
-    {@render searchTrigger()}
-    {#if showFrameworkSwitcher}
-      {@render frameworkSelector()}
-    {/if}
-    {@render themeSelector()}
-    {@render colorModeToggle()}
-    {@render langSelector()}
-    <button
-      type="button"
-      class="docs-header-control docs-header-menuButton docs-login-trigger"
-      aria-label={locale.value === 'fr' ? 'Se connecter' : 'Sign in'}
-    >
-      <User size={16} strokeWidth={2.1} aria-hidden="true" />
-    </button>
-  </nav>
-
-  <button
-    type="button"
-    class="docs-mobile-menu-trigger"
-    onclick={() => (isMobileMenuOpen = !isMobileMenuOpen)}
-    aria-expanded={isMobileMenuOpen}
-    aria-label="Menu principal"
-  >
-    {#if isMobileMenuOpen}
-      <X size={20} />
-    {:else}
-      <Menu size={20} />
-    {/if}
-  </button>
+{#snippet extraControls()}
+  {@render searchTrigger()}
+  {#if showFrameworkSwitcher}
+    {@render frameworkSelector()}
+  {/if}
 {/snippet}
 
 {#snippet routeContent()}
@@ -438,176 +283,32 @@
   </div>
 {/snippet}
 
-{#if useCustomChrome && theme.value === 'carbon'}
-  <div data-st-theme={theme.value} use:chromeRouting>
-    <ChromeCarbon
-      activeThemeId={theme.value}
-      isThemeOpen={isThemeOpen}
-      onThemeToggle={() => (isThemeOpen = !isThemeOpen)}
-      onSearchOpen={openSearch}
-      themeSwitcher={themeSelector}
-      frameworkSwitcher={showFrameworkSwitcher ? frameworkSelector : emptySwitcher}
-      localeSwitcher={langSelector}
-      compareButton={emptySwitcher}
-      mobileMenuOpen={isMobileMenuOpen}
-      onMobileMenuToggle={() => (isMobileMenuOpen = !isMobileMenuOpen)}
-    >
-      {#snippet children()}{@render routeContent()}{/snippet}
-    </ChromeCarbon>
-  </div>
-{:else if useCustomChrome && theme.value === 'dsfr'}
-  <div data-st-theme={theme.value} use:chromeRouting>
-    <ChromeDsfr
-      activeThemeId={theme.value}
-      isThemeOpen={isThemeOpen}
-      onThemeToggle={() => (isThemeOpen = !isThemeOpen)}
-      onSearchOpen={openSearch}
-      themeSwitcher={themeSelector}
-      frameworkSwitcher={showFrameworkSwitcher ? frameworkSelector : emptySwitcher}
-      localeSwitcher={langSelector}
-      compareButton={emptySwitcher}
-      mobileMenuOpen={isMobileMenuOpen}
-      onMobileMenuToggle={() => (isMobileMenuOpen = !isMobileMenuOpen)}
-    >
-      {#snippet children()}{@render routeContent()}{/snippet}
-    </ChromeDsfr>
-  </div>
-{:else if useCustomChrome && theme.value === 'airbus'}
-  <div data-st-theme={theme.value} use:chromeRouting>
-    <ChromeAirbus
-      activeThemeId={theme.value}
-      isThemeOpen={isThemeOpen}
-      onThemeToggle={() => (isThemeOpen = !isThemeOpen)}
-      onSearchOpen={openSearch}
-      themeSwitcher={themeSelector}
-      frameworkSwitcher={showFrameworkSwitcher ? frameworkSelector : emptySwitcher}
-      localeSwitcher={langSelector}
-      compareButton={emptySwitcher}
-      mobileMenuOpen={isMobileMenuOpen}
-      onMobileMenuToggle={() => (isMobileMenuOpen = !isMobileMenuOpen)}
-    >
-      {#snippet children()}{@render routeContent()}{/snippet}
-    </ChromeAirbus>
-  </div>
-{:else if useCustomChrome && theme.value === 'canada'}
-  <div data-st-theme={theme.value} use:chromeRouting>
-    <ChromeCanada
-      activeThemeId={theme.value}
-      isThemeOpen={isThemeOpen}
-      onThemeToggle={() => (isThemeOpen = !isThemeOpen)}
-      onSearchOpen={openSearch}
-      themeSwitcher={themeSelector}
-      frameworkSwitcher={showFrameworkSwitcher ? frameworkSelector : emptySwitcher}
-      localeSwitcher={langSelector}
-      compareButton={emptySwitcher}
-      mobileMenuOpen={isMobileMenuOpen}
-      onMobileMenuToggle={() => (isMobileMenuOpen = !isMobileMenuOpen)}
-    >
-      {#snippet children()}{@render routeContent()}{/snippet}
-    </ChromeCanada>
-  </div>
-{:else if useCustomChrome && theme.value === 'quebec'}
-  <div data-st-theme={theme.value} use:chromeRouting>
-    <ChromeQuebec
-      activeThemeId={theme.value}
-      isThemeOpen={isThemeOpen}
-      onThemeToggle={() => (isThemeOpen = !isThemeOpen)}
-      onSearchOpen={openSearch}
-      themeSwitcher={themeSelector}
-      frameworkSwitcher={showFrameworkSwitcher ? frameworkSelector : emptySwitcher}
-      localeSwitcher={langSelector}
-      compareButton={emptySwitcher}
-      mobileMenuOpen={isMobileMenuOpen}
-      onMobileMenuToggle={() => (isMobileMenuOpen = !isMobileMenuOpen)}
-    >
-      {#snippet children()}{@render routeContent()}{/snippet}
-    </ChromeQuebec>
-  </div>
-{:else}
-  <a class="docs-skip-link" href="#main-content">Aller au contenu</a>
-  <div class="docs-shell" data-st-theme={theme.value} use:chromeRouting>
-    <Header
-      class="docs-header"
-      label="En-tête de la documentation Sentropic dataviz"
-      logo={docsBrand}
-      navigation={docsTopNav}
-      actions={docsUtilityNav}
-    />
-
-    {#if isMobileMenuOpen}
-      <nav class="docs-mobile-nav" aria-label="Menu mobile">
-        <div class="docs-mobile-nav-section">
-          <span class="docs-mobile-nav-label">{locale.value === 'fr' ? 'Navigation' : 'Navigation'}</span>
-          {#each topNavItems as item (item.href)}
-            <a
-              href={item.href}
-              onclick={() => (isMobileMenuOpen = false)}
-              aria-current={isActive(item.href) ? 'page' : undefined}
-            >
-              <span>{item.label}</span>
-            </a>
-          {/each}
-        </div>
-        <div class="docs-mobile-nav-section">
-          <span class="docs-mobile-nav-label">Framework</span>
-          <div class="docs-mobile-locale-switcher docs-mobile-framework-switcher">
-            {#each FRAMEWORKS as option (option.id)}
-              <button
-                type="button"
-                class="docs-mobile-locale-btn"
-                class:active={framework.value === option.id}
-                onclick={() => {
-                  framework.set(option.id);
-                  isMobileMenuOpen = false;
-                }}
-              >
-                {option.label}
-              </button>
-            {/each}
-          </div>
-
-          <span class="docs-mobile-nav-label">{locale.value === 'fr' ? 'Mode couleur' : 'Color mode'}</span>
-          <div class="docs-mobile-locale-switcher docs-mobile-color-mode-switcher">
-            {#each (['light', 'dark', 'auto'] as ColorMode[]) as mode (mode)}
-              <button
-                type="button"
-                class="docs-mobile-locale-btn"
-                class:active={colorMode.value === mode}
-                onclick={() => colorMode.set(mode)}
-              >
-                {mode === 'light'
-                  ? (locale.value === 'fr' ? 'Clair' : 'Light')
-                  : mode === 'dark'
-                    ? (locale.value === 'fr' ? 'Sombre' : 'Dark')
-                    : 'Auto'}
-              </button>
-            {/each}
-          </div>
-
-          <span class="docs-mobile-nav-label">{locale.value === 'fr' ? 'Langue' : 'Language'}</span>
-          <div class="docs-mobile-locale-switcher docs-mobile-lang-switcher">
-            {@render langSelector()}
-          </div>
-
-          <span class="docs-mobile-nav-label">{locale.value === 'fr' ? 'Thème' : 'Theme'}</span>
-          <div class="docs-mobile-locale-switcher docs-mobile-theme-switcher">
-            {#each THEMES as option (option.id)}
-              <button
-                type="button"
-                class="docs-mobile-locale-btn"
-                class:active={theme.value === option.id}
-                onclick={() => {
-                  theme.set(option.id);
-                  isMobileMenuOpen = false;
-                }}
-              >
-                {option.label}
-              </button>
-            {/each}
-          </div>
-        </div>
-      </nav>
-    {/if}
+<a class="docs-skip-link" href="#main-content">Aller au contenu</a>
+<div class="docs-shell" data-st-theme={theme.value} use:chromeRouting>
+  <AppChrome
+    brandName="Sentropic"
+    productName="dataviz"
+    logoSrc={`${import.meta.env.BASE_URL}SENT-logo-squared.svg`}
+    brandHref={router.href('/')}
+    brandLabel="Sentropic dataviz"
+    nav={appNavItems}
+    navLabel={locale.value === 'fr' ? 'Navigation principale' : 'Primary navigation'}
+    themes={appThemeOptions}
+    theme={theme.value}
+    onThemeChange={(id) => theme.set(id)}
+    themeLabel={locale.value === 'fr' ? 'Changer le thème' : 'Change theme'}
+    colorMode={colorMode.value}
+    onColorModeChange={(mode) => colorMode.set(mode)}
+    colorModeLabels={colorModeLabels}
+    locale={locale.value}
+    onLocaleChange={(value) => (locale.value = value)}
+    localeLabel={locale.value === 'fr' ? 'Changer la langue' : 'Change language'}
+    mobileMenuOpen={isMobileMenuOpen}
+    onMobileMenuToggle={() => (isMobileMenuOpen = !isMobileMenuOpen)}
+    menuLabel={locale.value === 'fr' ? 'Menu principal' : 'Main menu'}
+    identity={identityControl}
+    extraSelectors={extraControls}
+  />
 
     <div class="docs-body">
       <div class="docs-sidebar-mobile-trigger-wrap">
@@ -692,7 +393,6 @@
       {@render pageContent()}
     </div>
   </div>
-{/if}
 
 {#if searchOpen}
   <!-- svelte-ignore a11y_click_events_have_key_events a11y_no_static_element_interactions -->
