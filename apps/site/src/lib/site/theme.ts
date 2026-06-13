@@ -7,7 +7,7 @@
  * `:root` tokens via `compileTheme`, switchable at runtime.
  *
  *  - THEME : `compileTheme(activeTheme, { selector: ':root' })` — the full DS
- *            token set for the chosen tenant (sent-tech / dsfr / carbon / airbus),
+ *            token set for the chosen tenant (sent-tech / dsfr / carbon / airbus / canada / quebec),
  *            including its brand font (`--st-font-sans`) and the 8
  *            `--st-semantic-data-categoryN` chart colours. There is no app-level
  *            "palette" concept; chart colours come straight from these tokens.
@@ -20,6 +20,8 @@ import { compileTheme, sentTechTheme, type TenantTheme } from '@sentropic/design
 import { dsfrTheme } from '@sentropic/design-system-theme-dsfr';
 import { carbonTheme } from '@sentropic/design-system-theme-carbon';
 import { airbusTheme } from '@sentropic/design-system-theme-airbus';
+import { canadaTheme } from '@sentropic/design-system-theme-canada';
+import { quebecTheme } from '@sentropic/design-system-theme-quebec';
 
 export interface ThemeOption {
   id: string;
@@ -35,6 +37,8 @@ export const THEMES: ThemeOption[] = [
   { id: dsfrTheme.id, label: 'DSFR', theme: dsfrTheme },
   { id: carbonTheme.id, label: 'Carbon', theme: carbonTheme },
   { id: airbusTheme.id, label: 'Airbus', theme: airbusTheme },
+  { id: canadaTheme.id, label: 'Canada', theme: canadaTheme },
+  { id: quebecTheme.id, label: 'Québec', theme: quebecTheme },
 ];
 
 export const DEFAULT_THEME_ID = sentTechTheme.id;

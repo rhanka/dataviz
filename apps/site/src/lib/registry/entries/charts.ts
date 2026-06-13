@@ -454,6 +454,68 @@ export function CHART_ENTRIES(ChartDemo: Demo, GeoDemo: Demo): DemoEntry[] {
       }),
     }, ChartDemo),
 
+    chart({
+      slug: 'ohlc', name: 'OHLCChart', group: 'Finance', kind: 'ohlc', hasControls: false,
+      tagline: 'Barres OHLC (Open/High/Low/Close) pour des cours financiers.',
+      useCase:
+        "Alternative à la bougie japonaise : chaque barre OHLC affiche l'ouverture (tiret gauche), le plus haut, le plus bas et la clôture (tiret droit). Les mêmes données financières que le CandlestickChart, format barres.\n\nSupporte `annotations`, `dataLabels`, `hoverKey`/`onHoverKeyChange` (synchronisation du crosshair) et `keyboardNav`/`onSelectKey` (navigation clavier a11y).",
+      code: storeCode(['OHLCChart'], {
+        svelte: `<OHLCChart {store} viewId="ohlc" label_field="session" open="open" high="high" low="low" close="close" label="Cours boursiers OHLC (28 séances)" />`,
+        react: `<OHLCChart store={store} viewId="ohlc" label_field="session" open="open" high="high" low="low" close="close" label="Cours boursiers OHLC (28 séances)" />`,
+        vue: `<OHLCChart :store="store" viewId="ohlc" label_field="session" open="open" high="high" low="low" close="close" label="Cours boursiers OHLC (28 séances)" />`,
+      }),
+    }, ChartDemo),
+
+    // ── Projet & temps ──────────────────────────────────────────────────────
+    chart({
+      slug: 'gantt', name: 'GanttChart', group: 'Projet & temps', kind: 'gantt', hasControls: false,
+      tagline: 'Diagramme de Gantt pour planifier des tâches sur une timeline.',
+      useCase:
+        "Visualiser un planning de projet : chaque tâche est une barre entre son début et sa fin (indices de jours). Les `category` groupent les tâches par phase. Le `marker` positionne un indicateur \"aujourd'hui\".\n\n`task` désigne la dimension libellé, `start`/`end` les mesures de borne temporelle.",
+      code: storeCode(['GanttChart'], {
+        svelte: `<GanttChart {store} viewId="gantt" task="task" start="start" end="end" category="category" marker={10} label="Planning de projet" />`,
+        react: `<GanttChart store={store} viewId="gantt" task="task" start="start" end="end" category="category" marker={10} label="Planning de projet" />`,
+        vue: `<GanttChart :store="store" viewId="gantt" task="task" start="start" end="end" category="category" :marker="10" label="Planning de projet" />`,
+      }),
+    }, ChartDemo),
+    chart({
+      slug: 'timeline', name: 'TimelineChart', group: 'Projet & temps', kind: 'timeline', hasControls: false,
+      tagline: "Frise chronologique d'événements jalons.",
+      useCase:
+        "Représenter des jalons ponctuels sur un axe de temps — ici les étapes clés d'un projet (lancement, alpha, mise en production). Chaque événement a une `position` numérique, un `label`, une `description` optionnelle et un `tone` catégoriel.\n\n`label_field` désigne la dimension libellé, `position` la mesure de position sur l'axe.",
+      code: storeCode(['TimelineChart'], {
+        svelte: `<TimelineChart {store} viewId="timeline" label_field="event" position="position" description="description" tone="tone" label="Jalons du projet" />`,
+        react: `<TimelineChart store={store} viewId="timeline" label_field="event" position="position" description="description" tone="tone" label="Jalons du projet" />`,
+        vue: `<TimelineChart :store="store" viewId="timeline" label_field="event" position="position" description="description" tone="tone" label="Jalons du projet" />`,
+      }),
+    }, ChartDemo),
+
+    // ── Évolution & flux ────────────────────────────────────────────────────
+    chart({
+      slug: 'streamgraph', name: 'StreamgraphChart', group: 'Évolution & flux', kind: 'streamgraph', hasControls: false,
+      tagline: "Flux empilés lisses pour l'évolution de séries.",
+      useCase:
+        "Montrer l'évolution relative de plusieurs séries sur une dimension ordonnée (ici le revenu par canal sur 6 mois). Les flux sont empilés de façon organique ; `smooth` adoucit les transitions.\n\n`category` désigne la dimension X (mois), `series` la dimension couleur/légende, `measure` la valeur de chaque flux.",
+      code: storeCode(['StreamgraphChart'], {
+        svelte: `<StreamgraphChart {store} viewId="sg" category="month" series="channel" measure="revenue" smooth showLegend label="Revenu par canal (flux)" />`,
+        react: `<StreamgraphChart store={store} viewId="sg" category="month" series="channel" measure="revenue" smooth showLegend label="Revenu par canal (flux)" />`,
+        vue: `<StreamgraphChart :store="store" viewId="sg" category="month" series="channel" measure="revenue" :smooth="true" :showLegend="true" label="Revenu par canal (flux)" />`,
+      }),
+    }, ChartDemo),
+
+    // ── Cartographie ────────────────────────────────────────────────────────
+    chart({
+      slug: 'tilemap', name: 'TileMapChart', group: 'Cartographie', kind: 'tilemap', hasControls: false,
+      tagline: 'Cartogramme en grille de tuiles (tile map).',
+      useCase:
+        "Visualiser des données régionales sur une grille cartographique stylisée où chaque cellule encode le revenu par couleur. Contrairement à la choroplèthe, les tuiles sont toutes de même taille — elles encodent la valeur par couleur, pas par aire.\n\n`label_field` est la dimension région, `col`/`row` les coordonnées grille (0-based), `value` la mesure.",
+      code: storeCode(['TileMapChart'], {
+        svelte: `<TileMapChart {store} viewId="tm" label_field="region" col="col" row="row" value="revenue" label="Revenu régional (grille)" />`,
+        react: `<TileMapChart store={store} viewId="tm" label_field="region" col="col" row="row" value="revenue" label="Revenu régional (grille)" />`,
+        vue: `<TileMapChart :store="store" viewId="tm" label_field="region" col="col" row="row" value="revenue" label="Revenu régional (grille)" />`,
+      }),
+    }, ChartDemo),
+
     // ── Indicateurs ──────────────────────────────────────────────────────
     chart({
       slug: 'scatter', name: 'ScatterPlot', group: 'Couche analytique', kind: 'scatter', hasControls: false,

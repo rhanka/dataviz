@@ -67,9 +67,4 @@ export const SECTION_META: Record<Section, { label: string; href: string; blurb:
     blurb:
       'Tables et pivots bâtis sur DataTable : enregistrements cross-filtrés, pivot agrégé et pivot avancé (sous-totaux, heat, sparkline).',
   },
-  guides: {
-    label: 'Guides',
-    href: '/guides',
-    blurb: 'Prise en main, modèle de données et golden rule de présentation.',
-  },
 };

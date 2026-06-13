@@ -41,6 +41,11 @@
     ViolinChart,
     BumpChart,
     ParallelCoordinatesChart,
+    OHLCChart,
+    GanttChart,
+    TimelineChart,
+    StreamgraphChart,
+    TileMapChart,
     Sparkline,
     ScoreCard,
   } from '@sentropic/dataviz-svelte';
@@ -48,11 +53,19 @@
   import { lineAnnotation, regionAnnotation, makeFormatter } from '@sentropic/dataviz-core';
   import { makeStore } from '../../data/store';
   import { makeOhlcStore } from '../../data/ohlc-store';
+  import { makeGanttStore } from '../../data/gantt';
+  import { makeTimelineStore } from '../../data/timeline';
+  import { makeStreamgraphStore } from '../../data/streamgraph';
+  import { makeTilemapStore } from '../../data/tilemap';
 
   let { kind, controls = true }: { kind: string; controls?: boolean } = $props();
 
   const store = makeStore();
   const ohlcStore = makeOhlcStore();
+  const ganttStore = makeGanttStore();
+  const timelineStore = makeTimelineStore();
+  const streamgraphStore = makeStreamgraphStore();
+  const tilemapStore = makeTilemapStore();
 
   let measure = $state<'revenue' | 'units' | 'margin'>('revenue');
   const measureItems = [
@@ -180,6 +193,16 @@
     <ScatterPlot {store} viewId="c" x="revenue" y="units" series="category" labelField="category" label="Revenu vs unités par catégorie" />
   {:else if kind === 'candlestick'}
     <CandlestickChart store={ohlcStore} viewId="ohlc" label_field="session" open="open" high="high" low="low" close="close" label="Cours boursiers (28 séances)" />
+  {:else if kind === 'ohlc'}
+    <OHLCChart store={ohlcStore} viewId="ohlc" label_field="session" open="open" high="high" low="low" close="close" label="Cours boursiers OHLC (28 séances)" />
+  {:else if kind === 'gantt'}
+    <GanttChart store={ganttStore} viewId="gantt" task="task" start="start" end="end" category="category" marker={10} label="Planning de projet" />
+  {:else if kind === 'timeline'}
+    <TimelineChart store={timelineStore} viewId="timeline" label_field="event" position="position" description="description" tone="tone" label="Jalons du projet" />
+  {:else if kind === 'streamgraph'}
+    <StreamgraphChart store={streamgraphStore} viewId="sg" category="month" series="channel" measure="revenue" smooth showLegend label="Revenu par canal (flux)" />
+  {:else if kind === 'tilemap'}
+    <TileMapChart store={tilemapStore} viewId="tm" label_field="region" col="col" row="row" value="revenue" label="Revenu régional (grille)" />
   {:else if kind === 'sparkline'}
     <Sparkline {store} viewId="c" dimension="month" measure="revenue" area label="Tendance mensuelle du revenu" />
   {:else if kind === 'scorecard'}

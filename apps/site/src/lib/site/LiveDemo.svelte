@@ -28,7 +28,7 @@
   const useIsland = $derived(fw !== 'svelte' && hasIsland(entry.section, kind));
 </script>
 
-<div class="dv-demo">
+<div class="dv-demo" class:dv-demo--chart={entry.section === 'charts'}>
   {#if useIsland}
     <!-- key on (slug, framework): fresh island host per demo + framework. -->
     {#key `${entry.slug}:${fw}`}
