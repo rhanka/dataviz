@@ -120,6 +120,17 @@ select {
   min-height: 100vh;
 }
 
+/* AppChrome (DS) : recherche + switcher framework logés dans `extraSelectors`
+   (rendu en dernier par le composant). On les ramène en TÊTE des contrôles
+   utilitaires pour coller à l'ordre du site source : recherche, framework,
+   thème, mode couleur, langue, identité. */
+.st-appChrome__extraSelectors {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--st-spacing-2, 0.5rem);
+  order: -1;
+}
+
 /* La barre du haut est le composant Header porté (`<header class="st-header docs-header">`).
    On surcharge l'habillage du composant pour conserver l'identité de la doc, tout en
    laissant sa structure flex (leading | navigation | actions) piloter la mise en page. */
