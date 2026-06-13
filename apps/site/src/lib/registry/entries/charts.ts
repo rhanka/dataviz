@@ -621,6 +621,18 @@ export function CHART_ENTRIES(ChartDemo: Demo, GeoDemo: Demo): DemoEntry[] {
       }),
     }, ChartDemo),
 
+    chart({
+      slug: 'column-pyramid', name: 'ColumnPyramidChart', group: 'Proportions', kind: 'column-pyramid', hasControls: false,
+      tagline: 'Colonnes en pyramide pour un entonnoir ou un classement décroissant.',
+      useCase:
+        "Visualiser un entonnoir d'acquisition ou un classement décroissant : chaque étape est une colonne dont la largeur se réduit, formant une pyramide. Une ligne par étape (pas d'agrégation).\n\n`category` nomme chaque étape, `value` donne sa valeur.",
+      code: storeCode(['ColumnPyramidChart'], {
+        svelte: `<ColumnPyramidChart {store} viewId="cp" category="stage" value="users" label="Funnel d'acquisition" />`,
+        react: `<ColumnPyramidChart store={store} viewId="cp" category="stage" value="users" label="Funnel d'acquisition" />`,
+        vue: `<ColumnPyramidChart :store="store" viewId="cp" category="stage" value="users" label="Funnel d'acquisition" />`,
+      }),
+    }, ChartDemo),
+
     // ── Distribution & statistique (bell curve) ──────────────────────────
     chart({
       slug: 'bell-curve', name: 'BellCurveChart', group: 'Distribution & statistique', kind: 'bell-curve', hasControls: false,
