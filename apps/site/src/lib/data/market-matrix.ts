@@ -145,8 +145,8 @@ export const MARKET_COVERAGE: ComponentMapping[] = [
   { component: 'AdvancedPivotDataTable', group: 'Grilles', status: 'covered', inSolutions: ['powerbi', 'qlik'], marketNames: 'Heatmap table / P&L pivot' },
 
   // ── Catégorie B — demandés au design system (fr-ds), câblés à la livraison ─
-  { component: 'StateTimelineChart', group: 'Observabilité', status: 'fr-ds', inSolutions: ['grafana', 'kibana'], marketNames: 'State timeline (xrange)' },
-  { component: 'SolidGaugeChart', group: 'Indicateurs', status: 'fr-ds', inSolutions: ['highcharts'], marketNames: 'Solid gauge / Progress ring' },
+  { component: 'StateTimelineChart', group: 'Observabilité', status: 'gap-filled', since: 'v0.4.38', inSolutions: ['grafana', 'kibana'], marketNames: 'State timeline (xrange)' },
+  { component: 'SolidGaugeChart', group: 'Indicateurs', status: 'gap-filled', since: 'v0.4.38', inSolutions: ['highcharts'], marketNames: 'Solid gauge / Progress ring' },
   { component: 'StatusHistoryChart', group: 'Observabilité', status: 'fr-ds', inSolutions: ['grafana'], marketNames: 'Status history' },
   { component: 'WaffleChart', group: 'Proportions', status: 'fr-ds', inSolutions: ['kibana'], marketNames: 'Waffle' },
   { component: 'RibbonChart', group: 'Évolution & classements', status: 'fr-ds', inSolutions: ['powerbi'], marketNames: 'Ribbon' },

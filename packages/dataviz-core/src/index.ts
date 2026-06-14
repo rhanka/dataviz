@@ -523,6 +523,10 @@ export { buildCorrelationMatrix } from './correlation.js';
 export type { ScatterMatrixConfig, ScatterMatrixCell, ScatterMatrixModel } from './scatterMatrix.js';
 export { buildScatterMatrix } from './scatterMatrix.js';
 
+// State timeline model (observabilité — bandes d'états dans le temps)
+export type { StateTimelineDatum, StateTimelineSegmentDatum, StateTimelineConfig } from './stateTimeline.js';
+export { buildStateTimelineData } from './stateTimeline.js';
+
 // Bell curve chart model
 export type { BellCurveConfig } from './bellCurve.js';
 export { buildBellCurveData } from './bellCurve.js';

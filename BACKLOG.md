@@ -35,8 +35,8 @@ Réalisables en composant dataviz qui orchestre/compose des composants DS exista
 
 | # | Composant | Prio | Highcharts equiv | Vu dans | État |
 |---|-----------|------|------------------|---------|------|
-| B1 | StateTimelineChart (bandes d'états dans le temps) | **P1** | xrange | Grafana, Kibana | 🟡 DS (FR acceptée) |
-| B2 | SolidGaugeChart (arc plein / progress ring) | P2 | solidgauge | Highcharts, KPI dashboards | 🟡 DS (FR acceptée) |
+| B1 | StateTimelineChart (bandes d'états dans le temps) | **P1** | xrange | Grafana, Kibana | ✅ v0.4.38 |
+| B2 | SolidGaugeChart (arc plein / progress ring) | P2 | solidgauge | Highcharts, KPI dashboards | ✅ v0.4.38 |
 | B3 | StatusHistoryChart (grille temps×entité statut) | P2 | heatmap | Grafana | 🟡 DS (FR acceptée) |
 | B4 | WaffleChart (grille proportionnelle) | P2 | item parliament | Kibana | 🟡 DS (FR acceptée) |
 | B5 | RibbonChart (rang empilé dans le temps) | P2 | — | Power BI | 🟡 DS (FR acceptée) |

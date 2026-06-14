@@ -361,6 +361,21 @@ export function CHART_ENTRIES(ChartDemo: Demo, GeoDemo: Demo): DemoEntry[] {
       }),
     }, ChartDemo),
 
+    chart({
+      slug: 'solid-gauge', name: 'SolidGaugeChart', group: 'Distribution & statistique', kind: 'solid-gauge', hasControls: false,
+      tagline: 'Anneau de progression à seuils colorés (arc plein, sans aiguille).',
+      useCase:
+        "Afficher une mesure unique sous forme d'anneau rempli sur une échelle bornée ; la zone de seuil atteinte teinte l'arc. Variante « jauge solide » du cadran à aiguille, idéale pour un score ou un taux d'objectif.",
+      code: storeCode(['SolidGaugeChart'], {
+        svelte: `<SolidGaugeChart {store} viewId="c" value="revenue" min={0} max={2000000} unit="€"
+  thresholds={[{ value: 800000, tone: 'warning' }, { value: 1400000, tone: 'success' }]} label="Revenu vs objectif" format="number" />`,
+        react: `<SolidGaugeChart store={store} viewId="c" value="revenue" min={0} max={2000000} unit="€"
+  thresholds={[{ value: 800000, tone: 'warning' }, { value: 1400000, tone: 'success' }]} label="Revenu vs objectif" format="number" />`,
+        vue: `<SolidGaugeChart :store="store" viewId="c" value="revenue" :min="0" :max="2000000" unit="€"
+  :thresholds="[{ value: 800000, tone: 'warning' }, { value: 1400000, tone: 'success' }]" label="Revenu vs objectif" format="number" />`,
+      }),
+    }, ChartDemo),
+
     // ── Couche analytique ────────────────────────────────────────────────
     chart({
       slug: 'reference-line', name: 'ReferenceLineChart', group: 'Couche analytique', kind: 'reference', hasControls: false,
@@ -828,6 +843,19 @@ export function CHART_ENTRIES(ChartDemo: Demo, GeoDemo: Demo): DemoEntry[] {
         svelte: `<AnimatedBubbleChart {store} viewId="ab" x="gdpPerCapita" y="lifeExpectancy" size="population" time="year" series="country" label="Espérance de vie vs PIB/hab" />`,
         react: `<AnimatedBubbleChart store={store} viewId="ab" x="gdpPerCapita" y="lifeExpectancy" size="population" time="year" series="country" label="Espérance de vie vs PIB/hab" />`,
         vue: `<AnimatedBubbleChart :store="store" viewId="ab" x="gdpPerCapita" y="lifeExpectancy" size="population" time="year" series="country" label="Espérance de vie vs PIB/hab" />`,
+      }),
+    }, ChartDemo),
+
+    // ── Observabilité ────────────────────────────────────────────────────
+    chart({
+      slug: 'state-timeline', name: 'StateTimelineChart', group: 'Observabilité', kind: 'state-timeline', hasControls: false,
+      tagline: "Bandes d'états discrets dans le temps, par service ou ressource.",
+      useCase:
+        "Visualiser l'historique de santé de plusieurs services sur une période : chaque lane est un service, chaque segment coloré indique l'état (up / degraded / down). Idéal pour les tableaux de bord d'observabilité, d'uptime ou de SLA.\n\n`series` désigne la lane, `start`/`end` les bornes temporelles, `state` la valeur d'état (couleur stable par état).",
+      code: storeCode(['StateTimelineChart'], {
+        svelte: `<StateTimelineChart {store} viewId="st" series="service" start="start" end="end" state="state" label="États des services (24 h)" />`,
+        react: `<StateTimelineChart store={store} viewId="st" series="service" start="start" end="end" state="state" label="États des services (24 h)" />`,
+        vue: `<StateTimelineChart :store="store" viewId="st" series="service" start="start" end="end" state="state" label="États des services (24 h)" />`,
       }),
     }, ChartDemo),
 
