@@ -140,6 +140,8 @@ export { default as CorrelationMatrix } from './lib/CorrelationMatrix.svelte';
 export type { CorrelationMatrixProps } from './lib/CorrelationMatrix.svelte';
 export { default as ScatterPlotMatrix } from './lib/ScatterPlotMatrix.svelte';
 export type { ScatterPlotMatrixProps } from './lib/ScatterPlotMatrix.svelte';
+export { default as AnimatedBubbleChart } from './lib/AnimatedBubbleChart.svelte';
+export type { AnimatedBubbleChartProps } from './lib/AnimatedBubbleChart.svelte';
 export { default as BellCurveChart } from './lib/BellCurveChart.svelte';
 export type { BellCurveChartProps } from './lib/BellCurveChart.svelte';
 export { default as OrganizationChart } from './lib/OrganizationChart.svelte';

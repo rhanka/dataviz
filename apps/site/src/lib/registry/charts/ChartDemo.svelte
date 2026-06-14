@@ -69,6 +69,7 @@
     HLCChart,
     CorrelationMatrix,
     ScatterPlotMatrix,
+    AnimatedBubbleChart,
   } from '@sentropic/dataviz-svelte';
   import { ContentSwitcher } from '@sentropic/design-system-svelte';
   import { lineAnnotation, regionAnnotation, makeFormatter } from '@sentropic/dataviz-core';
@@ -84,6 +85,7 @@
   import { makeForceGraphStore } from '../../data/forceGraph';
   import { makeArcDiagramStore } from '../../data/arcDiagram';
   import { makeDependencyWheelStore } from '../../data/dependencyWheel';
+  import { makeAnimatedBubbleStore } from '../../data/animatedBubble';
   import { makeBellCurveStore } from '../../data/bellCurve';
   import { makeHierarchyStore } from '../../data/hierarchy';
   import { makeWordCloudStore } from '../../data/wordCloud';
@@ -105,6 +107,7 @@
   const forceGraphStore = makeForceGraphStore();
   const arcDiagramStore = makeArcDiagramStore();
   const dependencyWheelStore = makeDependencyWheelStore();
+  const animatedBubbleStore = makeAnimatedBubbleStore();
   const bellCurveStore = makeBellCurveStore();
   const hierarchyStore = makeHierarchyStore();
   const wordCloudStore = makeWordCloudStore();
@@ -298,6 +301,8 @@
     <ScatterPlotMatrix {store} viewId="c" measures={['price', 'units', 'marginRate']} label="Matrice de nuages" />
   {:else if kind === 'correlation-matrix'}
     <CorrelationMatrix {store} viewId="c" measures={['price', 'units', 'marginRate', 'revenue']} label="Corrélations" />
+  {:else if kind === 'animated-bubble'}
+    <AnimatedBubbleChart store={animatedBubbleStore} viewId="ab" x="gdpPerCapita" y="lifeExpectancy" size="population" time="year" series="country" label="Espérance de vie vs PIB/hab" />
   {/if}
 </div>
 
