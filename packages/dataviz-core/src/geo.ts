@@ -15,9 +15,17 @@ export interface GeoCoordinate {
   longitude: number;
 }
 
+/**
+ * Config for point data. Either (latitude + longitude) or geometry must be provided.
+ * When `geometry` is set, it must reference a column containing a GeoJSON Point object
+ * ({ type: 'Point', coordinates: [lng, lat] }). In that case latitude and longitude
+ * columns are not required.
+ */
 export interface GeoPointConfig {
-  latitude: string;
-  longitude: string;
+  latitude?: string;
+  longitude?: string;
+  /** Column containing a GeoJSON Point geometry { type:'Point', coordinates:[lng,lat] }. */
+  geometry?: string;
   id?: string;
   label?: string;
   value?: string;
@@ -33,9 +41,16 @@ export interface GeoPointModel {
   points: GeoPoint[];
 }
 
+export interface ChoroplethClassification {
+  method: 'quantile' | 'equal';
+  count: number;
+}
+
 export interface ChoroplethConfig {
   region: string;
   measure: string;
+  /** Optional classification scheme. When provided, `ChoroplethModel.breaks` is populated. */
+  classification?: ChoroplethClassification;
 }
 
 export interface ChoroplethRegion {
@@ -48,6 +63,13 @@ export interface ChoroplethModel {
   regionId: string;
   measureId: string;
   regions: ChoroplethRegion[];
+  /**
+   * Classification breaks computed via `classify()`. Only present when
+   * `ChoroplethConfig.classification` is provided.
+   * Convention: count+1 values including min and max, so there are `count` classes.
+   * E.g. classify([0,10,20,30], { method:'equal', count:2 }) → [0, 15, 30].
+   */
+  breaks?: number[];
 }
 
 export interface GeoFlowConfig {
@@ -71,8 +93,10 @@ export interface GeoFlowModel {
 }
 
 export interface GeoHexbinConfig {
-  latitude: string;
-  longitude: string;
+  latitude?: string;
+  longitude?: string;
+  /** Column containing a GeoJSON Point geometry { type:'Point', coordinates:[lng,lat] }. */
+  geometry?: string;
   value?: string;
   cellSize?: number;
 }
@@ -84,6 +108,8 @@ export interface GeoHexbin {
   center: GeoCoordinate;
   count: number;
   value: number;
+  /** Optional: the 6 vertices of the hexagon (pointy-top) surrounding `center`, in lat/lng degrees. */
+  polygon?: GeoCoordinate[];
 }
 
 export interface GeoHexbinModel {
@@ -92,8 +118,10 @@ export interface GeoHexbinModel {
 }
 
 export interface GeoClusterConfig {
-  latitude: string;
-  longitude: string;
+  latitude?: string;
+  longitude?: string;
+  /** Column containing a GeoJSON Point geometry { type:'Point', coordinates:[lng,lat] }. */
+  geometry?: string;
   id?: string;
   value?: string;
   radius?: number;
@@ -114,8 +142,10 @@ export interface GeoClusterModel {
 }
 
 export interface GeoDensityConfig {
-  latitude: string;
-  longitude: string;
+  latitude?: string;
+  longitude?: string;
+  /** Column containing a GeoJSON Point geometry { type:'Point', coordinates:[lng,lat] }. */
+  geometry?: string;
   value?: string;
   cellSize?: number;
 }
@@ -136,6 +166,8 @@ export interface GeoDensityCell {
   count: number;
   value: number;
   density: number;
+  /** Optional: the 4 corners of the cell rectangle (SW, SE, NE, NW), in lat/lng degrees. */
+  polygon?: GeoCoordinate[];
 }
 
 export interface GeoDensityModel {
@@ -265,18 +297,120 @@ function isGeoJsonGeometry(value: unknown): value is GeoJsonGeometry {
   );
 }
 
+/**
+ * Extract lat/lng from a GeoJSON Point geometry object.
+ * Returns undefined if the value is not a valid GeoJSON Point.
+ */
+function extractPointCoords(value: unknown): { latitude: number; longitude: number } | undefined {
+  if (typeof value !== 'object' || value === null) return undefined;
+  const geom = value as { type?: unknown; coordinates?: unknown };
+  if (geom.type !== 'Point' || !Array.isArray(geom.coordinates)) return undefined;
+  const [lng, lat] = geom.coordinates as unknown[];
+  const latitude = toFiniteNumber(lat);
+  const longitude = toFiniteNumber(lng);
+  if (latitude === undefined || longitude === undefined) return undefined;
+  if (!isCoordinate(latitude, longitude)) return undefined;
+  return { latitude, longitude };
+}
+
+/**
+ * Compute classification breaks for a set of values.
+ *
+ * Convention: returns `count + 1` values including the overall min and max,
+ * defining `count` non-overlapping classes. For example with count=3:
+ *   [min, break1, break2, max]
+ * Returns [] when `values` is empty or `count <= 0`.
+ *
+ * @param values - Input numbers (non-finite values are ignored).
+ * @param opts.method - 'equal' for equal-width intervals, 'quantile' for quantile-based breaks.
+ * @param opts.count  - Number of classes (result length = count + 1).
+ */
+export function classify(
+  values: number[],
+  opts: { method: 'quantile' | 'equal'; count: number },
+): number[] {
+  const { method, count } = opts;
+  const finite = values.filter((v) => Number.isFinite(v));
+  if (finite.length === 0 || count <= 0) return [];
+
+  const sorted = [...finite].sort((a, b) => a - b);
+  const min = sorted[0]!;
+  const max = sorted[sorted.length - 1]!;
+
+  if (count === 1) return [min, max];
+
+  if (method === 'equal') {
+    const step = (max - min) / count;
+    const breaks: number[] = [min];
+    for (let i = 1; i < count; i++) {
+      breaks.push(min + step * i);
+    }
+    breaks.push(max);
+    return breaks;
+  }
+
+  // quantile
+  const breaks: number[] = [min];
+  for (let i = 1; i < count; i++) {
+    const pos = (i / count) * (sorted.length - 1);
+    const lo = Math.floor(pos);
+    const hi = Math.ceil(pos);
+    const frac = pos - lo;
+    breaks.push(sorted[lo]! + frac * (sorted[hi]! - sorted[lo]!));
+  }
+  breaks.push(max);
+  return breaks;
+}
+
+/**
+ * Compute the 6 vertices of a pointy-top hexagon centred at (centerLat, centerLon)
+ * given a `cellSize` (in degrees of longitude). The latitude half-height is
+ * cellSize * (sqrt(3)/2), matching the binning formula used in buildGeoHexbinModel.
+ */
+function hexagonVertices(centerLat: number, centerLon: number, cellSize: number): GeoCoordinate[] {
+  const hw = cellSize / 2; // half-width in lng
+  const hh = cellSize * (Math.sqrt(3) / 4); // half-height in lat (= height/2)
+  // Pointy-top order: top, upper-right, lower-right, bottom, lower-left, upper-left
+  return [
+    { latitude: centerLat + hh * 2, longitude: centerLon },
+    { latitude: centerLat + hh, longitude: centerLon + hw },
+    { latitude: centerLat - hh, longitude: centerLon + hw },
+    { latitude: centerLat - hh * 2, longitude: centerLon },
+    { latitude: centerLat - hh, longitude: centerLon - hw },
+    { latitude: centerLat + hh, longitude: centerLon - hw },
+  ];
+}
+
 function collectPoints(model: DataModel, data: readonly Row[], config: GeoPointConfig): GeoInputPoint[] {
-  assertField(model, config.latitude, 'geo latitude');
-  assertField(model, config.longitude, 'geo longitude');
+  const usingGeometry = config.geometry !== undefined;
+
+  if (usingGeometry) {
+    assertField(model, config.geometry!, 'geo geometry');
+  } else {
+    if (config.latitude === undefined) throw new Error('GeoPointConfig requires latitude or geometry');
+    if (config.longitude === undefined) throw new Error('GeoPointConfig requires longitude or geometry');
+    assertField(model, config.latitude, 'geo latitude');
+    assertField(model, config.longitude, 'geo longitude');
+  }
   if (config.id !== undefined) assertField(model, config.id, 'geo id');
   if (config.label !== undefined) assertField(model, config.label, 'geo label');
   if (config.value !== undefined) assertField(model, config.value, 'geo value');
 
   const points: GeoInputPoint[] = [];
   data.forEach((row, index) => {
-    const latitude = toFiniteNumber(row[config.latitude]);
-    const longitude = toFiniteNumber(row[config.longitude]);
-    if (!isCoordinate(latitude, longitude)) return;
+    let latitude: number | undefined;
+    let longitude: number | undefined;
+
+    if (usingGeometry) {
+      const coords = extractPointCoords(row[config.geometry!]);
+      if (!coords) return;
+      latitude = coords.latitude;
+      longitude = coords.longitude;
+    } else {
+      latitude = toFiniteNumber(row[config.latitude!]);
+      longitude = toFiniteNumber(row[config.longitude!]);
+      if (!isCoordinate(latitude, longitude)) return;
+    }
 
     points.push({
       id: config.id === undefined ? String(index) : cellKey(row[config.id]),
@@ -312,15 +446,22 @@ export function buildChoroplethModel(
   assertDimension(model, config.region, 'choropleth region');
   const measure = resolveMeasure(model, config.measure, 'choropleth');
 
-  return {
-    regionId: config.region,
-    measureId: measure.id,
-    regions: Array.from(groupRows(data, config.region), ([key, rows]) => ({
-      key,
-      label: key,
-      value: aggregate(rows, measure),
-    })),
-  };
+  const regions = Array.from(groupRows(data, config.region), ([key, rows]) => ({
+    key,
+    label: key,
+    value: aggregate(rows, measure),
+  }));
+
+  const result: ChoroplethModel = { regionId: config.region, measureId: measure.id, regions };
+
+  if (config.classification !== undefined) {
+    result.breaks = classify(
+      regions.map((r) => r.value),
+      config.classification,
+    );
+  }
+
+  return result;
 }
 
 export function buildGeoFlowModel(
@@ -372,6 +513,7 @@ export function buildGeoHexbinModel(
   const points = collectPoints(model, data, {
     latitude: config.latitude,
     longitude: config.longitude,
+    geometry: config.geometry,
     value: config.value,
   });
 
@@ -386,13 +528,16 @@ export function buildGeoHexbinModel(
       bin.count += 1;
       bin.value += point.value;
     } else {
+      const centerLat = r * height;
+      const centerLon = q * cellSize;
       bins.set(id, {
         id,
         q,
         r,
-        center: { latitude: r * height, longitude: q * cellSize },
+        center: { latitude: centerLat, longitude: centerLon },
         count: 1,
         value: point.value,
+        polygon: hexagonVertices(centerLat, centerLon, cellSize),
       });
     }
   }
@@ -416,6 +561,7 @@ export function buildGeoClusterModel(
   const points = collectPoints(model, data, {
     latitude: config.latitude,
     longitude: config.longitude,
+    geometry: config.geometry,
     id: config.id,
     value: config.value,
   });
@@ -455,6 +601,7 @@ export function buildGeoDensityModel(
   const points = collectPoints(model, data, {
     latitude: config.latitude,
     longitude: config.longitude,
+    geometry: config.geometry,
     value: config.value,
   });
   const area = cellSize * cellSize;
@@ -474,15 +621,23 @@ export function buildGeoDensityModel(
 
     const west = x * cellSize - 180;
     const south = y * cellSize - 90;
+    const north = south + cellSize;
+    const east = west + cellSize;
     cells.set(id, {
       id,
       x,
       y,
-      bounds: { south, west, north: south + cellSize, east: west + cellSize },
+      bounds: { south, west, north, east },
       center: { latitude: south + cellSize / 2, longitude: west + cellSize / 2 },
       count: 1,
       value: point.value,
       density: point.value / area,
+      polygon: [
+        { latitude: south, longitude: west },
+        { latitude: south, longitude: east },
+        { latitude: north, longitude: east },
+        { latitude: north, longitude: west },
+      ],
     });
   }
 

@@ -9,6 +9,7 @@ import {
   buildGeoHexbinModel,
   buildGeoJsonLayerModel,
   buildGeoPointModel,
+  classify,
 } from './index.js';
 
 const model: DataModel = {
@@ -21,6 +22,7 @@ const model: DataModel = {
     { id: 'targetLat', label: 'Target latitude', type: 'continuous' },
     { id: 'targetLon', label: 'Target longitude', type: 'continuous' },
     { id: 'shape', label: 'Shape', type: 'discrete' },
+    { id: 'geom', label: 'Geometry', type: 'discrete' },
   ],
   measures: [
     { id: 'revenue', label: 'Revenue', aggregation: 'sum' },
@@ -39,6 +41,7 @@ const rows: Row[] = [
     targetLon: 4.8357,
     revenue: 100,
     orders: 1,
+    geom: { type: 'Point', coordinates: [2.3522, 48.8566] },
   },
   {
     id: 'lyon',
@@ -50,6 +53,7 @@ const rows: Row[] = [
     targetLon: 2.3522,
     revenue: 50,
     orders: 1,
+    geom: { type: 'Point', coordinates: [4.8357, 45.764] },
   },
   {
     id: 'nyc',
@@ -61,8 +65,9 @@ const rows: Row[] = [
     targetLon: 2.3522,
     revenue: 200,
     orders: 1,
+    geom: { type: 'Point', coordinates: [-74.006, 40.7128] },
   },
-  { id: 'bad', city: 'Bad', region: 'XX', lat: 'north', lon: 2, revenue: 999, orders: 1 },
+  { id: 'bad', city: 'Bad', region: 'XX', lat: 'north', lon: 2, revenue: 999, orders: 1, geom: null },
 ];
 
 describe('geo model builders', () => {
@@ -141,8 +146,38 @@ describe('geo model builders', () => {
     ).toEqual({
       cellSize: 10,
       bins: [
-        { id: '0:5', q: 0, r: 5, center: { latitude: 43.301270189221924, longitude: 0 }, count: 2, value: 150 },
-        { id: '-7:4', q: -7, r: 4, center: { latitude: 34.64101615137754, longitude: -70 }, count: 1, value: 200 },
+        {
+          id: '0:5',
+          q: 0,
+          r: 5,
+          center: { latitude: 43.301270189221924, longitude: 0 },
+          count: 2,
+          value: 150,
+          polygon: [
+            { latitude: 51.961524227066306, longitude: 0 },
+            { latitude: 47.631397208144115, longitude: 5 },
+            { latitude: 38.97114317029973, longitude: 5 },
+            { latitude: 34.64101615137754, longitude: 0 },
+            { latitude: 38.97114317029973, longitude: -5 },
+            { latitude: 47.631397208144115, longitude: -5 },
+          ],
+        },
+        {
+          id: '-7:4',
+          q: -7,
+          r: 4,
+          center: { latitude: 34.64101615137754, longitude: -70 },
+          count: 1,
+          value: 200,
+          polygon: [
+            { latitude: 43.301270189221924, longitude: -70 },
+            { latitude: 38.97114317029973, longitude: -65 },
+            { latitude: 30.31088913245535, longitude: -65 },
+            { latitude: 25.980762113533157, longitude: -70 },
+            { latitude: 30.31088913245535, longitude: -75 },
+            { latitude: 38.97114317029973, longitude: -75 },
+          ],
+        },
       ],
     });
   });
@@ -199,6 +234,12 @@ describe('geo model builders', () => {
           count: 2,
           value: 150,
           density: 1.5,
+          polygon: [
+            { latitude: 40, longitude: 0 },
+            { latitude: 40, longitude: 10 },
+            { latitude: 50, longitude: 10 },
+            { latitude: 50, longitude: 0 },
+          ],
         },
         {
           id: '10:13',
@@ -209,6 +250,12 @@ describe('geo model builders', () => {
           count: 1,
           value: 200,
           density: 2,
+          polygon: [
+            { latitude: 40, longitude: -80 },
+            { latitude: 40, longitude: -70 },
+            { latitude: 50, longitude: -70 },
+            { latitude: 50, longitude: -80 },
+          ],
         },
       ],
     });
@@ -248,6 +295,87 @@ describe('geo model builders', () => {
         },
       ],
     });
+  });
+
+  it('classify returns equal-width breaks including min and max', () => {
+    // 4 classes → 5 breaks; values [0, 10, 20, 30] → step=30/4=7.5
+    expect(classify([0, 10, 20, 30], { method: 'equal', count: 4 })).toEqual([0, 7.5, 15, 22.5, 30]);
+    // ignores non-finite values
+    expect(classify([0, Infinity, 20, NaN], { method: 'equal', count: 2 })).toEqual([0, 10, 20]);
+  });
+
+  it('classify returns quantile breaks including min and max', () => {
+    // sorted [10, 20, 30, 40]; count=4 → quartiles at positions 0.25*3=0.75, 1.5, 2.25
+    // pos=0.75 → 10 + 0.75*(20-10)=17.5; pos=1.5 → 20+0.5*10=25; pos=2.25 → 30+0.25*10=32.5
+    expect(classify([10, 40, 20, 30], { method: 'quantile', count: 4 })).toEqual([10, 17.5, 25, 32.5, 40]);
+  });
+
+  it('classify returns [] for empty input or count <= 0', () => {
+    expect(classify([], { method: 'equal', count: 4 })).toEqual([]);
+    expect(classify([1, 2, 3], { method: 'equal', count: 0 })).toEqual([]);
+    expect(classify([1, 2, 3], { method: 'quantile', count: -1 })).toEqual([]);
+  });
+
+  it('classify with count=1 returns [min, max]', () => {
+    expect(classify([5, 1, 3], { method: 'equal', count: 1 })).toEqual([1, 5]);
+    expect(classify([5, 1, 3], { method: 'quantile', count: 1 })).toEqual([1, 5]);
+  });
+
+  it('buildChoroplethModel adds breaks when classification is provided', () => {
+    const result = buildChoroplethModel(model, rows, {
+      region: 'region',
+      measure: 'revenue',
+      classification: { method: 'equal', count: 2 },
+    });
+    // regions: FR=150, US=200, XX=999 → min=150, max=999, step=(999-150)/2=424.5
+    expect(result.breaks).toEqual([150, 574.5, 999]);
+    expect(result.regionId).toBe('region');
+  });
+
+  it('buildChoroplethModel has no breaks when classification is absent', () => {
+    const result = buildChoroplethModel(model, rows, { region: 'region', measure: 'revenue' });
+    expect(result.breaks).toBeUndefined();
+  });
+
+  it('builds points from a GeoJSON Point geometry column same as lat/lng', () => {
+    const fromLatLon = buildGeoPointModel(model, rows, {
+      latitude: 'lat',
+      longitude: 'lon',
+      id: 'id',
+      value: 'revenue',
+    });
+    const fromGeom = buildGeoPointModel(model, rows, {
+      geometry: 'geom',
+      id: 'id',
+      value: 'revenue',
+    });
+    // both should produce the same 3 valid points (bad row skipped in both cases)
+    expect(fromGeom.points).toEqual(fromLatLon.points);
+  });
+
+  it('hexbin polygon has 6 vertices surrounding the center', () => {
+    const { bins } = buildGeoHexbinModel(model, rows, { latitude: 'lat', longitude: 'lon', cellSize: 10 });
+    for (const bin of bins) {
+      expect(bin.polygon).toHaveLength(6);
+      // all vertices should be near the center (within cellSize degrees)
+      for (const v of bin.polygon!) {
+        expect(Math.abs(v.latitude - bin.center.latitude)).toBeLessThan(10);
+        expect(Math.abs(v.longitude - bin.center.longitude)).toBeLessThan(10);
+      }
+    }
+  });
+
+  it('density cell polygon has 4 corners matching bounds', () => {
+    const { cells } = buildGeoDensityModel(model, rows, { latitude: 'lat', longitude: 'lon', cellSize: 10 });
+    for (const cell of cells) {
+      expect(cell.polygon).toHaveLength(4);
+      const lats = cell.polygon!.map((c) => c.latitude);
+      const lons = cell.polygon!.map((c) => c.longitude);
+      expect(Math.min(...lats)).toBe(cell.bounds.south);
+      expect(Math.max(...lats)).toBe(cell.bounds.north);
+      expect(Math.min(...lons)).toBe(cell.bounds.west);
+      expect(Math.max(...lons)).toBe(cell.bounds.east);
+    }
   });
 
   it('validates configured fields and numeric options', () => {
