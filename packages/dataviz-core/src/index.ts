@@ -539,6 +539,27 @@ export { buildRibbonData } from './ribbon.js';
 export type { AnomalySwimLaneDatum, AnomalySwimLaneBucketDatum, AnomalySwimLaneConfig } from './anomalySwimLane.js';
 export { buildAnomalySwimLaneData } from './anomalySwimLane.js';
 
+// Flamegraph model (call stacks, hiérarchie récursive)
+export type { FlamegraphNode, FlamegraphConfig } from './flamegraph.js';
+export { buildFlamegraphData } from './flamegraph.js';
+
+// Density 2D model (densité binned non-géo)
+export type { Density2DPoint, Density2DConfig } from './density2d.js';
+export { buildDensity2DData } from './density2d.js';
+
+// Trace waterfall model (spans distribués imbriqués)
+export type { TraceSpan, TraceWaterfallConfig } from './traceWaterfall.js';
+export { buildTraceWaterfallData } from './traceWaterfall.js';
+
+// Decomposition tree model (décomposition hiérarchique par niveaux)
+export type {
+  DecompositionTreeNode,
+  DecompositionTreeLevel,
+  DecompositionTreeData,
+  DecompositionTreeConfig,
+} from './decompositionTree.js';
+export { buildDecompositionTreeData } from './decompositionTree.js';
+
 // Bell curve chart model
 export type { BellCurveConfig } from './bellCurve.js';
 export { buildBellCurveData } from './bellCurve.js';

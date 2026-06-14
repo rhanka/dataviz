@@ -39,6 +39,10 @@ import { makeStateTimelineStore } from '../../data/stateTimeline';
 import { makeStatusHistoryStore } from '../../data/statusHistory';
 import { makeRibbonStore } from '../../data/ribbon';
 import { makeAnomalySwimLaneStore } from '../../data/anomalySwimLane';
+import { makeFlamegraphStore } from '../../data/flamegraph';
+import { makeTraceWaterfallStore } from '../../data/traceWaterfall';
+import { makeDecompositionTreeStore } from '../../data/decompositionTree';
+import { makeDensity2DStore } from '../../data/density2d';
 
 /** One mounted dataviz component: its export name + props. */
 export interface NodeSpec {
@@ -78,6 +82,10 @@ const stateTimelineStore = makeStateTimelineStore();
 const statusHistoryStore = makeStatusHistoryStore();
 const ribbonStore = makeRibbonStore();
 const anomalySwimLaneStore = makeAnomalySwimLaneStore();
+const flamegraphStore = makeFlamegraphStore();
+const traceWaterfallStore = makeTraceWaterfallStore();
+const decompositionTreeStore = makeDecompositionTreeStore();
+const density2dStore = makeDensity2DStore();
 
 // ── Conditional-format rules (gridSpec) ──────────────────────────────────────
 const revenueFormat = [
@@ -247,6 +255,14 @@ function chartSpec(kind: string, ctx: SpecContext): NodeSpec[] | null {
       return [{ comp: 'StatusHistoryChart', props: { store: statusHistoryStore, viewId: 'sh', series: 'service', at: 'at', value: 'status', label: 'Historique de statut (8 h)' } }];
     case 'anomaly-swimlane':
       return [{ comp: 'AnomalySwimLaneChart', props: { store: anomalySwimLaneStore, viewId: 'asl', job: 'job', at: 'at', score: 'score', max: 100, label: 'Scores d’anomalie ML' } }];
+    case 'flamegraph':
+      return [{ comp: 'FlamegraphChart', props: { store: flamegraphStore, viewId: 'fg', id: 'id', parentId: 'parent', name: 'name', value: 'value', label: 'Profil CPU (flamegraph)' } }];
+    case 'trace-waterfall':
+      return [{ comp: 'TraceWaterfallChart', props: { store: traceWaterfallStore, viewId: 'tw', spanId: 'spanId', parentSpanId: 'parentSpanId', service: 'service', start: 'start', duration: 'duration', label: 'Trace distribuée (waterfall)' } }];
+    case 'decomposition-tree':
+      return [{ comp: 'DecompositionTreeChart', props: { store: decompositionTreeStore, viewId: 'dt', measure: 'revenue', levels: ['region', 'category', 'product'], label: 'Décomposition du CA' } }];
+    case 'density-2d':
+      return [{ comp: 'Density2DChart', props: { store: density2dStore, viewId: 'd2', x: 'x', y: 'y', bins: 24, label: 'Densité 2D (nuage binné)' } }];
     case 'solid-gauge':
       return [{ comp: 'SolidGaugeChart', props: { store, viewId: 'c', value: 'revenue', min: 0, max: 2000000, label: 'Revenu vs objectif', format: 'number', unit: '€', thresholds: [{ value: 800000, tone: 'warning' }, { value: 1400000, tone: 'success' }] } }];
     default:

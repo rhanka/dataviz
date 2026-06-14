@@ -41,10 +41,10 @@ Réalisables en composant dataviz qui orchestre/compose des composants DS exista
 | B4 | WaffleChart (grille proportionnelle) | P2 | item parliament | Kibana | ✅ v0.4.39 |
 | B5 | RibbonChart (rang empilé dans le temps) | P2 | — | Power BI | ✅ v0.4.40 |
 | B6 | AnomalySwimLaneChart (heatmap scoring ML) | P2 | heatmap | Kibana | ✅ v0.4.40 |
-| B7 | FlamegraphChart (call stacks profiling) | P2 | — | Grafana | 🟡 DS (FR acceptée) |
-| B8 | TraceWaterfallChart (spans distribués imbriqués) | P2 | gantt | Grafana | 🟡 DS (FR acceptée) |
-| B9 | DecompositionTreeChart (drill hiérarchique interactif) | P2 | — | Power BI | 🟡 DS (FR acceptée) |
-| B10 | Density2DChart (hexbin/contour non-géo) | P2 | heatmap binned | Tableau, Dataiku | 🟡 DS (FR acceptée) |
+| B7 | FlamegraphChart (call stacks profiling) | P2 | — | Grafana | ✅ v0.4.41 |
+| B8 | TraceWaterfallChart (spans distribués imbriqués) | P2 | gantt | Grafana | ✅ v0.4.41 |
+| B9 | DecompositionTreeChart (drill hiérarchique interactif) | P2 | — | Power BI | ✅ v0.4.41 |
+| B10 | Density2DChart (hexbin/contour non-géo) | P2 | heatmap binned | Tableau, Dataiku | ✅ v0.4.41 |
 | B11 | EventFeedPanel (flux d'événements daté) | P2 | — | New Relic | 🟡 DS (FR acceptée) |
 | B12 | VectorFieldChart (champ de vecteurs) | P3 | vector | Highcharts, SAS | 🟡 DS (FR acceptée) |
 | B13 | ContourChart (isolignes) | P3 | contour | Highcharts | 🟡 DS (FR acceptée) |
@@ -62,6 +62,6 @@ Réalisables en composant dataviz qui orchestre/compose des composants DS exista
 - ✅ **Catégorie A** complète (v0.4.33 + v0.4.34) — 6 wrappers de composants DS existants (dont ForceGraph/NetworkGraph P1).
 - ✅ **Catégorie C** complète (v0.4.35 + v0.4.36) — 3 composables (SPLOM, CorrelationMatrix, AnimatedBubble).
 - ✅ **Matrice de mapping** : données (`apps/site/src/lib/data/market-matrix.ts`, 9 solutions × ~85 composants) + **PAGE livrée** (route `/coverage`, `MarketMatrixPage.svelte`, lien nav « Couverture marché ») — intégration additive pure (chrome de l'autre agent intact), build vert, déployée.
-- ⏳ **Catégorie B** (16 composants) : FR acceptée par le DS, livraison par lots ; je câble à chaque tag npm. **6/16 livrés** : LOT1 v0.4.38 (StateTimeline+SolidGauge), LOT2 v0.4.39 (StatusHistory+Waffle), LOT3 v0.4.40 (Ribbon+AnomalySwimLane). Reste 10 B (LOT4 Flamegraph+TraceWaterfall en construction côté DS, puis DecompositionTree+Density2D+EventFeed ; LOT5 P3 Vector/Contour/WindBarb/Renko/PointAndFigure).
+- ⏳ **Catégorie B** (16 composants) : FR acceptée par le DS, livraison par lots ; je câble à chaque tag npm. **10/16 livrés** : LOT1 v0.4.38 (StateTimeline+SolidGauge), LOT2 v0.4.39 (StatusHistory+Waffle), LOT3 v0.4.40 (Ribbon+AnomalySwimLane), LOT4 v0.4.41 (Flamegraph+TraceWaterfall+DecompositionTree+Density2D, batché par le DS). Reste 6 B : EventFeedPanel (B11) + LOT5 P3 (Vector/Contour/WindBarb/Renko/PointAndFigure).
 
 Méthode : `/loop` 2 agents (un composant disjoint par agent), intégration registry/index/specs + gate + release lockstep par le conducteur, publication régulière sur `main`.
