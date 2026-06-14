@@ -59,7 +59,7 @@ Réalisables en composant dataviz qui orchestre/compose des composants DS exista
 **ÉTAT au 2026-06-14 : tout ce qui est faisable côté dataviz est livré.**
 - ✅ **Catégorie A** complète (v0.4.33 + v0.4.34) — 6 wrappers de composants DS existants (dont ForceGraph/NetworkGraph P1).
 - ✅ **Catégorie C** complète (v0.4.35 + v0.4.36) — 3 composables (SPLOM, CorrelationMatrix, AnimatedBubble).
-- 🔢 **Matrice de mapping** : données prêtes dans `apps/site/src/lib/data/market-matrix.ts` (9 solutions × ~85 composants). La PAGE reste à brancher quand la structure de pages/doc (refondue par l'autre agent, sa lane) se stabilise — choix humain « données prêtes + intègre quand stable ».
+- ✅ **Matrice de mapping** : données (`apps/site/src/lib/data/market-matrix.ts`, 9 solutions × ~85 composants) + **PAGE livrée** (route `/coverage`, `MarketMatrixPage.svelte`, lien nav « Couverture marché ») — intégration additive pure (chrome de l'autre agent intact), build vert, déployée.
 - ⏳ **Catégorie B** (16 composants) : FR acceptée par le DS, livraison par lots (StateTimeline P1 d'abord) ; je câble à chaque tag npm.
 
 Méthode : `/loop` 2 agents (un composant disjoint par agent), intégration registry/index/specs + gate + release lockstep par le conducteur, publication régulière sur `main`.
