@@ -509,6 +509,14 @@ export { buildDependencyWheelData } from './dependencyWheel.js';
 export type { HlcDatum, HlcConfig } from './hlc.js';
 export { buildHlcData } from './hlc.js';
 
+// Correlation matrix model
+export type { CorrelationDatum, CorrelationConfig } from './correlation.js';
+export { buildCorrelationMatrix } from './correlation.js';
+
+// Scatter plot matrix (SPLOM) model
+export type { ScatterMatrixConfig, ScatterMatrixCell, ScatterMatrixModel } from './scatterMatrix.js';
+export { buildScatterMatrix } from './scatterMatrix.js';
+
 // Bell curve chart model
 export type { BellCurveConfig } from './bellCurve.js';
 export { buildBellCurveData } from './bellCurve.js';
