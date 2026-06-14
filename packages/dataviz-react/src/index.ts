@@ -136,6 +136,8 @@ export { CorrelationMatrix } from './lib/CorrelationMatrix.js';
 export type { CorrelationMatrixProps } from './lib/CorrelationMatrix.js';
 export { ScatterPlotMatrix } from './lib/ScatterPlotMatrix.js';
 export type { ScatterPlotMatrixProps } from './lib/ScatterPlotMatrix.js';
+export { AnimatedBubbleChart } from './lib/AnimatedBubbleChart.js';
+export type { AnimatedBubbleChartProps } from './lib/AnimatedBubbleChart.js';
 export { BellCurveChart } from './lib/BellCurveChart.js';
 export type { BellCurveChartProps } from './lib/BellCurveChart.js';
 export { OrganizationChart } from './lib/OrganizationChart.js';

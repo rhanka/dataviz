@@ -820,6 +820,18 @@ export function CHART_ENTRIES(ChartDemo: Demo, GeoDemo: Demo): DemoEntry[] {
     }, ChartDemo),
 
     chart({
+      slug: 'animated-bubble', name: 'AnimatedBubbleChart', group: 'Couche analytique', kind: 'animated-bubble', hasControls: false,
+      tagline: 'Nuage de bulles animé (Gapminder) : trois mesures dans le temps, en lecture continue.',
+      useCase:
+        "Visualiser l'évolution simultanée de trois mesures (x, y, taille) sur une dimension temporelle, avec lecture/pause et curseur de pas — idéal pour comparer des entités sur la durée (PIB/hab vs espérance de vie vs population).\n\n`x`/`y`/`size` sont des mesures, `time` la dimension temporelle, `series` colore les bulles.",
+      code: storeCode(['AnimatedBubbleChart'], {
+        svelte: `<AnimatedBubbleChart {store} viewId="ab" x="gdpPerCapita" y="lifeExpectancy" size="population" time="year" series="country" label="Espérance de vie vs PIB/hab" />`,
+        react: `<AnimatedBubbleChart store={store} viewId="ab" x="gdpPerCapita" y="lifeExpectancy" size="population" time="year" series="country" label="Espérance de vie vs PIB/hab" />`,
+        vue: `<AnimatedBubbleChart :store="store" viewId="ab" x="gdpPerCapita" y="lifeExpectancy" size="population" time="year" series="country" label="Espérance de vie vs PIB/hab" />`,
+      }),
+    }, ChartDemo),
+
+    chart({
       slug: 'correlation-matrix', name: 'CorrelationMatrix', group: 'Distribution & statistique', kind: 'correlation-matrix', hasControls: false,
       tagline: 'Matrice de corrélation de Pearson entre mesures numériques.',
       useCase:

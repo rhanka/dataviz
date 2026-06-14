@@ -203,6 +203,10 @@ export {
 export type { ScatterDatum, ScatterConfig, ScatterModel, ScatterTone } from './scatter.js';
 export { buildScatterModel } from './scatter.js';
 
+// Animated bubble chart (Gapminder-style)
+export type { BubbleDatum, BubbleFrame } from './animatedBubble.js';
+export { distinctSorted, buildBubbleFrame } from './animatedBubble.js';
+
 // Candlestick chart model
 export type { CandlestickDatum, CandlestickConfig } from './candlestick.js';
 export { buildCandlestickData } from './candlestick.js';
