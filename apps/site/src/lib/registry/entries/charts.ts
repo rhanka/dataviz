@@ -554,6 +554,18 @@ export function CHART_ENTRIES(ChartDemo: Demo, GeoDemo: Demo): DemoEntry[] {
       }),
     }, ChartDemo),
 
+    chart({
+      slug: 'ribbon', name: 'RibbonChart', group: 'Évolution & classements', kind: 'ribbon', hasControls: false,
+      tagline: 'Classements empilés à rubans par période.',
+      useCase:
+        "Suivre la part relative et le rang de plusieurs catégories sur des périodes ordonnées. Les rubans lissés entre les colonnes révèlent les inversions de classement que les barres empilées classiques ne matérialisent pas.\n\n`category` est la dimension colorée, `period` l'axe ordonné, `value` la hauteur.",
+      code: storeCode(['RibbonChart'], {
+        svelte: `<RibbonChart {store} viewId="rb" category="product" period="quarter" value="sales" label="Parts par trimestre" />`,
+        react: `<RibbonChart store={store} viewId="rb" category="product" period="quarter" value="sales" label="Parts par trimestre" />`,
+        vue: `<RibbonChart :store="store" viewId="rb" category="product" period="quarter" value="sales" label="Parts par trimestre" />`,
+      }),
+    }, ChartDemo),
+
     // ── Cartographie ────────────────────────────────────────────────────────
     chart({
       slug: 'tilemap', name: 'TileMapChart', group: 'Cartographie géo', kind: 'tilemap', hasControls: false,
@@ -880,6 +892,18 @@ export function CHART_ENTRIES(ChartDemo: Demo, GeoDemo: Demo): DemoEntry[] {
         svelte: `<StatusHistoryChart {store} viewId="sh" series="service" at="at" value="status" label="Historique de statut (8 h)" />`,
         react: `<StatusHistoryChart store={store} viewId="sh" series="service" at="at" value="status" label="Historique de statut (8 h)" />`,
         vue: `<StatusHistoryChart :store="store" viewId="sh" series="service" at="at" value="status" label="Historique de statut (8 h)" />`,
+      }),
+    }, ChartDemo),
+
+    chart({
+      slug: 'anomaly-swimlane', name: 'AnomalySwimLaneChart', group: 'Observabilité', kind: 'anomaly-swimlane', hasControls: false,
+      tagline: "Swim lanes de scores d'anomalie ML par job dans le temps.",
+      useCase:
+        "Surveiller l'évolution des scores d'anomalie (continus) de plusieurs jobs ML sur une fenêtre temporelle ; l'intensité de couleur encode le score normalisé Low→High. Idéal pour les dashboards AIOps.\n\n`job` désigne la lane, `at` l'instant du bucket, `score` la valeur d'anomalie ; `max` borne l'échelle.",
+      code: storeCode(['AnomalySwimLaneChart'], {
+        svelte: `<AnomalySwimLaneChart {store} viewId="asl" job="job" at="at" score="score" max={100} label="Scores d'anomalie ML" />`,
+        react: `<AnomalySwimLaneChart store={store} viewId="asl" job="job" at="at" score="score" max={100} label="Scores d'anomalie ML" />`,
+        vue: `<AnomalySwimLaneChart :store="store" viewId="asl" job="job" at="at" score="score" :max="100" label="Scores d'anomalie ML" />`,
       }),
     }, ChartDemo),
 

@@ -74,6 +74,8 @@
     SolidGaugeChart,
     StatusHistoryChart,
     WaffleChart,
+    RibbonChart,
+    AnomalySwimLaneChart,
   } from '@sentropic/dataviz-svelte';
   import { ContentSwitcher } from '@sentropic/design-system-svelte';
   import { lineAnnotation, regionAnnotation, makeFormatter } from '@sentropic/dataviz-core';
@@ -92,6 +94,8 @@
   import { makeAnimatedBubbleStore } from '../../data/animatedBubble';
   import { makeStateTimelineStore } from '../../data/stateTimeline';
   import { makeStatusHistoryStore } from '../../data/statusHistory';
+  import { makeRibbonStore } from '../../data/ribbon';
+  import { makeAnomalySwimLaneStore } from '../../data/anomalySwimLane';
   import { makeBellCurveStore } from '../../data/bellCurve';
   import { makeHierarchyStore } from '../../data/hierarchy';
   import { makeWordCloudStore } from '../../data/wordCloud';
@@ -116,6 +120,8 @@
   const animatedBubbleStore = makeAnimatedBubbleStore();
   const stateTimelineStore = makeStateTimelineStore();
   const statusHistoryStore = makeStatusHistoryStore();
+  const ribbonStore = makeRibbonStore();
+  const anomalySwimLaneStore = makeAnomalySwimLaneStore();
   const bellCurveStore = makeBellCurveStore();
   const hierarchyStore = makeHierarchyStore();
   const wordCloudStore = makeWordCloudStore();
@@ -253,6 +259,8 @@
     <GanttChart store={ganttStore} viewId="gantt" task="task" start="start" end="end" category="category" marker={10} label="Planning de projet" />
   {:else if kind === 'timeline'}
     <TimelineChart store={timelineStore} viewId="timeline" label_field="event" position="position" description="description" tone="tone" label="Jalons du projet" />
+  {:else if kind === 'ribbon'}
+    <RibbonChart store={ribbonStore} viewId="rb" category="product" period="quarter" value="sales" label="Parts par trimestre" />
   {:else if kind === 'streamgraph'}
     <StreamgraphChart store={streamgraphStore} viewId="sg" category="month" series="channel" measure="revenue" smooth showLegend label="Revenu par canal (flux)" />
   {:else if kind === 'tilemap'}
@@ -317,6 +325,8 @@
     <StateTimelineChart store={stateTimelineStore} viewId="st" series="service" start="start" end="end" state="state" label="États des services (24 h)" />
   {:else if kind === 'status-history'}
     <StatusHistoryChart store={statusHistoryStore} viewId="sh" series="service" at="at" value="status" label="Historique de statut (8 h)" />
+  {:else if kind === 'anomaly-swimlane'}
+    <AnomalySwimLaneChart store={anomalySwimLaneStore} viewId="asl" job="job" at="at" score="score" max={100} label="Scores d'anomalie ML" />
   {:else if kind === 'solid-gauge'}
     <SolidGaugeChart {store} viewId="c" value="revenue" min={0} max={2000000} label="Revenu vs objectif" format="number" unit="€" thresholds={[{ value: 800000, tone: 'warning' }, { value: 1400000, tone: 'success' }]} />
   {/if}

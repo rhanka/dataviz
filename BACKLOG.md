@@ -39,8 +39,8 @@ Réalisables en composant dataviz qui orchestre/compose des composants DS exista
 | B2 | SolidGaugeChart (arc plein / progress ring) | P2 | solidgauge | Highcharts, KPI dashboards | ✅ v0.4.38 |
 | B3 | StatusHistoryChart (grille temps×entité statut) | P2 | heatmap | Grafana | ✅ v0.4.39 |
 | B4 | WaffleChart (grille proportionnelle) | P2 | item parliament | Kibana | ✅ v0.4.39 |
-| B5 | RibbonChart (rang empilé dans le temps) | P2 | — | Power BI | 🟡 DS (FR acceptée) |
-| B6 | AnomalySwimLaneChart (heatmap scoring ML) | P2 | heatmap | Kibana | 🟡 DS (FR acceptée) |
+| B5 | RibbonChart (rang empilé dans le temps) | P2 | — | Power BI | ✅ v0.4.40 |
+| B6 | AnomalySwimLaneChart (heatmap scoring ML) | P2 | heatmap | Kibana | ✅ v0.4.40 |
 | B7 | FlamegraphChart (call stacks profiling) | P2 | — | Grafana | 🟡 DS (FR acceptée) |
 | B8 | TraceWaterfallChart (spans distribués imbriqués) | P2 | gantt | Grafana | 🟡 DS (FR acceptée) |
 | B9 | DecompositionTreeChart (drill hiérarchique interactif) | P2 | — | Power BI | 🟡 DS (FR acceptée) |
