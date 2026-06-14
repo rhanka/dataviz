@@ -31,24 +31,26 @@ Réalisables en composant dataviz qui orchestre/compose des composants DS exista
 
 ## Catégorie B — FR au DS (composant DS inexistant → demander, wrapper à livraison)
 
+**FR envoyée + relancée + ACCEPTÉE par le DS** (claude:sent-tech-design-system). Ordre de livraison DS par lots : **LOT1** = StateTimeline (P1) + SolidGauge → **LOT2** = StatusHistory + Waffle + Ribbon → **LOT3** = AnomalySwimLane + Flamegraph + TraceWaterfall → **LOT4** = DecompositionTree + Density2D + EventFeedPanel → **LOT5** (P3) = Vector + Contour + WindBarb + Renko + PointAndFigure. Ping DS à chaque tag npm ; je câble chaque lot sous ~10 min (3 fw + démo + îlot + matrice fr-ds→covered + release). ⚠️ **BLOCAGE LOT1** : le DS démarre B dès que **rhanka valide le chantier header app-shell du DS** (presque clos). Je reste en `/loop` actif, re-relance le DS si stagnation.
+
 | # | Composant | Prio | Highcharts equiv | Vu dans | État |
 |---|-----------|------|------------------|---------|------|
-| B1 | StateTimelineChart (bandes d'états dans le temps) | **P1** | xrange | Grafana, Kibana | FR à envoyer |
-| B2 | SolidGaugeChart (arc plein / progress ring) | P2 | solidgauge | Highcharts, KPI dashboards | FR à envoyer |
-| B3 | StatusHistoryChart (grille temps×entité statut) | P2 | heatmap | Grafana | FR à envoyer |
-| B4 | WaffleChart (grille proportionnelle) | P2 | item parliament | Kibana | FR à envoyer |
-| B5 | RibbonChart (rang empilé dans le temps) | P2 | — | Power BI | FR à envoyer |
-| B6 | AnomalySwimLaneChart (heatmap scoring ML) | P2 | heatmap | Kibana | FR à envoyer |
-| B7 | FlamegraphChart (call stacks profiling) | P2 | — | Grafana | FR à envoyer |
-| B8 | TraceWaterfallChart (spans distribués imbriqués) | P2 | gantt | Grafana | FR à envoyer |
-| B9 | DecompositionTreeChart (drill hiérarchique interactif) | P2 | — | Power BI | FR à envoyer |
-| B10 | Density2DChart (hexbin/contour non-géo) | P2 | heatmap binned | Tableau, Dataiku | FR à envoyer |
-| B11 | EventFeedPanel (flux d'événements daté) | P2 | — | New Relic | FR à envoyer |
-| B12 | VectorFieldChart (champ de vecteurs) | P3 | vector | Highcharts, SAS | FR à envoyer |
-| B13 | ContourChart (isolignes) | P3 | contour | Highcharts | FR à envoyer |
-| B14 | WindBarbChart (barbules de vent) | P3 | windbarb | Highcharts | FR à envoyer |
-| B15 | RenkoChart (briques Renko) | P3 | renko | Highcharts Stock | FR à envoyer |
-| B16 | PointAndFigureChart (X/O) | P3 | pointandfigure | Highcharts Stock | FR à envoyer |
+| B1 | StateTimelineChart (bandes d'états dans le temps) | **P1** | xrange | Grafana, Kibana | 🟡 DS (FR acceptée) |
+| B2 | SolidGaugeChart (arc plein / progress ring) | P2 | solidgauge | Highcharts, KPI dashboards | 🟡 DS (FR acceptée) |
+| B3 | StatusHistoryChart (grille temps×entité statut) | P2 | heatmap | Grafana | 🟡 DS (FR acceptée) |
+| B4 | WaffleChart (grille proportionnelle) | P2 | item parliament | Kibana | 🟡 DS (FR acceptée) |
+| B5 | RibbonChart (rang empilé dans le temps) | P2 | — | Power BI | 🟡 DS (FR acceptée) |
+| B6 | AnomalySwimLaneChart (heatmap scoring ML) | P2 | heatmap | Kibana | 🟡 DS (FR acceptée) |
+| B7 | FlamegraphChart (call stacks profiling) | P2 | — | Grafana | 🟡 DS (FR acceptée) |
+| B8 | TraceWaterfallChart (spans distribués imbriqués) | P2 | gantt | Grafana | 🟡 DS (FR acceptée) |
+| B9 | DecompositionTreeChart (drill hiérarchique interactif) | P2 | — | Power BI | 🟡 DS (FR acceptée) |
+| B10 | Density2DChart (hexbin/contour non-géo) | P2 | heatmap binned | Tableau, Dataiku | 🟡 DS (FR acceptée) |
+| B11 | EventFeedPanel (flux d'événements daté) | P2 | — | New Relic | 🟡 DS (FR acceptée) |
+| B12 | VectorFieldChart (champ de vecteurs) | P3 | vector | Highcharts, SAS | 🟡 DS (FR acceptée) |
+| B13 | ContourChart (isolignes) | P3 | contour | Highcharts | 🟡 DS (FR acceptée) |
+| B14 | WindBarbChart (barbules de vent) | P3 | windbarb | Highcharts | 🟡 DS (FR acceptée) |
+| B15 | RenkoChart (briques Renko) | P3 | renko | Highcharts Stock | 🟡 DS (FR acceptée) |
+| B16 | PointAndFigureChart (X/O) | P3 | pointandfigure | Highcharts Stock | 🟡 DS (FR acceptée) |
 
 ## Hors scope (sauf demande explicite)
 - Variants 3D décoratifs : funnel3d, pyramid3d, cylinder, scatter3d.
