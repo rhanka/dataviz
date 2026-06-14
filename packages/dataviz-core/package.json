@@ -10,7 +10,8 @@
     "directory": "packages/dataviz-core"
   },
   "files": [
-    "dist"
+    "dist",
+    "LICENSE"
   ],
   "exports": {
     ".": {
