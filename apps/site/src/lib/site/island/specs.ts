@@ -19,6 +19,10 @@ import type { DashboardStore } from '@sentropic/dataviz-svelte';
 import { lineAnnotation, regionAnnotation, makeFormatter } from '@sentropic/dataviz-core';
 import { model, DEMO_NOW } from '../../data/dataset';
 import type { Section } from '../../registry/types';
+import { makeOhlcStore } from '../../data/ohlc-store';
+import { makeRangeStore } from '../../data/range';
+import { makeVariablePieStore, makeItemStore } from '../../data/variablePie';
+import { makeColumnPyramidStore } from '../../data/columnPyramid';
 
 /** One mounted dataviz component: its export name + props. */
 export interface NodeSpec {
@@ -34,6 +38,13 @@ export interface SpecContext {
   /** Active dimension from the demo's dimension switcher. */
   dimension?: 'category' | 'country' | 'channel' | 'segment';
 }
+
+// ── Dedicated stores for lot-A charts ────────────────────────────────────────
+const ohlcStore = makeOhlcStore();
+const rangeStore = makeRangeStore();
+const variablePieStore = makeVariablePieStore();
+const itemStore = makeItemStore();
+const columnPyramidStore = makeColumnPyramidStore();
 
 const kpiConfigs = [
   { id: 'revenue', measure: 'revenue', label: 'Revenu total' },
@@ -115,6 +126,24 @@ function chartSpec(kind: string, ctx: SpecContext): NodeSpec[] | null {
       return [{ comp: 'ErrorBarsChart', props: { ...base, category: 'category', value: 'price', interval: 'stdev', label: 'Prix moyen ± écart-type' } }];
     case 'cluster':
       return [{ comp: 'AnalyticsClusterPlot', props: { ...base, fields: ['price', 'marginRate'], k: 3, label: 'Clusters prix/marge' } }];
+    case 'ohlc':
+      return [{ comp: 'OHLCChart', props: { store: ohlcStore, viewId: 'ohlc', label_field: 'session', open: 'open', high: 'high', low: 'low', close: 'close', label: 'Cours boursiers OHLC (28 séances)' } }];
+    case 'candlestick':
+      return [{ comp: 'CandlestickChart', props: { store: ohlcStore, viewId: 'ohlc', label_field: 'session', open: 'open', high: 'high', low: 'low', close: 'close', label: 'Cours boursiers (28 séances)' } }];
+    case 'area-range':
+      return [{ comp: 'AreaRangeChart', props: { store: rangeStore, viewId: 'r', x_field: 'month', low: 'low', high: 'high', label: 'Températures min/max (°C)' } }];
+    case 'area-spline-range':
+      return [{ comp: 'AreaSplineRangeChart', props: { store: rangeStore, viewId: 'r', x_field: 'month', low: 'low', high: 'high', label: 'Plage lissée min/max (°C)' } }];
+    case 'column-range':
+      return [{ comp: 'ColumnRangeChart', props: { store: rangeStore, viewId: 'r', category: 'month', low: 'low', high: 'high', label: 'Amplitude mensuelle (°C)' } }];
+    case 'dumbbell':
+      return [{ comp: 'DumbbellChart', props: { store: rangeStore, viewId: 'r', category: 'month', low: 'low', high: 'high', lowLabel: 'Min', highLabel: 'Max', label: 'Écart mensuel (°C)' } }];
+    case 'column-pyramid':
+      return [{ comp: 'ColumnPyramidChart', props: { store: columnPyramidStore, viewId: 'cp', category: 'stage', value: 'users', label: 'Funnel d\'acquisition' } }];
+    case 'item-chart':
+      return [{ comp: 'ItemChart', props: { store: itemStore, viewId: 'ic', label_field: 'party', value: 'seats', label: 'Répartition des sièges' } }];
+    case 'variable-pie':
+      return [{ comp: 'VariablePieChart', props: { store: variablePieStore, viewId: 'vp', label_field: 'party', value: 'votes', z: 'seats', label: 'Partis : voix (angle) × sièges (rayon)' } }];
     default:
       return null;
   }
