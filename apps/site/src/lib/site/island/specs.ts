@@ -24,6 +24,14 @@ import { makeRangeStore } from '../../data/range';
 import { makeVariablePieStore, makeItemStore } from '../../data/variablePie';
 import { makeColumnPyramidStore } from '../../data/columnPyramid';
 import { makeBellCurveStore } from '../../data/bellCurve';
+import { makeGanttStore } from '../../data/gantt';
+import { makeTimelineStore } from '../../data/timeline';
+import { makeStreamgraphStore } from '../../data/streamgraph';
+import { makeTilemapStore } from '../../data/tilemap';
+import { makeHierarchyStore } from '../../data/hierarchy';
+import { makeWordCloudStore } from '../../data/wordCloud';
+import { makePolygonStore } from '../../data/polygon';
+import { vennAreas } from '../../data/venn';
 
 /** One mounted dataviz component: its export name + props. */
 export interface NodeSpec {
@@ -47,6 +55,15 @@ const variablePieStore = makeVariablePieStore();
 const itemStore = makeItemStore();
 const columnPyramidStore = makeColumnPyramidStore();
 const bellCurveStore = makeBellCurveStore();
+
+// ── Dedicated stores for lot-C charts ────────────────────────────────────────
+const ganttStore = makeGanttStore();
+const timelineStore = makeTimelineStore();
+const streamgraphStore = makeStreamgraphStore();
+const tilemapStore = makeTilemapStore();
+const hierarchyStore = makeHierarchyStore();
+const wordCloudStore = makeWordCloudStore();
+const polygonStore = makePolygonStore();
 
 // ── Conditional-format rules (gridSpec) ──────────────────────────────────────
 const revenueFormat = [
@@ -156,6 +173,25 @@ function chartSpec(kind: string, ctx: SpecContext): NodeSpec[] | null {
       return [{ comp: 'ItemChart', props: { store: itemStore, viewId: 'ic', label_field: 'party', value: 'seats', label: 'Répartition des sièges' } }];
     case 'variable-pie':
       return [{ comp: 'VariablePieChart', props: { store: variablePieStore, viewId: 'vp', label_field: 'party', value: 'votes', z: 'seats', label: 'Partis : voix (angle) × sièges (rayon)' } }];
+    // ── Lot C ─────────────────────────────────────────────────────────────────
+    case 'gantt':
+      return [{ comp: 'GanttChart', props: { store: ganttStore, viewId: 'gantt', task: 'task', start: 'start', end: 'end', category: 'category', marker: 10, label: 'Planning de projet' } }];
+    case 'timeline':
+      return [{ comp: 'TimelineChart', props: { store: timelineStore, viewId: 'timeline', label_field: 'event', position: 'position', description: 'description', tone: 'tone', label: 'Jalons du projet' } }];
+    case 'streamgraph':
+      return [{ comp: 'StreamgraphChart', props: { store: streamgraphStore, viewId: 'sg', category: 'month', series: 'channel', measure: 'revenue', smooth: true, showLegend: true, label: 'Revenu par canal (flux)' } }];
+    case 'tilemap':
+      return [{ comp: 'TileMapChart', props: { store: tilemapStore, viewId: 'tm', label_field: 'region', col: 'col', row: 'row', value: 'revenue', label: 'Revenu régional (grille)' } }];
+    case 'organization':
+      return [{ comp: 'OrganizationChart', props: { store: hierarchyStore, viewId: 'org', id_field: 'id', parent_field: 'parentId', label_field: 'name', label: 'Organigramme' } }];
+    case 'treegraph':
+      return [{ comp: 'TreegraphChart', props: { store: hierarchyStore, viewId: 'org', id_field: 'id', parent_field: 'parentId', label_field: 'name', label: 'Arbre hiérarchique' } }];
+    case 'word-cloud':
+      return [{ comp: 'WordCloudChart', props: { store: wordCloudStore, viewId: 'wc', word_field: 'keyword', weight: 'frequency', label: 'Mots-clés tech (fréquence)' } }];
+    case 'polygon':
+      return [{ comp: 'PolygonChart', props: { store: polygonStore, viewId: 'pg', x: 'x', y: 'y', label: 'Plan d\'étage simplifié (m)' } }];
+    case 'venn':
+      return [{ comp: 'VennChart', props: { areas: vennAreas, label: 'Compétences partagées (Dev / Data / Design)' } }];
     // ── Lot B ─────────────────────────────────────────────────────────────────
     case 'scatter':
       return [{ comp: 'ScatterPlot', props: { store, viewId: 'c', x: 'revenue', y: 'units', series: 'category', labelField: 'category', label: 'Revenu vs unités par catégorie' } }];
