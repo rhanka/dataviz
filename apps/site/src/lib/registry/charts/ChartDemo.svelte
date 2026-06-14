@@ -61,6 +61,10 @@
     VennChart,
     WordCloudChart,
     PolygonChart,
+    ForceGraph,
+    ArcDiagramChart,
+    DependencyWheelChart,
+    HeikinAshiChart,
   } from '@sentropic/dataviz-svelte';
   import { ContentSwitcher } from '@sentropic/design-system-svelte';
   import { lineAnnotation, regionAnnotation, makeFormatter } from '@sentropic/dataviz-core';
@@ -73,6 +77,9 @@
   import { makeRangeStore } from '../../data/range';
   import { makeVariablePieStore, makeItemStore } from '../../data/variablePie';
   import { makeColumnPyramidStore } from '../../data/columnPyramid';
+  import { makeForceGraphStore } from '../../data/forceGraph';
+  import { makeArcDiagramStore } from '../../data/arcDiagram';
+  import { makeDependencyWheelStore } from '../../data/dependencyWheel';
   import { makeBellCurveStore } from '../../data/bellCurve';
   import { makeHierarchyStore } from '../../data/hierarchy';
   import { makeWordCloudStore } from '../../data/wordCloud';
@@ -91,6 +98,9 @@
   const variablePieStore = makeVariablePieStore();
   const itemStore = makeItemStore();
   const columnPyramidStore = makeColumnPyramidStore();
+  const forceGraphStore = makeForceGraphStore();
+  const arcDiagramStore = makeArcDiagramStore();
+  const dependencyWheelStore = makeDependencyWheelStore();
   const bellCurveStore = makeBellCurveStore();
   const hierarchyStore = makeHierarchyStore();
   const wordCloudStore = makeWordCloudStore();
@@ -268,6 +278,14 @@
     <WordCloudChart store={wordCloudStore} viewId="wc" word_field="keyword" weight="frequency" label="Mots-clés tech (fréquence)" />
   {:else if kind === 'polygon'}
     <PolygonChart store={polygonStore} viewId="pg" x="x" y="y" label="Plan d'étage simplifié (m)" />
+  {:else if kind === 'force-graph'}
+    <ForceGraph store={forceGraphStore} viewId="fg" source="source" target="target" weight="weight" label="Dépendances entre microservices" />
+  {:else if kind === 'arc-diagram'}
+    <ArcDiagramChart store={arcDiagramStore} viewId="ad" source="source" target="target" weight="weight" label="Collaborations entre équipes" />
+  {:else if kind === 'dependency-wheel'}
+    <DependencyWheelChart store={dependencyWheelStore} viewId="dw" source="source" target="target" weight="weight" label="Dépendances entre modules" />
+  {:else if kind === 'heikin-ashi'}
+    <HeikinAshiChart store={ohlcStore} viewId="ohlc" label_field="session" open="open" high="high" low="low" close="close" label="Cours Heikin-Ashi (28 séances)" />
   {/if}
 </div>
 
