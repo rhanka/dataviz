@@ -1,6 +1,6 @@
 {
   "name": "@sentropic/dataviz-react",
-  "version": "0.4.42",
+  "version": "0.4.43",
   "description": "React adapter for @sentropic/dataviz-core, built on @sentropic/design-system-react.",
   "type": "module",
   "license": "MIT",
@@ -28,7 +28,7 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@sentropic/dataviz-core": "0.4.42",
+    "@sentropic/dataviz-core": "0.4.43",
     "@sentropic/design-system-react": "0.36.40",
     "@sentropic/design-system-themes": "0.11.0"
   },
