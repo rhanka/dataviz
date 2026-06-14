@@ -16,13 +16,14 @@
  * panels carry mutable local state that doesn't reduce to static props).
  */
 import type { DashboardStore } from '@sentropic/dataviz-svelte';
-import { lineAnnotation, regionAnnotation, makeFormatter } from '@sentropic/dataviz-core';
+import { lineAnnotation, regionAnnotation, makeFormatter, rule } from '@sentropic/dataviz-core';
 import { model, DEMO_NOW } from '../../data/dataset';
 import type { Section } from '../../registry/types';
 import { makeOhlcStore } from '../../data/ohlc-store';
 import { makeRangeStore } from '../../data/range';
 import { makeVariablePieStore, makeItemStore } from '../../data/variablePie';
 import { makeColumnPyramidStore } from '../../data/columnPyramid';
+import { makeBellCurveStore } from '../../data/bellCurve';
 
 /** One mounted dataviz component: its export name + props. */
 export interface NodeSpec {
@@ -45,6 +46,17 @@ const rangeStore = makeRangeStore();
 const variablePieStore = makeVariablePieStore();
 const itemStore = makeItemStore();
 const columnPyramidStore = makeColumnPyramidStore();
+const bellCurveStore = makeBellCurveStore();
+
+// ── Conditional-format rules (gridSpec) ──────────────────────────────────────
+const revenueFormat = [
+  rule('gt', 50000, 'positive', { icon: 'trending-up' }),
+  rule('lt', 10000, 'negative', { icon: 'trending-down' }),
+];
+const marginRateFormat = [
+  rule('gte', 0.40, 'positive'),
+  rule('lt', 0.25, 'warning'),
+];
 
 const kpiConfigs = [
   { id: 'revenue', measure: 'revenue', label: 'Revenu total' },
@@ -144,6 +156,21 @@ function chartSpec(kind: string, ctx: SpecContext): NodeSpec[] | null {
       return [{ comp: 'ItemChart', props: { store: itemStore, viewId: 'ic', label_field: 'party', value: 'seats', label: 'Répartition des sièges' } }];
     case 'variable-pie':
       return [{ comp: 'VariablePieChart', props: { store: variablePieStore, viewId: 'vp', label_field: 'party', value: 'votes', z: 'seats', label: 'Partis : voix (angle) × sièges (rayon)' } }];
+    // ── Lot B ─────────────────────────────────────────────────────────────────
+    case 'scatter':
+      return [{ comp: 'ScatterPlot', props: { store, viewId: 'c', x: 'revenue', y: 'units', series: 'category', labelField: 'category', label: 'Revenu vs unités par catégorie' } }];
+    case 'sparkline':
+      return [{ comp: 'Sparkline', props: { store, viewId: 'c', dimension: 'month', measure: 'revenue', area: true, label: 'Tendance mensuelle du revenu' } }];
+    case 'scorecard':
+      return [{ comp: 'ScoreCard', props: { store, viewId: 'c', measure: 'revenue', sparklineDimension: 'month', format: 'currency', label: 'Revenu total', tone: 'category1' } }];
+    case 'violin':
+      return [{ comp: 'ViolinChart', props: { store, viewId: 'c', groupBy: 'category', measure: 'price', label: 'Distribution des prix par catégorie' } }];
+    case 'bump':
+      return [{ comp: 'BumpChart', props: { store, viewId: 'c', series: 'category', category: 'month', measure: 'revenue', label: 'Classement mensuel des catégories' } }];
+    case 'parallel':
+      return [{ comp: 'ParallelCoordinatesChart', props: { store, viewId: 'c', measures: ['price', 'units', 'marginRate'], series: 'category', label: 'Profil multivarié (prix / unités / marge)' } }];
+    case 'bell-curve':
+      return [{ comp: 'BellCurveChart', props: { store: bellCurveStore, viewId: 'bc', measure: 'score', label: 'Distribution des scores (/100)' } }];
     default:
       return null;
   }
@@ -271,6 +298,8 @@ function gridSpec(kind: string, ctx: SpecContext): NodeSpec[] | null {
       return [{ comp: 'PivotDataTable', props: { store, rows: ['region', 'country'], columns: ['channel'], measures: ['revenue'], caption: 'Revenu par région/pays × canal' } }];
     case 'advancedpivot':
       return [{ comp: 'AdvancedPivotDataTable', props: { store, rows: ['region', 'category'], columns: ['channel'], measures: ['revenue', 'units'], includeSubtotals: true, heatmap: true, sparklineDimension: 'month', caption: 'Pivot avancé — sous-totaux, heat & sparkline' } }];
+    case 'conditional-format':
+      return [{ comp: 'RecordsTable', props: { store, fields: ['region', 'category', 'channel', 'revenue', 'margin', 'marginRate'], conditionalFormat: { revenue: revenueFormat, marginRate: marginRateFormat }, pageSize: 15, caption: 'Mise en forme conditionnelle — revenu & taux de marge' } }];
     default:
       return null;
   }
