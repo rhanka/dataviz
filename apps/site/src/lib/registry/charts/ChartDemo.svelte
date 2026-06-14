@@ -72,6 +72,8 @@
     AnimatedBubbleChart,
     StateTimelineChart,
     SolidGaugeChart,
+    StatusHistoryChart,
+    WaffleChart,
   } from '@sentropic/dataviz-svelte';
   import { ContentSwitcher } from '@sentropic/design-system-svelte';
   import { lineAnnotation, regionAnnotation, makeFormatter } from '@sentropic/dataviz-core';
@@ -89,6 +91,7 @@
   import { makeDependencyWheelStore } from '../../data/dependencyWheel';
   import { makeAnimatedBubbleStore } from '../../data/animatedBubble';
   import { makeStateTimelineStore } from '../../data/stateTimeline';
+  import { makeStatusHistoryStore } from '../../data/statusHistory';
   import { makeBellCurveStore } from '../../data/bellCurve';
   import { makeHierarchyStore } from '../../data/hierarchy';
   import { makeWordCloudStore } from '../../data/wordCloud';
@@ -112,6 +115,7 @@
   const dependencyWheelStore = makeDependencyWheelStore();
   const animatedBubbleStore = makeAnimatedBubbleStore();
   const stateTimelineStore = makeStateTimelineStore();
+  const statusHistoryStore = makeStatusHistoryStore();
   const bellCurveStore = makeBellCurveStore();
   const hierarchyStore = makeHierarchyStore();
   const wordCloudStore = makeWordCloudStore();
@@ -275,6 +279,8 @@
     <VariablePieChart store={variablePieStore} viewId="vp" label_field="party" value="votes" z="seats" label="Partis : voix (angle) × sièges (rayon)" />
   {:else if kind === 'item-chart'}
     <ItemChart store={itemStore} viewId="ic" label_field="party" value="seats" label="Répartition des sièges" />
+  {:else if kind === 'waffle'}
+    <WaffleChart store={itemStore} viewId="ic" label_field="party" value="seats" label="Répartition des sièges (waffle)" />
   {:else if kind === 'column-pyramid'}
     <ColumnPyramidChart store={columnPyramidStore} viewId="cp" category="stage" value="users" label="Funnel d'acquisition" />
   {:else if kind === 'bell-curve'}
@@ -309,6 +315,8 @@
     <AnimatedBubbleChart store={animatedBubbleStore} viewId="ab" x="gdpPerCapita" y="lifeExpectancy" size="population" time="year" series="country" label="Espérance de vie vs PIB/hab" />
   {:else if kind === 'state-timeline'}
     <StateTimelineChart store={stateTimelineStore} viewId="st" series="service" start="start" end="end" state="state" label="États des services (24 h)" />
+  {:else if kind === 'status-history'}
+    <StatusHistoryChart store={statusHistoryStore} viewId="sh" series="service" at="at" value="status" label="Historique de statut (8 h)" />
   {:else if kind === 'solid-gauge'}
     <SolidGaugeChart {store} viewId="c" value="revenue" min={0} max={2000000} label="Revenu vs objectif" format="number" unit="€" thresholds={[{ value: 800000, tone: 'warning' }, { value: 1400000, tone: 'success' }]} />
   {/if}

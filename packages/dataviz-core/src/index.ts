@@ -527,6 +527,10 @@ export { buildScatterMatrix } from './scatterMatrix.js';
 export type { StateTimelineDatum, StateTimelineSegmentDatum, StateTimelineConfig } from './stateTimeline.js';
 export { buildStateTimelineData } from './stateTimeline.js';
 
+// Status history model (observabilité — buckets de statut ponctuels temps×entité)
+export type { StatusHistoryDatum, StatusHistoryBucketDatum, StatusHistoryConfig } from './statusHistory.js';
+export { buildStatusHistoryData } from './statusHistory.js';
+
 // Bell curve chart model
 export type { BellCurveConfig } from './bellCurve.js';
 export { buildBellCurveData } from './bellCurve.js';

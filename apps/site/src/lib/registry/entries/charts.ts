@@ -673,6 +673,18 @@ export function CHART_ENTRIES(ChartDemo: Demo, GeoDemo: Demo): DemoEntry[] {
     }, ChartDemo),
 
     chart({
+      slug: 'waffle', name: 'WaffleChart', group: 'Proportions', kind: 'waffle', hasControls: false,
+      tagline: 'Grille de cellules encodant la proportion de chaque catégorie.',
+      useCase:
+        "Visualiser la composition d'un tout en grille N×M où chaque cellule représente une fraction de 100 %. Chaque catégorie occupe un nombre de cellules proportionnel à sa valeur.\n\n`label_field` nomme chaque segment, `value` son poids ; `totalCells` (100) et `columns` (10) règlent la grille.",
+      code: storeCode(['WaffleChart'], {
+        svelte: `<WaffleChart {store} viewId="ic" label_field="party" value="seats" label="Répartition des sièges (waffle)" />`,
+        react: `<WaffleChart store={store} viewId="ic" label_field="party" value="seats" label="Répartition des sièges (waffle)" />`,
+        vue: `<WaffleChart :store="store" viewId="ic" label_field="party" value="seats" label="Répartition des sièges (waffle)" />`,
+      }),
+    }, ChartDemo),
+
+    chart({
       slug: 'column-pyramid', name: 'ColumnPyramidChart', group: 'Proportions', kind: 'column-pyramid', hasControls: false,
       tagline: 'Colonnes en pyramide pour un entonnoir ou un classement décroissant.',
       useCase:
@@ -856,6 +868,18 @@ export function CHART_ENTRIES(ChartDemo: Demo, GeoDemo: Demo): DemoEntry[] {
         svelte: `<StateTimelineChart {store} viewId="st" series="service" start="start" end="end" state="state" label="États des services (24 h)" />`,
         react: `<StateTimelineChart store={store} viewId="st" series="service" start="start" end="end" state="state" label="États des services (24 h)" />`,
         vue: `<StateTimelineChart :store="store" viewId="st" series="service" start="start" end="end" state="state" label="États des services (24 h)" />`,
+      }),
+    }, ChartDemo),
+
+    chart({
+      slug: 'status-history', name: 'StatusHistoryChart', group: 'Observabilité', kind: 'status-history', hasControls: false,
+      tagline: 'Jalons de statut ponctuels par service sur un axe temporel.',
+      useCase:
+        "Visualiser l'historique de statut point-par-point (ok / warn / crit) de plusieurs services sur une même fenêtre horaire. Chaque bucket correspond à un instant mesuré — idéal pour corréler des incidents entre services.\n\n`series` désigne la lane, `at` l'instant, `value` le statut (couleur stable par statut).",
+      code: storeCode(['StatusHistoryChart'], {
+        svelte: `<StatusHistoryChart {store} viewId="sh" series="service" at="at" value="status" label="Historique de statut (8 h)" />`,
+        react: `<StatusHistoryChart store={store} viewId="sh" series="service" at="at" value="status" label="Historique de statut (8 h)" />`,
+        vue: `<StatusHistoryChart :store="store" viewId="sh" series="service" at="at" value="status" label="Historique de statut (8 h)" />`,
       }),
     }, ChartDemo),
 
