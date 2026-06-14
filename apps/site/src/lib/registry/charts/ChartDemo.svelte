@@ -76,6 +76,10 @@
     WaffleChart,
     RibbonChart,
     AnomalySwimLaneChart,
+    FlamegraphChart,
+    TraceWaterfallChart,
+    DecompositionTreeChart,
+    Density2DChart,
   } from '@sentropic/dataviz-svelte';
   import { ContentSwitcher } from '@sentropic/design-system-svelte';
   import { lineAnnotation, regionAnnotation, makeFormatter } from '@sentropic/dataviz-core';
@@ -96,6 +100,10 @@
   import { makeStatusHistoryStore } from '../../data/statusHistory';
   import { makeRibbonStore } from '../../data/ribbon';
   import { makeAnomalySwimLaneStore } from '../../data/anomalySwimLane';
+  import { makeFlamegraphStore } from '../../data/flamegraph';
+  import { makeTraceWaterfallStore } from '../../data/traceWaterfall';
+  import { makeDecompositionTreeStore } from '../../data/decompositionTree';
+  import { makeDensity2DStore } from '../../data/density2d';
   import { makeBellCurveStore } from '../../data/bellCurve';
   import { makeHierarchyStore } from '../../data/hierarchy';
   import { makeWordCloudStore } from '../../data/wordCloud';
@@ -122,6 +130,10 @@
   const statusHistoryStore = makeStatusHistoryStore();
   const ribbonStore = makeRibbonStore();
   const anomalySwimLaneStore = makeAnomalySwimLaneStore();
+  const flamegraphStore = makeFlamegraphStore();
+  const traceWaterfallStore = makeTraceWaterfallStore();
+  const decompositionTreeStore = makeDecompositionTreeStore();
+  const density2dStore = makeDensity2DStore();
   const bellCurveStore = makeBellCurveStore();
   const hierarchyStore = makeHierarchyStore();
   const wordCloudStore = makeWordCloudStore();
@@ -327,6 +339,14 @@
     <StatusHistoryChart store={statusHistoryStore} viewId="sh" series="service" at="at" value="status" label="Historique de statut (8 h)" />
   {:else if kind === 'anomaly-swimlane'}
     <AnomalySwimLaneChart store={anomalySwimLaneStore} viewId="asl" job="job" at="at" score="score" max={100} label="Scores d'anomalie ML" />
+  {:else if kind === 'flamegraph'}
+    <FlamegraphChart store={flamegraphStore} viewId="fg" id="id" parentId="parent" name="name" value="value" label="Profil CPU (flamegraph)" />
+  {:else if kind === 'trace-waterfall'}
+    <TraceWaterfallChart store={traceWaterfallStore} viewId="tw" spanId="spanId" parentSpanId="parentSpanId" service="service" start="start" duration="duration" label="Trace distribuée (waterfall)" />
+  {:else if kind === 'decomposition-tree'}
+    <DecompositionTreeChart store={decompositionTreeStore} viewId="dt" measure="revenue" levels={['region', 'category', 'product']} label="Décomposition du CA" />
+  {:else if kind === 'density-2d'}
+    <Density2DChart store={density2dStore} viewId="d2" x="x" y="y" bins={24} label="Densité 2D (nuage binné)" />
   {:else if kind === 'solid-gauge'}
     <SolidGaugeChart {store} viewId="c" value="revenue" min={0} max={2000000} label="Revenu vs objectif" format="number" unit="€" thresholds={[{ value: 800000, tone: 'warning' }, { value: 1400000, tone: 'success' }]} />
   {/if}

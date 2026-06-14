@@ -908,6 +908,54 @@ export function CHART_ENTRIES(ChartDemo: Demo, GeoDemo: Demo): DemoEntry[] {
     }, ChartDemo),
 
     chart({
+      slug: 'flamegraph', name: 'FlamegraphChart', group: 'Observabilité', kind: 'flamegraph', hasControls: false,
+      tagline: 'Profil d’exécution en flammes (call stacks).',
+      useCase:
+        "Visualiser un profil CPU ou un arbre d'appels : chaque barre est une frame, sa largeur est proportionnelle au temps passé, l'empilement vertical suit la pile d'appels. Indispensable pour repérer les hot paths en profiling (continuous profiling type Grafana Pyroscope).\n\n`id`/`parentId` décrivent l'arbre, `name` est le libellé de la frame, `value` le temps (largeur).",
+      code: storeCode(['FlamegraphChart'], {
+        svelte: `<FlamegraphChart {store} viewId="fg" id="id" parentId="parent" name="name" value="value" label="Profil CPU (flamegraph)" />`,
+        react: `<FlamegraphChart store={store} viewId="fg" id="id" parentId="parent" name="name" value="value" label="Profil CPU (flamegraph)" />`,
+        vue: `<FlamegraphChart :store="store" viewId="fg" id="id" parentId="parent" name="name" value="value" label="Profil CPU (flamegraph)" />`,
+      }),
+    }, ChartDemo),
+
+    chart({
+      slug: 'trace-waterfall', name: 'TraceWaterfallChart', group: 'Observabilité', kind: 'trace-waterfall', hasControls: false,
+      tagline: 'Cascade des spans d’une trace distribuée.',
+      useCase:
+        "Inspecter une trace distribuée : chaque span est une barre positionnée par son `start` et dimensionnée par sa `duration`, l'imbrication parent/enfant matérialise le chemin critique entre services. C'est la vue waterfall des APM (Grafana Tempo, Jaeger).\n\n`spanId`/`parentSpanId` décrivent l'arbre des spans, `service` la lane, `start`/`duration` la position temporelle.",
+      code: storeCode(['TraceWaterfallChart'], {
+        svelte: `<TraceWaterfallChart {store} viewId="tw" spanId="spanId" parentSpanId="parentSpanId" service="service" start="start" duration="duration" label="Trace distribuée (waterfall)" />`,
+        react: `<TraceWaterfallChart store={store} viewId="tw" spanId="spanId" parentSpanId="parentSpanId" service="service" start="start" duration="duration" label="Trace distribuée (waterfall)" />`,
+        vue: `<TraceWaterfallChart :store="store" viewId="tw" spanId="spanId" parentSpanId="parentSpanId" service="service" start="start" duration="duration" label="Trace distribuée (waterfall)" />`,
+      }),
+    }, ChartDemo),
+
+    chart({
+      slug: 'decomposition-tree', name: 'DecompositionTreeChart', group: 'Hiérarchie', kind: 'decomposition-tree', hasControls: false,
+      tagline: 'Décomposition hiérarchique d’une mesure par niveaux.',
+      useCase:
+        "Décomposer une mesure agrégée niveau par niveau (region → category → product) pour comprendre d'où vient une valeur, à la manière du Decomposition Tree de Power BI. Chaque niveau ventile le total du niveau parent.\n\n`measure` est la mesure agrégée, `levels` la liste ordonnée des dimensions de décomposition.",
+      code: storeCode(['DecompositionTreeChart'], {
+        svelte: `<DecompositionTreeChart {store} viewId="dt" measure="revenue" levels={['region', 'category', 'product']} label="Décomposition du CA" />`,
+        react: `<DecompositionTreeChart store={store} viewId="dt" measure="revenue" levels={['region', 'category', 'product']} label="Décomposition du CA" />`,
+        vue: `<DecompositionTreeChart :store="store" viewId="dt" measure="revenue" :levels="['region', 'category', 'product']" label="Décomposition du CA" />`,
+      }),
+    }, ChartDemo),
+
+    chart({
+      slug: 'density-2d', name: 'Density2DChart', group: 'Distribution & statistique', kind: 'density-2d', hasControls: false,
+      tagline: 'Densité 2D binnée d’un nuage de points.',
+      useCase:
+        "Révéler la densité d'un nuage de points trop dense pour un scatter classique : le plan est découpé en cellules (`bins`) dont l'intensité encode le nombre de points. Équivalent non-géo du hexbin/heatmap de densité (Tableau, Dataiku).\n\n`x`/`y` sont les axes, `bins` la résolution de la grille.",
+      code: storeCode(['Density2DChart'], {
+        svelte: `<Density2DChart {store} viewId="d2" x="x" y="y" bins={24} label="Densité 2D (nuage binné)" />`,
+        react: `<Density2DChart store={store} viewId="d2" x="x" y="y" bins={24} label="Densité 2D (nuage binné)" />`,
+        vue: `<Density2DChart :store="store" viewId="d2" x="x" y="y" :bins="24" label="Densité 2D (nuage binné)" />`,
+      }),
+    }, ChartDemo),
+
+    chart({
       slug: 'correlation-matrix', name: 'CorrelationMatrix', group: 'Distribution & statistique', kind: 'correlation-matrix', hasControls: false,
       tagline: 'Matrice de corrélation de Pearson entre mesures numériques.',
       useCase:
