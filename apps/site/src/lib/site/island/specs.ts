@@ -45,6 +45,8 @@ import { makeDecompositionTreeStore } from '../../data/decompositionTree';
 import { makeDensity2DStore } from '../../data/density2d';
 import { makeEventFeedStore } from '../../data/eventFeed';
 import { makeVectorFieldStore } from '../../data/vectorField';
+import { makeContourStore } from '../../data/contour';
+import { makeWindBarbStore } from '../../data/windBarb';
 
 /** One mounted dataviz component: its export name + props. */
 export interface NodeSpec {
@@ -90,6 +92,8 @@ const decompositionTreeStore = makeDecompositionTreeStore();
 const density2dStore = makeDensity2DStore();
 const eventFeedStore = makeEventFeedStore();
 const vectorFieldStore = makeVectorFieldStore();
+const contourStore = makeContourStore();
+const windBarbStore = makeWindBarbStore();
 
 // ── Conditional-format rules (gridSpec) ──────────────────────────────────────
 const revenueFormat = [
@@ -271,6 +275,10 @@ function chartSpec(kind: string, ctx: SpecContext): NodeSpec[] | null {
       return [{ comp: 'EventFeedPanel', props: { store: eventFeedStore, viewId: 'ef', at: 'at', type: 'type', severity: 'severity', message: 'message', maxHeight: 360, label: 'Flux d’événements' } }];
     case 'vector-field':
       return [{ comp: 'VectorFieldChart', props: { store: vectorFieldStore, viewId: 'vf', x: 'x', y: 'y', length: 'length', direction: 'direction', label: 'Champ de vecteurs (flux)' } }];
+    case 'contour':
+      return [{ comp: 'ContourChart', props: { store: contourStore, viewId: 'ct', x: 'x', y: 'y', value: 'value', levels: 8, label: 'Contour (champ scalaire 2D)' } }];
+    case 'wind-barb':
+      return [{ comp: 'WindBarbChart', props: { store: windBarbStore, viewId: 'wb', at: 'at', speed: 'speed', direction: 'direction', label: 'Vent (barbules)' } }];
     case 'solid-gauge':
       return [{ comp: 'SolidGaugeChart', props: { store, viewId: 'c', value: 'revenue', min: 0, max: 2000000, label: 'Revenu vs objectif', format: 'number', unit: '€', thresholds: [{ value: 800000, tone: 'warning' }, { value: 1400000, tone: 'success' }] } }];
     default:

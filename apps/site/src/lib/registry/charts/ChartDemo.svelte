@@ -82,6 +82,8 @@
     Density2DChart,
     EventFeedPanel,
     VectorFieldChart,
+    ContourChart,
+    WindBarbChart,
   } from '@sentropic/dataviz-svelte';
   import { ContentSwitcher } from '@sentropic/design-system-svelte';
   import { lineAnnotation, regionAnnotation, makeFormatter } from '@sentropic/dataviz-core';
@@ -108,6 +110,8 @@
   import { makeDensity2DStore } from '../../data/density2d';
   import { makeEventFeedStore } from '../../data/eventFeed';
   import { makeVectorFieldStore } from '../../data/vectorField';
+  import { makeContourStore } from '../../data/contour';
+  import { makeWindBarbStore } from '../../data/windBarb';
   import { makeBellCurveStore } from '../../data/bellCurve';
   import { makeHierarchyStore } from '../../data/hierarchy';
   import { makeWordCloudStore } from '../../data/wordCloud';
@@ -140,6 +144,8 @@
   const density2dStore = makeDensity2DStore();
   const eventFeedStore = makeEventFeedStore();
   const vectorFieldStore = makeVectorFieldStore();
+  const contourStore = makeContourStore();
+  const windBarbStore = makeWindBarbStore();
   const bellCurveStore = makeBellCurveStore();
   const hierarchyStore = makeHierarchyStore();
   const wordCloudStore = makeWordCloudStore();
@@ -357,6 +363,10 @@
     <EventFeedPanel store={eventFeedStore} viewId="ef" at="at" type="type" severity="severity" message="message" maxHeight={360} label="Flux d'événements" />
   {:else if kind === 'vector-field'}
     <VectorFieldChart store={vectorFieldStore} viewId="vf" x="x" y="y" length="length" direction="direction" label="Champ de vecteurs (flux)" />
+  {:else if kind === 'contour'}
+    <ContourChart store={contourStore} viewId="ct" x="x" y="y" value="value" levels={8} label="Contour (champ scalaire 2D)" />
+  {:else if kind === 'wind-barb'}
+    <WindBarbChart store={windBarbStore} viewId="wb" at="at" speed="speed" direction="direction" label="Vent (barbules)" />
   {:else if kind === 'solid-gauge'}
     <SolidGaugeChart {store} viewId="c" value="revenue" min={0} max={2000000} label="Revenu vs objectif" format="number" unit="€" thresholds={[{ value: 800000, tone: 'warning' }, { value: 1400000, tone: 'success' }]} />
   {/if}

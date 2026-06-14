@@ -980,6 +980,30 @@ export function CHART_ENTRIES(ChartDemo: Demo, GeoDemo: Demo): DemoEntry[] {
     }, ChartDemo),
 
     chart({
+      slug: 'contour', name: 'ContourChart', group: 'Distribution & statistique', kind: 'contour', hasControls: false,
+      tagline: 'Bandes de contour sur grille 2D.',
+      useCase:
+        "Représenter un champ scalaire continu (altitude, température, densité) par des bandes d'iso-valeurs sur une grille 2D — la carte de contour classique (Highcharts contour, cartes topographiques).\n\n`x`/`y` positionnent la cellule, `value` est la valeur scalaire (bande de couleur), `levels` fixe le nombre de paliers.",
+      code: storeCode(['ContourChart'], {
+        svelte: `<ContourChart {store} viewId="ct" x="x" y="y" value="value" levels={8} label="Contour (champ scalaire 2D)" />`,
+        react: `<ContourChart store={store} viewId="ct" x="x" y="y" value="value" levels={8} label="Contour (champ scalaire 2D)" />`,
+        vue: `<ContourChart :store="store" viewId="ct" x="x" y="y" value="value" :levels="8" label="Contour (champ scalaire 2D)" />`,
+      }),
+    }, ChartDemo),
+
+    chart({
+      slug: 'wind-barb', name: 'WindBarbChart', group: 'Distribution & statistique', kind: 'wind-barb', hasControls: false,
+      tagline: 'Barbules de vent météo sur axe temporel.',
+      useCase:
+        "Afficher l'évolution du vent dans le temps avec les barbules météo conventionnelles : chaque hampe encode la direction (d'où vient le vent, 0° = Nord) et les barbules la vitesse en nœuds (traits 5/10, fanion 50). Standard météorologique (Highcharts windbarb).\n\n`at` est l'instant, `speed` la vitesse en nœuds, `direction` la provenance en degrés.",
+      code: storeCode(['WindBarbChart'], {
+        svelte: `<WindBarbChart {store} viewId="wb" at="at" speed="speed" direction="direction" label="Vent (barbules)" />`,
+        react: `<WindBarbChart store={store} viewId="wb" at="at" speed="speed" direction="direction" label="Vent (barbules)" />`,
+        vue: `<WindBarbChart :store="store" viewId="wb" at="at" speed="speed" direction="direction" label="Vent (barbules)" />`,
+      }),
+    }, ChartDemo),
+
+    chart({
       slug: 'correlation-matrix', name: 'CorrelationMatrix', group: 'Distribution & statistique', kind: 'correlation-matrix', hasControls: false,
       tagline: 'Matrice de corrélation de Pearson entre mesures numériques.',
       useCase:
