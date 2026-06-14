@@ -505,6 +505,10 @@ export { buildForceGraphData } from './forceGraph.js';
 export type { DependencyWheelLink, DependencyWheelConfig } from './dependencyWheel.js';
 export { buildDependencyWheelData } from './dependencyWheel.js';
 
+// HLC (high-low-close) chart model
+export type { HlcDatum, HlcConfig } from './hlc.js';
+export { buildHlcData } from './hlc.js';
+
 // Bell curve chart model
 export type { BellCurveConfig } from './bellCurve.js';
 export { buildBellCurveData } from './bellCurve.js';

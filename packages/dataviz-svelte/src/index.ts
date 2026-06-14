@@ -132,6 +132,10 @@ export { default as DependencyWheelChart } from './lib/DependencyWheelChart.svel
 export type { DependencyWheelChartProps } from './lib/DependencyWheelChart.svelte';
 export { default as HeikinAshiChart } from './lib/HeikinAshiChart.svelte';
 export type { HeikinAshiChartProps } from './lib/HeikinAshiChart.svelte';
+export { default as HollowCandlestickChart } from './lib/HollowCandlestickChart.svelte';
+export type { HollowCandlestickChartProps } from './lib/HollowCandlestickChart.svelte';
+export { default as HLCChart } from './lib/HLCChart.svelte';
+export type { HLCChartProps } from './lib/HLCChart.svelte';
 export { default as BellCurveChart } from './lib/BellCurveChart.svelte';
 export type { BellCurveChartProps } from './lib/BellCurveChart.svelte';
 export { default as OrganizationChart } from './lib/OrganizationChart.svelte';
