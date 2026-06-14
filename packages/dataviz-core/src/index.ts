@@ -531,6 +531,14 @@ export { buildStateTimelineData } from './stateTimeline.js';
 export type { StatusHistoryDatum, StatusHistoryBucketDatum, StatusHistoryConfig } from './statusHistory.js';
 export { buildStatusHistoryData } from './statusHistory.js';
 
+// Ribbon chart model (rang empilé à rubans dans le temps)
+export type { RibbonTone, RibbonDatum, RibbonConfig } from './ribbon.js';
+export { buildRibbonData } from './ribbon.js';
+
+// Anomaly swim lane model (heatmap temps×job, score continu)
+export type { AnomalySwimLaneDatum, AnomalySwimLaneBucketDatum, AnomalySwimLaneConfig } from './anomalySwimLane.js';
+export { buildAnomalySwimLaneData } from './anomalySwimLane.js';
+
 // Bell curve chart model
 export type { BellCurveConfig } from './bellCurve.js';
 export { buildBellCurveData } from './bellCurve.js';

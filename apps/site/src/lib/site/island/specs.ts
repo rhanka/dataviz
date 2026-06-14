@@ -37,6 +37,8 @@ import { makePolygonStore } from '../../data/polygon';
 import { vennAreas } from '../../data/venn';
 import { makeStateTimelineStore } from '../../data/stateTimeline';
 import { makeStatusHistoryStore } from '../../data/statusHistory';
+import { makeRibbonStore } from '../../data/ribbon';
+import { makeAnomalySwimLaneStore } from '../../data/anomalySwimLane';
 
 /** One mounted dataviz component: its export name + props. */
 export interface NodeSpec {
@@ -74,6 +76,8 @@ const wordCloudStore = makeWordCloudStore();
 const polygonStore = makePolygonStore();
 const stateTimelineStore = makeStateTimelineStore();
 const statusHistoryStore = makeStatusHistoryStore();
+const ribbonStore = makeRibbonStore();
+const anomalySwimLaneStore = makeAnomalySwimLaneStore();
 
 // ── Conditional-format rules (gridSpec) ──────────────────────────────────────
 const revenueFormat = [
@@ -192,6 +196,8 @@ function chartSpec(kind: string, ctx: SpecContext): NodeSpec[] | null {
       return [{ comp: 'TimelineChart', props: { store: timelineStore, viewId: 'timeline', label_field: 'event', position: 'position', description: 'description', tone: 'tone', label: 'Jalons du projet' } }];
     case 'streamgraph':
       return [{ comp: 'StreamgraphChart', props: { store: streamgraphStore, viewId: 'sg', category: 'month', series: 'channel', measure: 'revenue', smooth: true, showLegend: true, label: 'Revenu par canal (flux)' } }];
+    case 'ribbon':
+      return [{ comp: 'RibbonChart', props: { store: ribbonStore, viewId: 'rb', category: 'product', period: 'quarter', value: 'sales', label: 'Parts par trimestre' } }];
     case 'tilemap':
       return [{ comp: 'TileMapChart', props: { store: tilemapStore, viewId: 'tm', label_field: 'region', col: 'col', row: 'row', value: 'revenue', label: 'Revenu régional (grille)' } }];
     case 'organization':
@@ -239,6 +245,8 @@ function chartSpec(kind: string, ctx: SpecContext): NodeSpec[] | null {
       return [{ comp: 'StateTimelineChart', props: { store: stateTimelineStore, viewId: 'st', series: 'service', start: 'start', end: 'end', state: 'state', label: 'États des services (24 h)' } }];
     case 'status-history':
       return [{ comp: 'StatusHistoryChart', props: { store: statusHistoryStore, viewId: 'sh', series: 'service', at: 'at', value: 'status', label: 'Historique de statut (8 h)' } }];
+    case 'anomaly-swimlane':
+      return [{ comp: 'AnomalySwimLaneChart', props: { store: anomalySwimLaneStore, viewId: 'asl', job: 'job', at: 'at', score: 'score', max: 100, label: 'Scores d’anomalie ML' } }];
     case 'solid-gauge':
       return [{ comp: 'SolidGaugeChart', props: { store, viewId: 'c', value: 'revenue', min: 0, max: 2000000, label: 'Revenu vs objectif', format: 'number', unit: '€', thresholds: [{ value: 800000, tone: 'warning' }, { value: 1400000, tone: 'success' }] } }];
     default:
