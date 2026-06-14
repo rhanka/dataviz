@@ -36,6 +36,7 @@ import { makeWordCloudStore } from '../../data/wordCloud';
 import { makePolygonStore } from '../../data/polygon';
 import { vennAreas } from '../../data/venn';
 import { makeStateTimelineStore } from '../../data/stateTimeline';
+import { makeStatusHistoryStore } from '../../data/statusHistory';
 
 /** One mounted dataviz component: its export name + props. */
 export interface NodeSpec {
@@ -72,6 +73,7 @@ const hierarchyStore = makeHierarchyStore();
 const wordCloudStore = makeWordCloudStore();
 const polygonStore = makePolygonStore();
 const stateTimelineStore = makeStateTimelineStore();
+const statusHistoryStore = makeStatusHistoryStore();
 
 // ── Conditional-format rules (gridSpec) ──────────────────────────────────────
 const revenueFormat = [
@@ -179,6 +181,8 @@ function chartSpec(kind: string, ctx: SpecContext): NodeSpec[] | null {
       return [{ comp: 'ColumnPyramidChart', props: { store: columnPyramidStore, viewId: 'cp', category: 'stage', value: 'users', label: 'Funnel d\'acquisition' } }];
     case 'item-chart':
       return [{ comp: 'ItemChart', props: { store: itemStore, viewId: 'ic', label_field: 'party', value: 'seats', label: 'Répartition des sièges' } }];
+    case 'waffle':
+      return [{ comp: 'WaffleChart', props: { store: itemStore, viewId: 'ic', label_field: 'party', value: 'seats', label: 'Répartition des sièges (waffle)' } }];
     case 'variable-pie':
       return [{ comp: 'VariablePieChart', props: { store: variablePieStore, viewId: 'vp', label_field: 'party', value: 'votes', z: 'seats', label: 'Partis : voix (angle) × sièges (rayon)' } }];
     // ── Lot C ─────────────────────────────────────────────────────────────────
@@ -233,6 +237,8 @@ function chartSpec(kind: string, ctx: SpecContext): NodeSpec[] | null {
       return [{ comp: 'CorrelationMatrix', props: { store, viewId: 'c', measures: ['price', 'units', 'marginRate', 'revenue'], label: 'Corrélations' } }];
     case 'state-timeline':
       return [{ comp: 'StateTimelineChart', props: { store: stateTimelineStore, viewId: 'st', series: 'service', start: 'start', end: 'end', state: 'state', label: 'États des services (24 h)' } }];
+    case 'status-history':
+      return [{ comp: 'StatusHistoryChart', props: { store: statusHistoryStore, viewId: 'sh', series: 'service', at: 'at', value: 'status', label: 'Historique de statut (8 h)' } }];
     case 'solid-gauge':
       return [{ comp: 'SolidGaugeChart', props: { store, viewId: 'c', value: 'revenue', min: 0, max: 2000000, label: 'Revenu vs objectif', format: 'number', unit: '€', thresholds: [{ value: 800000, tone: 'warning' }, { value: 1400000, tone: 'success' }] } }];
     default:
