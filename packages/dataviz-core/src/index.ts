@@ -493,6 +493,18 @@ export { buildItemChartData } from './itemChart.js';
 export type { ColumnPyramidTone, ColumnPyramidDatum, ColumnPyramidConfig } from './columnPyramid.js';
 export { buildColumnPyramidData } from './columnPyramid.js';
 
+// Arc diagram chart model
+export type { ArcDiagramLink, ArcDiagramConfig } from './arcDiagram.js';
+export { buildArcDiagramData } from './arcDiagram.js';
+
+// Force-directed graph model
+export type { ForceGraphToneCore, ForceGraphNodeCore, ForceGraphEdgeCore, ForceGraphDataResult, ForceGraphConfig } from './forceGraph.js';
+export { buildForceGraphData } from './forceGraph.js';
+
+// Dependency wheel chart model
+export type { DependencyWheelLink, DependencyWheelConfig } from './dependencyWheel.js';
+export { buildDependencyWheelData } from './dependencyWheel.js';
+
 // Bell curve chart model
 export type { BellCurveConfig } from './bellCurve.js';
 export { buildBellCurveData } from './bellCurve.js';

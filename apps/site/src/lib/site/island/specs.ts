@@ -23,6 +23,9 @@ import { makeOhlcStore } from '../../data/ohlc-store';
 import { makeRangeStore } from '../../data/range';
 import { makeVariablePieStore, makeItemStore } from '../../data/variablePie';
 import { makeColumnPyramidStore } from '../../data/columnPyramid';
+import { makeForceGraphStore } from '../../data/forceGraph';
+import { makeArcDiagramStore } from '../../data/arcDiagram';
+import { makeDependencyWheelStore } from '../../data/dependencyWheel';
 import { makeBellCurveStore } from '../../data/bellCurve';
 import { makeGanttStore } from '../../data/gantt';
 import { makeTimelineStore } from '../../data/timeline';
@@ -54,6 +57,9 @@ const rangeStore = makeRangeStore();
 const variablePieStore = makeVariablePieStore();
 const itemStore = makeItemStore();
 const columnPyramidStore = makeColumnPyramidStore();
+const forceGraphStore = makeForceGraphStore();
+const arcDiagramStore = makeArcDiagramStore();
+const dependencyWheelStore = makeDependencyWheelStore();
 const bellCurveStore = makeBellCurveStore();
 
 // ── Dedicated stores for lot-C charts ────────────────────────────────────────
@@ -207,6 +213,14 @@ function chartSpec(kind: string, ctx: SpecContext): NodeSpec[] | null {
       return [{ comp: 'ParallelCoordinatesChart', props: { store, viewId: 'c', measures: ['price', 'units', 'marginRate'], series: 'category', label: 'Profil multivarié (prix / unités / marge)' } }];
     case 'bell-curve':
       return [{ comp: 'BellCurveChart', props: { store: bellCurveStore, viewId: 'bc', measure: 'score', label: 'Distribution des scores (/100)' } }];
+    case 'force-graph':
+      return [{ comp: 'ForceGraph', props: { store: forceGraphStore, viewId: 'fg', source: 'source', target: 'target', weight: 'weight', label: 'Dépendances entre microservices' } }];
+    case 'arc-diagram':
+      return [{ comp: 'ArcDiagramChart', props: { store: arcDiagramStore, viewId: 'ad', source: 'source', target: 'target', weight: 'weight', label: 'Collaborations entre équipes' } }];
+    case 'dependency-wheel':
+      return [{ comp: 'DependencyWheelChart', props: { store: dependencyWheelStore, viewId: 'dw', source: 'source', target: 'target', weight: 'weight', label: 'Dépendances entre modules' } }];
+    case 'heikin-ashi':
+      return [{ comp: 'HeikinAshiChart', props: { store: ohlcStore, viewId: 'ohlc', label_field: 'session', open: 'open', high: 'high', low: 'low', close: 'close', label: 'Cours Heikin-Ashi (28 séances)' } }];
     default:
       return null;
   }

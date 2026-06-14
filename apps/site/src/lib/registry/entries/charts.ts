@@ -455,6 +455,18 @@ export function CHART_ENTRIES(ChartDemo: Demo, GeoDemo: Demo): DemoEntry[] {
     }, ChartDemo),
 
     chart({
+      slug: 'heikin-ashi', name: 'HeikinAshiChart', group: 'Finance', kind: 'heikin-ashi', hasControls: false,
+      tagline: 'Bougies Heikin-Ashi lissées pour mieux lire la tendance.',
+      useCase:
+        "Variante lissée des bougies japonaises : les valeurs OHLC sont recalculées (close = moyenne OHLC, open = moyenne des bougies HA précédentes) pour filtrer le bruit et faire ressortir la tendance. Mêmes données et mêmes champs que CandlestickChart.\n\n`label_field` désigne la session et `open`/`high`/`low`/`close` les mesures.",
+      code: storeCode(['HeikinAshiChart'], {
+        svelte: `<HeikinAshiChart {store} viewId="ohlc" label_field="session" open="open" high="high" low="low" close="close" label="Cours Heikin-Ashi (28 séances)" />`,
+        react: `<HeikinAshiChart store={store} viewId="ohlc" label_field="session" open="open" high="high" low="low" close="close" label="Cours Heikin-Ashi (28 séances)" />`,
+        vue: `<HeikinAshiChart :store="store" viewId="ohlc" label_field="session" open="open" high="high" low="low" close="close" label="Cours Heikin-Ashi (28 séances)" />`,
+      }),
+    }, ChartDemo),
+
+    chart({
       slug: 'ohlc', name: 'OHLCChart', group: 'Finance', kind: 'ohlc', hasControls: false,
       tagline: 'Barres OHLC (Open/High/Low/Close) pour des cours financiers.',
       useCase:
@@ -731,6 +743,43 @@ export function CHART_ENTRIES(ChartDemo: Demo, GeoDemo: Demo): DemoEntry[] {
         svelte: `<PolygonChart {store} viewId="pg" x="x" y="y" label="Plan d'étage simplifié" />`,
         react: `<PolygonChart store={store} viewId="pg" x="x" y="y" label="Plan d'étage simplifié" />`,
         vue: `<PolygonChart :store="store" viewId="pg" x="x" y="y" label="Plan d'étage simplifié" />`,
+      }),
+    }, ChartDemo),
+
+    // ── Réseaux & graphes ────────────────────────────────────────────────
+    chart({
+      slug: 'force-graph', name: 'ForceGraph', group: 'Réseaux & graphes', kind: 'force-graph', hasControls: false,
+      tagline: 'Graphe force-directed pour réseaux et dépendances entre entités.',
+      useCase:
+        "Représenter les dépendances entre services, les relations sociales ou tout réseau orienté. Les nœuds sont déduits automatiquement des colonnes source/target ; le poids module l'épaisseur des arêtes et le rayon des nœuds.\n\n`source` et `target` sont des identifiants de nœuds ; `weight` est optionnel.",
+      code: storeCode(['ForceGraph'], {
+        svelte: `<ForceGraph {store} viewId="fg" source="source" target="target" weight="weight" label="Dépendances entre microservices" />`,
+        react: `<ForceGraph store={store} viewId="fg" source="source" target="target" weight="weight" label="Dépendances entre microservices" />`,
+        vue: `<ForceGraph :store="store" viewId="fg" source="source" target="target" weight="weight" label="Dépendances entre microservices" />`,
+      }),
+    }, ChartDemo),
+
+    chart({
+      slug: 'arc-diagram', name: 'ArcDiagramChart', group: 'Réseaux & graphes', kind: 'arc-diagram', hasControls: false,
+      tagline: 'Liens pondérés entre nœuds alignés sur un axe, reliés par des arcs.',
+      useCase:
+        "Visualiser les relations et la force des connexions entre entités alignées sur une ligne — co-occurrences, collaborations, flux entre nœuds. L'épaisseur de l'arc reflète le poids du lien.\n\n`source` et `target` désignent les extrémités du lien, `weight` sa force.",
+      code: storeCode(['ArcDiagramChart'], {
+        svelte: `<ArcDiagramChart {store} viewId="ad" source="source" target="target" weight="weight" label="Collaborations entre équipes" />`,
+        react: `<ArcDiagramChart store={store} viewId="ad" source="source" target="target" weight="weight" label="Collaborations entre équipes" />`,
+        vue: `<ArcDiagramChart :store="store" viewId="ad" source="source" target="target" weight="weight" label="Collaborations entre équipes" />`,
+      }),
+    }, ChartDemo),
+
+    chart({
+      slug: 'dependency-wheel', name: 'DependencyWheelChart', group: 'Réseaux & graphes', kind: 'dependency-wheel', hasControls: false,
+      tagline: 'Roue de dépendances : flux circulaires pondérés entre modules ou entités.',
+      useCase:
+        "Visualiser les dépendances et imports entre modules d'une application, ou tout flux orienté entre entités, sur une disposition circulaire où l'épaisseur des rubans reflète le poids.\n\n`source` et `target` désignent les extrémités du lien, `weight` sa force.",
+      code: storeCode(['DependencyWheelChart'], {
+        svelte: `<DependencyWheelChart {store} viewId="dw" source="source" target="target" weight="weight" label="Dépendances entre modules" />`,
+        react: `<DependencyWheelChart store={store} viewId="dw" source="source" target="target" weight="weight" label="Dépendances entre modules" />`,
+        vue: `<DependencyWheelChart :store="store" viewId="dw" source="source" target="target" weight="weight" label="Dépendances entre modules" />`,
       }),
     }, ChartDemo),
 
