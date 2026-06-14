@@ -70,6 +70,8 @@
     CorrelationMatrix,
     ScatterPlotMatrix,
     AnimatedBubbleChart,
+    StateTimelineChart,
+    SolidGaugeChart,
   } from '@sentropic/dataviz-svelte';
   import { ContentSwitcher } from '@sentropic/design-system-svelte';
   import { lineAnnotation, regionAnnotation, makeFormatter } from '@sentropic/dataviz-core';
@@ -86,6 +88,7 @@
   import { makeArcDiagramStore } from '../../data/arcDiagram';
   import { makeDependencyWheelStore } from '../../data/dependencyWheel';
   import { makeAnimatedBubbleStore } from '../../data/animatedBubble';
+  import { makeStateTimelineStore } from '../../data/stateTimeline';
   import { makeBellCurveStore } from '../../data/bellCurve';
   import { makeHierarchyStore } from '../../data/hierarchy';
   import { makeWordCloudStore } from '../../data/wordCloud';
@@ -108,6 +111,7 @@
   const arcDiagramStore = makeArcDiagramStore();
   const dependencyWheelStore = makeDependencyWheelStore();
   const animatedBubbleStore = makeAnimatedBubbleStore();
+  const stateTimelineStore = makeStateTimelineStore();
   const bellCurveStore = makeBellCurveStore();
   const hierarchyStore = makeHierarchyStore();
   const wordCloudStore = makeWordCloudStore();
@@ -303,6 +307,10 @@
     <CorrelationMatrix {store} viewId="c" measures={['price', 'units', 'marginRate', 'revenue']} label="Corrélations" />
   {:else if kind === 'animated-bubble'}
     <AnimatedBubbleChart store={animatedBubbleStore} viewId="ab" x="gdpPerCapita" y="lifeExpectancy" size="population" time="year" series="country" label="Espérance de vie vs PIB/hab" />
+  {:else if kind === 'state-timeline'}
+    <StateTimelineChart store={stateTimelineStore} viewId="st" series="service" start="start" end="end" state="state" label="États des services (24 h)" />
+  {:else if kind === 'solid-gauge'}
+    <SolidGaugeChart {store} viewId="c" value="revenue" min={0} max={2000000} label="Revenu vs objectif" format="number" unit="€" thresholds={[{ value: 800000, tone: 'warning' }, { value: 1400000, tone: 'success' }]} />
   {/if}
 </div>
 

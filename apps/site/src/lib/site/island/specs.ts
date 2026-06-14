@@ -35,6 +35,7 @@ import { makeHierarchyStore } from '../../data/hierarchy';
 import { makeWordCloudStore } from '../../data/wordCloud';
 import { makePolygonStore } from '../../data/polygon';
 import { vennAreas } from '../../data/venn';
+import { makeStateTimelineStore } from '../../data/stateTimeline';
 
 /** One mounted dataviz component: its export name + props. */
 export interface NodeSpec {
@@ -70,6 +71,7 @@ const tilemapStore = makeTilemapStore();
 const hierarchyStore = makeHierarchyStore();
 const wordCloudStore = makeWordCloudStore();
 const polygonStore = makePolygonStore();
+const stateTimelineStore = makeStateTimelineStore();
 
 // ── Conditional-format rules (gridSpec) ──────────────────────────────────────
 const revenueFormat = [
@@ -229,6 +231,10 @@ function chartSpec(kind: string, ctx: SpecContext): NodeSpec[] | null {
       return [{ comp: 'ScatterPlotMatrix', props: { store, viewId: 'c', measures: ['price', 'units', 'marginRate'], label: 'Matrice de nuages' } }];
     case 'correlation-matrix':
       return [{ comp: 'CorrelationMatrix', props: { store, viewId: 'c', measures: ['price', 'units', 'marginRate', 'revenue'], label: 'Corrélations' } }];
+    case 'state-timeline':
+      return [{ comp: 'StateTimelineChart', props: { store: stateTimelineStore, viewId: 'st', series: 'service', start: 'start', end: 'end', state: 'state', label: 'États des services (24 h)' } }];
+    case 'solid-gauge':
+      return [{ comp: 'SolidGaugeChart', props: { store, viewId: 'c', value: 'revenue', min: 0, max: 2000000, label: 'Revenu vs objectif', format: 'number', unit: '€', thresholds: [{ value: 800000, tone: 'warning' }, { value: 1400000, tone: 'success' }] } }];
     default:
       return null;
   }
