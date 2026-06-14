@@ -33,6 +33,10 @@ export const DOCS_UTILITY_NAV: NavItem[] = [
     href: "https://github.com/rhanka/dataviz",
     external: true,
   },
+  {
+    label: "Couverture marché",
+    href: appHref("/coverage"),
+  },
 ];
 
 function appHref(path: string): string {

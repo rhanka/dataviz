@@ -25,6 +25,7 @@
   import CataloguePage from './lib/site/CataloguePage.svelte';
   import DemoPage from './lib/site/DemoPage.svelte';
   import DatavizSearch from './lib/site/search/DatavizSearch.svelte';
+  import MarketMatrixPage from './lib/site/MarketMatrixPage.svelte';
 
   router.init();
   colorMode.init();
@@ -47,11 +48,13 @@
     | { kind: 'home' }
     | { kind: 'catalogue'; section: Section }
     | { kind: 'demo'; section: Section; slug: string }
+    | { kind: 'coverage' }
     | { kind: 'notfound' };
 
   const route = $derived.by<Route>(() => {
     const path = router.path;
     if (path === '/' || path === '') return { kind: 'home' };
+    if (path === '/coverage') return { kind: 'coverage' };
     const parts = path.split('/').filter(Boolean);
     const section = parts[0] as Section;
     if (!['charts', 'dashboards', 'grids'].includes(section)) return { kind: 'notfound' };
@@ -252,6 +255,8 @@
       <CataloguePage section={route.section} />
     {:else if route.kind === 'demo' && demoEntry}
       <DemoPage entry={demoEntry} />
+    {:else if route.kind === 'coverage'}
+      <MarketMatrixPage />
     {:else}
       <div class="dv-prose">
         <h1 class="dv-h1">Page introuvable</h1>
