@@ -13,12 +13,12 @@ Le DS exporte déjà ces composants ; il suffit de les wrapper (core builder + 3
 
 | # | Composant | Prio | Composant DS | data_shape | Vu dans | État |
 |---|-----------|------|--------------|-----------|---------|------|
-| A1 | **ForceGraph** (= NetworkGraph) | **P1** | `ForceGraph` (`ForceGraphNode`/`ForceGraphEdge`/shapes/tones/legend) | `{nodes:[{id,label,…}], edges:[{from,to,weight?}]}` | Grafana, New Relic, Kibana, Qlik, Power BI, SAS | to-do |
-| A2 | ArcDiagramChart | P2 | `ArcDiagramChart` | `{from,to,weight}[]` + labels | Highcharts | to-do |
-| A3 | DependencyWheelChart | P2 | `DependencyWheelChart` | `{from,to,weight}[]` + labels | Highcharts | to-do |
-| A4 | HeikinAshiChart | P2 | `HeikinAshiChart` | `{label,open,high,low,close}` | Highcharts Stock | to-do |
-| A5 | HollowCandlestickChart | P2 | `HollowCandlestickChart` | `{label,open,high,low,close}` | Highcharts Stock | to-do |
-| A6 | HLCChart | P2 | `HLCChart` | `{label,high,low,close}` | Highcharts Stock, SAS | to-do |
+| A1 | **ForceGraph** (= NetworkGraph) | **P1** | `ForceGraph` | `{nodes,edges}` | Grafana, New Relic, Kibana, Qlik, Power BI, SAS | ✅ v0.4.33 |
+| A2 | ArcDiagramChart | P2 | `ArcDiagramChart` | `{from,to,weight}[]` | Highcharts | ✅ v0.4.33 |
+| A3 | DependencyWheelChart | P2 | `DependencyWheelChart` | `{from,to,weight}[]` | Highcharts | ✅ v0.4.33 |
+| A4 | HeikinAshiChart | P2 | `HeikinAshiChart` | `{label,open,high,low,close}` | Highcharts Stock | ✅ v0.4.33 |
+| A5 | HollowCandlestickChart | P2 | `HollowCandlestickChart` | `{label,open,high,low,close}` | Highcharts Stock | 🔧 in-progress |
+| A6 | HLCChart | P2 | `HLCChart` | `{label,high,low,close}` | Highcharts Stock, SAS | 🔧 in-progress |
 
 ## Catégorie C — Composables core (ma lane, sans FR DS)
 Réalisables en composant dataviz qui orchestre/compose des composants DS existants + un builder core.
