@@ -47,6 +47,8 @@ import { makeEventFeedStore } from '../../data/eventFeed';
 import { makeVectorFieldStore } from '../../data/vectorField';
 import { makeContourStore } from '../../data/contour';
 import { makeWindBarbStore } from '../../data/windBarb';
+import { makeRenkoStore } from '../../data/renko';
+import { makePointAndFigureStore } from '../../data/pointAndFigure';
 
 /** One mounted dataviz component: its export name + props. */
 export interface NodeSpec {
@@ -94,6 +96,8 @@ const eventFeedStore = makeEventFeedStore();
 const vectorFieldStore = makeVectorFieldStore();
 const contourStore = makeContourStore();
 const windBarbStore = makeWindBarbStore();
+const renkoStore = makeRenkoStore();
+const pointAndFigureStore = makePointAndFigureStore();
 
 // ── Conditional-format rules (gridSpec) ──────────────────────────────────────
 const revenueFormat = [
@@ -279,6 +283,10 @@ function chartSpec(kind: string, ctx: SpecContext): NodeSpec[] | null {
       return [{ comp: 'ContourChart', props: { store: contourStore, viewId: 'ct', x: 'x', y: 'y', value: 'value', levels: 8, label: 'Contour (champ scalaire 2D)' } }];
     case 'wind-barb':
       return [{ comp: 'WindBarbChart', props: { store: windBarbStore, viewId: 'wb', at: 'at', speed: 'speed', direction: 'direction', label: 'Vent (barbules)' } }];
+    case 'renko':
+      return [{ comp: 'RenkoChart', props: { store: renkoStore, viewId: 'rk', date: 'date', close: 'close', boxSize: 3, label: 'Renko (briques de prix)' } }];
+    case 'point-and-figure':
+      return [{ comp: 'PointAndFigureChart', props: { store: pointAndFigureStore, viewId: 'pf', date: 'date', close: 'close', boxSize: 2, reversal: 3, label: 'Point & Figure (X/O)' } }];
     case 'solid-gauge':
       return [{ comp: 'SolidGaugeChart', props: { store, viewId: 'c', value: 'revenue', min: 0, max: 2000000, label: 'Revenu vs objectif', format: 'number', unit: '€', thresholds: [{ value: 800000, tone: 'warning' }, { value: 1400000, tone: 'success' }] } }];
     default:

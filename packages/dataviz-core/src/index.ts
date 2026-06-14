@@ -576,6 +576,14 @@ export { buildContourData } from './contour.js';
 export type { WindBarbDatum, WindBarbConfig } from './windBarb.js';
 export { buildWindBarbData } from './windBarb.js';
 
+// Renko model (briques de prix : date/close)
+export type { RenkoPoint, RenkoConfig } from './renko.js';
+export { buildRenkoData } from './renko.js';
+
+// Point & figure model (colonnes X/O : date/close)
+export type { PointAndFigurePoint, PointAndFigureConfig } from './pointAndFigure.js';
+export { buildPointAndFigureData } from './pointAndFigure.js';
+
 // Bell curve chart model
 export type { BellCurveConfig } from './bellCurve.js';
 export { buildBellCurveData } from './bellCurve.js';

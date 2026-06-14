@@ -84,6 +84,8 @@
     VectorFieldChart,
     ContourChart,
     WindBarbChart,
+    RenkoChart,
+    PointAndFigureChart,
   } from '@sentropic/dataviz-svelte';
   import { ContentSwitcher } from '@sentropic/design-system-svelte';
   import { lineAnnotation, regionAnnotation, makeFormatter } from '@sentropic/dataviz-core';
@@ -112,6 +114,8 @@
   import { makeVectorFieldStore } from '../../data/vectorField';
   import { makeContourStore } from '../../data/contour';
   import { makeWindBarbStore } from '../../data/windBarb';
+  import { makeRenkoStore } from '../../data/renko';
+  import { makePointAndFigureStore } from '../../data/pointAndFigure';
   import { makeBellCurveStore } from '../../data/bellCurve';
   import { makeHierarchyStore } from '../../data/hierarchy';
   import { makeWordCloudStore } from '../../data/wordCloud';
@@ -146,6 +150,8 @@
   const vectorFieldStore = makeVectorFieldStore();
   const contourStore = makeContourStore();
   const windBarbStore = makeWindBarbStore();
+  const renkoStore = makeRenkoStore();
+  const pointAndFigureStore = makePointAndFigureStore();
   const bellCurveStore = makeBellCurveStore();
   const hierarchyStore = makeHierarchyStore();
   const wordCloudStore = makeWordCloudStore();
@@ -367,6 +373,10 @@
     <ContourChart store={contourStore} viewId="ct" x="x" y="y" value="value" levels={8} label="Contour (champ scalaire 2D)" />
   {:else if kind === 'wind-barb'}
     <WindBarbChart store={windBarbStore} viewId="wb" at="at" speed="speed" direction="direction" label="Vent (barbules)" />
+  {:else if kind === 'renko'}
+    <RenkoChart store={renkoStore} viewId="rk" date="date" close="close" boxSize={3} label="Renko (briques de prix)" />
+  {:else if kind === 'point-and-figure'}
+    <PointAndFigureChart store={pointAndFigureStore} viewId="pf" date="date" close="close" boxSize={2} reversal={3} label="Point & Figure (X/O)" />
   {:else if kind === 'solid-gauge'}
     <SolidGaugeChart {store} viewId="c" value="revenue" min={0} max={2000000} label="Revenu vs objectif" format="number" unit="€" thresholds={[{ value: 800000, tone: 'warning' }, { value: 1400000, tone: 'success' }]} />
   {/if}

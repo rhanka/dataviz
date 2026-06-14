@@ -1004,6 +1004,30 @@ export function CHART_ENTRIES(ChartDemo: Demo, GeoDemo: Demo): DemoEntry[] {
     }, ChartDemo),
 
     chart({
+      slug: 'renko', name: 'RenkoChart', group: 'Finance', kind: 'renko', hasControls: false,
+      tagline: 'Briques Renko (filtrage du bruit de prix).',
+      useCase:
+        "Filtrer le bruit temporel d'une série de prix : une nouvelle brique n'apparaît que lorsque le cours franchit une taille de boîte (`boxSize`), indépendamment du temps. Hausse en vert, baisse en rouge — la lecture de tendance classique du Renko (Highcharts Stock).\n\n`date` ordonne la série, `close` est le cours de clôture, `boxSize` la taille de brique.",
+      code: storeCode(['RenkoChart'], {
+        svelte: `<RenkoChart {store} viewId="rk" date="date" close="close" boxSize={3} label="Renko (briques de prix)" />`,
+        react: `<RenkoChart store={store} viewId="rk" date="date" close="close" boxSize={3} label="Renko (briques de prix)" />`,
+        vue: `<RenkoChart :store="store" viewId="rk" date="date" close="close" :boxSize="3" label="Renko (briques de prix)" />`,
+      }),
+    }, ChartDemo),
+
+    chart({
+      slug: 'point-and-figure', name: 'PointAndFigureChart', group: 'Finance', kind: 'point-and-figure', hasControls: false,
+      tagline: 'Colonnes X/O Point & Figure.',
+      useCase:
+        "Représenter les mouvements de prix par colonnes de X (hausse) et O (baisse), sans axe temporel régulier : une nouvelle colonne se forme à chaque renversement de `reversal` boîtes. Outil d'analyse technique pur signal (Highcharts Stock).\n\n`date` ordonne la série, `close` le cours, `boxSize` la taille de boîte, `reversal` le seuil de renversement.",
+      code: storeCode(['PointAndFigureChart'], {
+        svelte: `<PointAndFigureChart {store} viewId="pf" date="date" close="close" boxSize={2} reversal={3} label="Point & Figure (X/O)" />`,
+        react: `<PointAndFigureChart store={store} viewId="pf" date="date" close="close" boxSize={2} reversal={3} label="Point & Figure (X/O)" />`,
+        vue: `<PointAndFigureChart :store="store" viewId="pf" date="date" close="close" :boxSize="2" :reversal="3" label="Point & Figure (X/O)" />`,
+      }),
+    }, ChartDemo),
+
+    chart({
       slug: 'correlation-matrix', name: 'CorrelationMatrix', group: 'Distribution & statistique', kind: 'correlation-matrix', hasControls: false,
       tagline: 'Matrice de corrélation de Pearson entre mesures numériques.',
       useCase:
