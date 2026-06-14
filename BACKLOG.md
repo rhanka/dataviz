@@ -17,16 +17,16 @@ Le DS exporte déjà ces composants ; il suffit de les wrapper (core builder + 3
 | A2 | ArcDiagramChart | P2 | `ArcDiagramChart` | `{from,to,weight}[]` | Highcharts | ✅ v0.4.33 |
 | A3 | DependencyWheelChart | P2 | `DependencyWheelChart` | `{from,to,weight}[]` | Highcharts | ✅ v0.4.33 |
 | A4 | HeikinAshiChart | P2 | `HeikinAshiChart` | `{label,open,high,low,close}` | Highcharts Stock | ✅ v0.4.33 |
-| A5 | HollowCandlestickChart | P2 | `HollowCandlestickChart` | `{label,open,high,low,close}` | Highcharts Stock | 🔧 in-progress |
-| A6 | HLCChart | P2 | `HLCChart` | `{label,high,low,close}` | Highcharts Stock, SAS | 🔧 in-progress |
+| A5 | HollowCandlestickChart | P2 | `HollowCandlestickChart` | `{label,open,high,low,close}` | Highcharts Stock | ✅ v0.4.34 |
+| A6 | HLCChart | P2 | `HLCChart` | `{label,high,low,close}` | Highcharts Stock, SAS | ✅ v0.4.34 |
 
 ## Catégorie C — Composables core (ma lane, sans FR DS)
 Réalisables en composant dataviz qui orchestre/compose des composants DS existants + un builder core.
 
 | # | Composant | Prio | Construit sur | Vu dans | État |
 |---|-----------|------|---------------|---------|------|
-| C1 | ScatterPlotMatrix (SPLOM) | P2 | grille N×N de `ScatterPlot` DS | SAS | to-do |
-| C2 | CorrelationMatrix | P2 | calcul corrélation (core) → `HeatmapChart` DS | SAS | to-do |
+| C1 | ScatterPlotMatrix (SPLOM) | P2 | grille N×N de `ScatterPlot` DS | SAS | 🔧 in-progress |
+| C2 | CorrelationMatrix | P2 | calcul corrélation (core) → `HeatmapChart` DS | SAS | 🔧 in-progress |
 | C3 | AnimatedBubbleChart (Gapminder) | P2 | `ScatterPlot` DS + contrôle temporel/play (dataviz) | SAS | faisabilité à confirmer |
 
 ## Catégorie B — FR au DS (composant DS inexistant → demander, wrapper à livraison)
