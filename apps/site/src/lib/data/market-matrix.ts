@@ -159,8 +159,8 @@ export const MARKET_COVERAGE: ComponentMapping[] = [
   { component: 'VectorFieldChart', group: 'Distribution & statistique', status: 'gap-filled', since: 'v0.4.42', inSolutions: ['highcharts', 'sas'], marketNames: 'Vector field' },
   { component: 'ContourChart', group: 'Distribution & statistique', status: 'gap-filled', since: 'v0.4.43', inSolutions: ['highcharts'], marketNames: 'Contour' },
   { component: 'WindBarbChart', group: 'Distribution & statistique', status: 'gap-filled', since: 'v0.4.43', inSolutions: ['highcharts'], marketNames: 'Wind barb' },
-  { component: 'RenkoChart', group: 'Finance', status: 'fr-ds', inSolutions: ['highcharts'], marketNames: 'Renko' },
-  { component: 'PointAndFigureChart', group: 'Finance', status: 'fr-ds', inSolutions: ['highcharts'], marketNames: 'Point & figure' },
+  { component: 'RenkoChart', group: 'Finance', status: 'gap-filled', since: 'v0.4.44', inSolutions: ['highcharts'], marketNames: 'Renko' },
+  { component: 'PointAndFigureChart', group: 'Finance', status: 'gap-filled', since: 'v0.4.44', inSolutions: ['highcharts'], marketNames: 'Point & figure' },
 ];
 
 /** Synthèse rapide (pour un bandeau de page). */
