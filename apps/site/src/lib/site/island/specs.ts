@@ -221,6 +221,10 @@ function chartSpec(kind: string, ctx: SpecContext): NodeSpec[] | null {
       return [{ comp: 'DependencyWheelChart', props: { store: dependencyWheelStore, viewId: 'dw', source: 'source', target: 'target', weight: 'weight', label: 'Dépendances entre modules' } }];
     case 'heikin-ashi':
       return [{ comp: 'HeikinAshiChart', props: { store: ohlcStore, viewId: 'ohlc', label_field: 'session', open: 'open', high: 'high', low: 'low', close: 'close', label: 'Cours Heikin-Ashi (28 séances)' } }];
+    case 'hollow-candlestick':
+      return [{ comp: 'HollowCandlestickChart', props: { store: ohlcStore, viewId: 'ohlc', label_field: 'session', open: 'open', high: 'high', low: 'low', close: 'close', label: 'Bougies creuses (28 séances)' } }];
+    case 'hlc':
+      return [{ comp: 'HLCChart', props: { store: ohlcStore, viewId: 'ohlc', label_field: 'session', high: 'high', low: 'low', close: 'close', label: 'Cours HLC (28 séances)' } }];
     default:
       return null;
   }

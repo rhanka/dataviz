@@ -65,6 +65,8 @@
     ArcDiagramChart,
     DependencyWheelChart,
     HeikinAshiChart,
+    HollowCandlestickChart,
+    HLCChart,
   } from '@sentropic/dataviz-svelte';
   import { ContentSwitcher } from '@sentropic/design-system-svelte';
   import { lineAnnotation, regionAnnotation, makeFormatter } from '@sentropic/dataviz-core';
@@ -286,6 +288,10 @@
     <DependencyWheelChart store={dependencyWheelStore} viewId="dw" source="source" target="target" weight="weight" label="Dépendances entre modules" />
   {:else if kind === 'heikin-ashi'}
     <HeikinAshiChart store={ohlcStore} viewId="ohlc" label_field="session" open="open" high="high" low="low" close="close" label="Cours Heikin-Ashi (28 séances)" />
+  {:else if kind === 'hollow-candlestick'}
+    <HollowCandlestickChart store={ohlcStore} viewId="ohlc" label_field="session" open="open" high="high" low="low" close="close" label="Bougies creuses (28 séances)" />
+  {:else if kind === 'hlc'}
+    <HLCChart store={ohlcStore} viewId="ohlc" label_field="session" high="high" low="low" close="close" label="Cours HLC (28 séances)" />
   {/if}
 </div>
 

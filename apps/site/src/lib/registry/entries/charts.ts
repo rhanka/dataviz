@@ -467,6 +467,30 @@ export function CHART_ENTRIES(ChartDemo: Demo, GeoDemo: Demo): DemoEntry[] {
     }, ChartDemo),
 
     chart({
+      slug: 'hollow-candlestick', name: 'HollowCandlestickChart', group: 'Finance', kind: 'hollow-candlestick', hasControls: false,
+      tagline: 'Bougies creuses : le corps évidé/plein distingue hausse et baisse.',
+      useCase:
+        "Variante des bougies japonaises où le corps est creux quand la clôture dépasse l'ouverture (tendance haussière) et plein sinon. Mêmes données OHLC que CandlestickChart.\n\n`label_field` désigne la session et `open`/`high`/`low`/`close` les mesures.",
+      code: storeCode(['HollowCandlestickChart'], {
+        svelte: `<HollowCandlestickChart {store} viewId="ohlc" label_field="session" open="open" high="high" low="low" close="close" label="Bougies creuses (28 séances)" />`,
+        react: `<HollowCandlestickChart store={store} viewId="ohlc" label_field="session" open="open" high="high" low="low" close="close" label="Bougies creuses (28 séances)" />`,
+        vue: `<HollowCandlestickChart :store="store" viewId="ohlc" label_field="session" open="open" high="high" low="low" close="close" label="Bougies creuses (28 séances)" />`,
+      }),
+    }, ChartDemo),
+
+    chart({
+      slug: 'hlc', name: 'HLCChart', group: 'Finance', kind: 'hlc', hasControls: false,
+      tagline: 'Bâtons High-Low-Close : fourchette de prix et clôture, sans ouverture.',
+      useCase:
+        "Représenter la fourchette (haut/bas) et la clôture d'un titre par séance, sans l'ouverture — utile quand l'open n'est pas pertinent ou indisponible.\n\n`label_field` désigne la session ; `high`/`low`/`close` les mesures.",
+      code: storeCode(['HLCChart'], {
+        svelte: `<HLCChart {store} viewId="ohlc" label_field="session" high="high" low="low" close="close" label="Cours HLC (28 séances)" />`,
+        react: `<HLCChart store={store} viewId="ohlc" label_field="session" high="high" low="low" close="close" label="Cours HLC (28 séances)" />`,
+        vue: `<HLCChart :store="store" viewId="ohlc" label_field="session" high="high" low="low" close="close" label="Cours HLC (28 séances)" />`,
+      }),
+    }, ChartDemo),
+
+    chart({
       slug: 'ohlc', name: 'OHLCChart', group: 'Finance', kind: 'ohlc', hasControls: false,
       tagline: 'Barres OHLC (Open/High/Low/Close) pour des cours financiers.',
       useCase:
