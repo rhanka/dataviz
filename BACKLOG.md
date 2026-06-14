@@ -25,9 +25,9 @@ Réalisables en composant dataviz qui orchestre/compose des composants DS exista
 
 | # | Composant | Prio | Construit sur | Vu dans | État |
 |---|-----------|------|---------------|---------|------|
-| C1 | ScatterPlotMatrix (SPLOM) | P2 | grille N×N de `ScatterPlot` DS | SAS | 🔧 in-progress |
-| C2 | CorrelationMatrix | P2 | calcul corrélation (core) → `HeatmapChart` DS | SAS | 🔧 in-progress |
-| C3 | AnimatedBubbleChart (Gapminder) | P2 | `ScatterPlot` DS + contrôle temporel/play (dataviz) | SAS | faisabilité à confirmer |
+| C1 | ScatterPlotMatrix (SPLOM) | P2 | grille N×N de `ScatterPlot` DS | SAS | ✅ v0.4.35 |
+| C2 | CorrelationMatrix | P2 | calcul corrélation (core) → `HeatmapChart` DS | SAS | ✅ v0.4.35 |
+| C3 | AnimatedBubbleChart (Gapminder) | P2 | `ScatterPlot` DS + contrôle temporel/play (dataviz) | SAS | 🔧 in-progress |
 
 ## Catégorie B — FR au DS (composant DS inexistant → demander, wrapper à livraison)
 
