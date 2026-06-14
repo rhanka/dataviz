@@ -807,6 +807,30 @@ export function CHART_ENTRIES(ChartDemo: Demo, GeoDemo: Demo): DemoEntry[] {
       }),
     }, ChartDemo),
 
+    chart({
+      slug: 'scatter-matrix', name: 'ScatterPlotMatrix', group: 'Couche analytique', kind: 'scatter-matrix', hasControls: false,
+      tagline: 'Matrice de nuages (SPLOM) : toutes les paires de mesures en un coup d\'œil.',
+      useCase:
+        "Comparer simultanément N mesures deux à deux dans une grille N×N de nuages de points — exploration multivariée des corrélations et structures. Chaque cellule est un vrai nuage de points du design system.\n\n`measures` liste les champs numériques à croiser.",
+      code: storeCode(['ScatterPlotMatrix'], {
+        svelte: `<ScatterPlotMatrix {store} viewId="c" measures={['price', 'units', 'marginRate']} label="Matrice de nuages" />`,
+        react: `<ScatterPlotMatrix store={store} viewId="c" measures={['price', 'units', 'marginRate']} label="Matrice de nuages" />`,
+        vue: `<ScatterPlotMatrix :store="store" view-id="c" :measures="['price', 'units', 'marginRate']" label="Matrice de nuages" />`,
+      }),
+    }, ChartDemo),
+
+    chart({
+      slug: 'correlation-matrix', name: 'CorrelationMatrix', group: 'Distribution & statistique', kind: 'correlation-matrix', hasControls: false,
+      tagline: 'Matrice de corrélation de Pearson entre mesures numériques.',
+      useCase:
+        "Identifier les liens statistiques entre KPIs : chaque cellule encode le coefficient de Pearson (−1 à 1) entre deux mesures, rendu en carte de chaleur. Diagonale = 1.\n\n`measures` liste les champs numériques à corréler.",
+      code: storeCode(['CorrelationMatrix'], {
+        svelte: `<CorrelationMatrix {store} viewId="c" measures={['price', 'units', 'marginRate', 'revenue']} label="Corrélations" />`,
+        react: `<CorrelationMatrix store={store} viewId="c" measures={['price', 'units', 'marginRate', 'revenue']} label="Corrélations" />`,
+        vue: `<CorrelationMatrix :store="store" view-id="c" :measures="['price', 'units', 'marginRate', 'revenue']" label="Corrélations" />`,
+      }),
+    }, ChartDemo),
+
     // ── Cartographie géo ─────────────────────────────────────────────────
     geo({
       slug: 'geo-point', name: 'GeoPointMap', kind: 'point', hasControls: true,

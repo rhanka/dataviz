@@ -67,6 +67,8 @@
     HeikinAshiChart,
     HollowCandlestickChart,
     HLCChart,
+    CorrelationMatrix,
+    ScatterPlotMatrix,
   } from '@sentropic/dataviz-svelte';
   import { ContentSwitcher } from '@sentropic/design-system-svelte';
   import { lineAnnotation, regionAnnotation, makeFormatter } from '@sentropic/dataviz-core';
@@ -292,6 +294,10 @@
     <HollowCandlestickChart store={ohlcStore} viewId="ohlc" label_field="session" open="open" high="high" low="low" close="close" label="Bougies creuses (28 séances)" />
   {:else if kind === 'hlc'}
     <HLCChart store={ohlcStore} viewId="ohlc" label_field="session" high="high" low="low" close="close" label="Cours HLC (28 séances)" />
+  {:else if kind === 'scatter-matrix'}
+    <ScatterPlotMatrix {store} viewId="c" measures={['price', 'units', 'marginRate']} label="Matrice de nuages" />
+  {:else if kind === 'correlation-matrix'}
+    <CorrelationMatrix {store} viewId="c" measures={['price', 'units', 'marginRate', 'revenue']} label="Corrélations" />
   {/if}
 </div>
 

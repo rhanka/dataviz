@@ -136,6 +136,10 @@ export { default as HollowCandlestickChart } from './lib/HollowCandlestickChart.
 export type { HollowCandlestickChartProps } from './lib/HollowCandlestickChart.svelte';
 export { default as HLCChart } from './lib/HLCChart.svelte';
 export type { HLCChartProps } from './lib/HLCChart.svelte';
+export { default as CorrelationMatrix } from './lib/CorrelationMatrix.svelte';
+export type { CorrelationMatrixProps } from './lib/CorrelationMatrix.svelte';
+export { default as ScatterPlotMatrix } from './lib/ScatterPlotMatrix.svelte';
+export type { ScatterPlotMatrixProps } from './lib/ScatterPlotMatrix.svelte';
 export { default as BellCurveChart } from './lib/BellCurveChart.svelte';
 export type { BellCurveChartProps } from './lib/BellCurveChart.svelte';
 export { default as OrganizationChart } from './lib/OrganizationChart.svelte';
