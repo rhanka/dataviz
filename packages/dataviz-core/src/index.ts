@@ -254,6 +254,7 @@ export type {
   GeoPointConfig,
   GeoPoint,
   GeoPointModel,
+  ChoroplethClassification,
   ChoroplethConfig,
   ChoroplethRegion,
   ChoroplethModel,
@@ -277,6 +278,7 @@ export type {
   GeoJsonLayerModel,
 } from './geo.js';
 export {
+  classify,
   buildGeoPointModel,
   buildChoroplethModel,
   buildGeoFlowModel,
