@@ -492,7 +492,7 @@ export function CHART_ENTRIES(ChartDemo: Demo, GeoDemo: Demo): DemoEntry[] {
 
     // ── Évolution & flux ────────────────────────────────────────────────────
     chart({
-      slug: 'streamgraph', name: 'StreamgraphChart', group: 'Évolution & flux', kind: 'streamgraph', hasControls: false,
+      slug: 'streamgraph', name: 'StreamgraphChart', group: 'Évolution & classements', kind: 'streamgraph', hasControls: false,
       tagline: "Flux empilés lisses pour l'évolution de séries.",
       useCase:
         "Montrer l'évolution relative de plusieurs séries sur une dimension ordonnée (ici le revenu par canal sur 6 mois). Les flux sont empilés de façon organique ; `smooth` adoucit les transitions.\n\n`category` désigne la dimension X (mois), `series` la dimension couleur/légende, `measure` la valeur de chaque flux.",
@@ -505,7 +505,7 @@ export function CHART_ENTRIES(ChartDemo: Demo, GeoDemo: Demo): DemoEntry[] {
 
     // ── Cartographie ────────────────────────────────────────────────────────
     chart({
-      slug: 'tilemap', name: 'TileMapChart', group: 'Cartographie', kind: 'tilemap', hasControls: false,
+      slug: 'tilemap', name: 'TileMapChart', group: 'Cartographie géo', kind: 'tilemap', hasControls: false,
       tagline: 'Cartogramme en grille de tuiles (tile map).',
       useCase:
         "Visualiser des données régionales sur une grille cartographique stylisée où chaque cellule encode le revenu par couleur. Contrairement à la choroplèthe, les tuiles sont toutes de même taille — elles encodent la valeur par couleur, pas par aire.\n\n`label_field` est la dimension région, `col`/`row` les coordonnées grille (0-based), `value` la mesure.",
