@@ -157,8 +157,8 @@ export const MARKET_COVERAGE: ComponentMapping[] = [
   { component: 'Density2DChart', group: 'Distribution & statistique', status: 'gap-filled', since: 'v0.4.41', inSolutions: ['tableau', 'dataiku'], marketNames: 'Density 2D (hexbin/contour non-géo)' },
   { component: 'EventFeedPanel', group: 'Observabilité', status: 'gap-filled', since: 'v0.4.42', inSolutions: ['newrelic'], marketNames: 'Event feed' },
   { component: 'VectorFieldChart', group: 'Distribution & statistique', status: 'gap-filled', since: 'v0.4.42', inSolutions: ['highcharts', 'sas'], marketNames: 'Vector field' },
-  { component: 'ContourChart', group: 'Couche analytique', status: 'fr-ds', inSolutions: ['highcharts'], marketNames: 'Contour' },
-  { component: 'WindBarbChart', group: 'Finance', status: 'fr-ds', inSolutions: ['highcharts'], marketNames: 'Wind barb' },
+  { component: 'ContourChart', group: 'Distribution & statistique', status: 'gap-filled', since: 'v0.4.43', inSolutions: ['highcharts'], marketNames: 'Contour' },
+  { component: 'WindBarbChart', group: 'Distribution & statistique', status: 'gap-filled', since: 'v0.4.43', inSolutions: ['highcharts'], marketNames: 'Wind barb' },
   { component: 'RenkoChart', group: 'Finance', status: 'fr-ds', inSolutions: ['highcharts'], marketNames: 'Renko' },
   { component: 'PointAndFigureChart', group: 'Finance', status: 'fr-ds', inSolutions: ['highcharts'], marketNames: 'Point & figure' },
 ];

@@ -568,6 +568,14 @@ export { buildEventFeedData } from './eventFeed.js';
 export type { VectorFieldDatum, VectorFieldConfig } from './vectorField.js';
 export { buildVectorFieldData } from './vectorField.js';
 
+// Contour model (champ scalaire 2D → bandes de contour)
+export type { ContourPoint, ContourConfig } from './contour.js';
+export { buildContourData } from './contour.js';
+
+// Wind barb model (barbules de vent : at/speed/direction)
+export type { WindBarbDatum, WindBarbConfig } from './windBarb.js';
+export { buildWindBarbData } from './windBarb.js';
+
 // Bell curve chart model
 export type { BellCurveConfig } from './bellCurve.js';
 export { buildBellCurveData } from './bellCurve.js';
