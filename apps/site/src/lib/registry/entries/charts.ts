@@ -956,6 +956,30 @@ export function CHART_ENTRIES(ChartDemo: Demo, GeoDemo: Demo): DemoEntry[] {
     }, ChartDemo),
 
     chart({
+      slug: 'event-feed', name: 'EventFeedPanel', group: 'Observabilité', kind: 'event-feed', hasControls: false,
+      tagline: 'Flux d’événements datés scrollable.',
+      useCase:
+        "Présenter un flux d'événements horodatés (déploiements, alertes, scalings…) trié du plus récent au plus ancien, avec une pastille de sévérité tokenisée (info/success/warning/error). C'est le panneau « event feed » des outils d'observabilité (New Relic, Datadog).\n\n`at` est l'horodatage (tri desc), `type` la catégorie, `severity` pilote la couleur, `message` le texte.",
+      code: storeCode(['EventFeedPanel'], {
+        svelte: `<EventFeedPanel {store} viewId="ef" at="at" type="type" severity="severity" message="message" maxHeight={360} label="Flux d'événements" />`,
+        react: `<EventFeedPanel store={store} viewId="ef" at="at" type="type" severity="severity" message="message" maxHeight={360} label="Flux d'événements" />`,
+        vue: `<EventFeedPanel :store="store" viewId="ef" at="at" type="type" severity="severity" message="message" :maxHeight="360" label="Flux d'événements" />`,
+      }),
+    }, ChartDemo),
+
+    chart({
+      slug: 'vector-field', name: 'VectorFieldChart', group: 'Distribution & statistique', kind: 'vector-field', hasControls: false,
+      tagline: 'Champ de vecteurs (magnitude + direction).',
+      useCase:
+        "Visualiser un champ vectoriel 2D : à chaque point `(x, y)` une flèche dont la longueur encode la magnitude et l'orientation la direction (en degrés). Idéal pour les champs de flux, de vent ou de gradient (équivalent du vector plot de Highcharts / SAS).\n\n`x`/`y` positionnent la flèche, `length` sa magnitude, `direction` son angle en degrés.",
+      code: storeCode(['VectorFieldChart'], {
+        svelte: `<VectorFieldChart {store} viewId="vf" x="x" y="y" length="length" direction="direction" label="Champ de vecteurs (flux)" />`,
+        react: `<VectorFieldChart store={store} viewId="vf" x="x" y="y" length="length" direction="direction" label="Champ de vecteurs (flux)" />`,
+        vue: `<VectorFieldChart :store="store" viewId="vf" x="x" y="y" length="length" direction="direction" label="Champ de vecteurs (flux)" />`,
+      }),
+    }, ChartDemo),
+
+    chart({
       slug: 'correlation-matrix', name: 'CorrelationMatrix', group: 'Distribution & statistique', kind: 'correlation-matrix', hasControls: false,
       tagline: 'Matrice de corrélation de Pearson entre mesures numériques.',
       useCase:

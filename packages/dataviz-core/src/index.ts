@@ -560,6 +560,14 @@ export type {
 } from './decompositionTree.js';
 export { buildDecompositionTreeData } from './decompositionTree.js';
 
+// Event feed model (flux d'événements datés)
+export type { EventFeedEvent, EventFeedConfig } from './eventFeed.js';
+export { buildEventFeedData } from './eventFeed.js';
+
+// Vector field model (champ de vecteurs x/y/length/direction)
+export type { VectorFieldDatum, VectorFieldConfig } from './vectorField.js';
+export { buildVectorFieldData } from './vectorField.js';
+
 // Bell curve chart model
 export type { BellCurveConfig } from './bellCurve.js';
 export { buildBellCurveData } from './bellCurve.js';

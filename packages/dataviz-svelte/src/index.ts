@@ -162,6 +162,10 @@ export { default as TraceWaterfallChart } from './lib/TraceWaterfallChart.svelte
 export type { TraceWaterfallChartProps } from './lib/TraceWaterfallChart.svelte';
 export { default as DecompositionTreeChart } from './lib/DecompositionTreeChart.svelte';
 export type { DecompositionTreeChartProps } from './lib/DecompositionTreeChart.svelte';
+export { default as EventFeedPanel } from './lib/EventFeedPanel.svelte';
+export type { EventFeedPanelProps } from './lib/EventFeedPanel.svelte';
+export { default as VectorFieldChart } from './lib/VectorFieldChart.svelte';
+export type { VectorFieldChartProps } from './lib/VectorFieldChart.svelte';
 export { default as BellCurveChart } from './lib/BellCurveChart.svelte';
 export type { BellCurveChartProps } from './lib/BellCurveChart.svelte';
 export { default as OrganizationChart } from './lib/OrganizationChart.svelte';

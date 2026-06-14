@@ -80,6 +80,8 @@
     TraceWaterfallChart,
     DecompositionTreeChart,
     Density2DChart,
+    EventFeedPanel,
+    VectorFieldChart,
   } from '@sentropic/dataviz-svelte';
   import { ContentSwitcher } from '@sentropic/design-system-svelte';
   import { lineAnnotation, regionAnnotation, makeFormatter } from '@sentropic/dataviz-core';
@@ -104,6 +106,8 @@
   import { makeTraceWaterfallStore } from '../../data/traceWaterfall';
   import { makeDecompositionTreeStore } from '../../data/decompositionTree';
   import { makeDensity2DStore } from '../../data/density2d';
+  import { makeEventFeedStore } from '../../data/eventFeed';
+  import { makeVectorFieldStore } from '../../data/vectorField';
   import { makeBellCurveStore } from '../../data/bellCurve';
   import { makeHierarchyStore } from '../../data/hierarchy';
   import { makeWordCloudStore } from '../../data/wordCloud';
@@ -134,6 +138,8 @@
   const traceWaterfallStore = makeTraceWaterfallStore();
   const decompositionTreeStore = makeDecompositionTreeStore();
   const density2dStore = makeDensity2DStore();
+  const eventFeedStore = makeEventFeedStore();
+  const vectorFieldStore = makeVectorFieldStore();
   const bellCurveStore = makeBellCurveStore();
   const hierarchyStore = makeHierarchyStore();
   const wordCloudStore = makeWordCloudStore();
@@ -347,6 +353,10 @@
     <DecompositionTreeChart store={decompositionTreeStore} viewId="dt" measure="revenue" levels={['region', 'category', 'product']} label="Décomposition du CA" />
   {:else if kind === 'density-2d'}
     <Density2DChart store={density2dStore} viewId="d2" x="x" y="y" bins={24} label="Densité 2D (nuage binné)" />
+  {:else if kind === 'event-feed'}
+    <EventFeedPanel store={eventFeedStore} viewId="ef" at="at" type="type" severity="severity" message="message" maxHeight={360} label="Flux d'événements" />
+  {:else if kind === 'vector-field'}
+    <VectorFieldChart store={vectorFieldStore} viewId="vf" x="x" y="y" length="length" direction="direction" label="Champ de vecteurs (flux)" />
   {:else if kind === 'solid-gauge'}
     <SolidGaugeChart {store} viewId="c" value="revenue" min={0} max={2000000} label="Revenu vs objectif" format="number" unit="€" thresholds={[{ value: 800000, tone: 'warning' }, { value: 1400000, tone: 'success' }]} />
   {/if}
