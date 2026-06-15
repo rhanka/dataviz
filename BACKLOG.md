@@ -65,3 +65,20 @@ Réalisables en composant dataviz qui orchestre/compose des composants DS exista
 - ✅ **Catégorie B** (16 composants) : **SOLDÉE 16/16** 🎉. LOT1 v0.4.38 (StateTimeline+SolidGauge), LOT2 v0.4.39 (StatusHistory+Waffle), LOT3 v0.4.40 (Ribbon+AnomalySwimLane), LOT4 v0.4.41 (Flamegraph+TraceWaterfall+DecompositionTree+Density2D), LOT6a v0.4.42 (EventFeedPanel+VectorField), LOT7b v0.4.43 (Contour+WindBarb), LOT8 v0.4.44 (Renko+PointAndFigure). Les 16 composants FR-au-DS sont livrés (composants DS + core builders + 3 fw + démos + îlots cross-fw), matrice marché 100% gap-filled.
 
 Méthode : `/loop` 2 agents (un composant disjoint par agent), intégration registry/index/specs + gate + release lockstep par le conducteur, publication régulière sur `main`.
+
+## WP20 — Capacités transverses & site docs (état réel 2026-06-15)
+
+Le track « WP20 » était partiellement **périmé** (des items « to-do/in-progress » étaient déjà livrés). État réel vérifié sur main :
+
+**✅ Livré :**
+- **i18n / formatage localisé** : `dataviz-core/format-value.ts` 100% Intl (number/currency/percent/compact + date), locale/currency/timeZone paramétrables ; labels d'export surchargeables (prop `labels`). Rien à faire.
+- **Golden-rule Rose/Chord/PackedBubble** : `RoseChart`/`ChordChart`/`PackedBubbleChart` (3 fw) **consomment déjà** les composants DS (`RoseChart`/`ChordDiagram`/`PackedBubblesChart`), zéro SVG hand-rollé.
+- **Export PDF vectoriel** : ✅ **v0.4.45** — `downloadPdf` (svg→pdf vectoriel via jspdf+svg2pdf.js en import lazy, hors bundle), bouton PDF dans ChartExport (3 fw).
+- **Échelles de couleur** : ✅ **v0.4.46** — `dataviz-core/color.ts` (categorical/sequential/diverging, interpolation OKLab, zéro couleur hardcodée).
+- **Modèle de layout dashboard** : ✅ **DÉJÀ présent** — `dataviz-core/layout.ts` (`DashboardLayout`/`PanelLayout`, createLayout/addPanel/movePanel/resizePanel/normalizeLayout, serializeLayout/deserializeLayout, `LayoutState`, guards `isDashboardLayout`). NB : non encore consommé par une UI (cf dashboard edit-mode ci-dessous). [Doublon `dashboardLayout.ts` que j'avais commencé → supprimé, le gate a attrapé la collision.]
+
+**🟡 DS-bloqué (FR déposée au DS, je câble à livraison) :**
+- **Palette picker + page doc « échelles de couleur »** : besoin d'un composant DS **ColorSwatch** (afficher une couleur arbitraire) + **ColorScaleBar** (gradient) — Tag/Badge ne prennent qu'un tone category1..8. FR déposée 2026-06-15. Le core (color.ts) est prêt.
+- **Dashboard edit-mode (UI drag-resize)** : DS a Grid/Tile/TileGroup mais pas de resize/drag — heads-up déposé au DS. Le modèle (dashboardLayout.ts) est prêt à être consommé.
+
+**⚪ À confirmer (probablement déjà résolus) :** régression sidebar mobile (`sidebarOpen` introuvable dans apps/site/src → vraisemblablement corrigé/renommé) ; header chrome parité (repris par un autre agent).
