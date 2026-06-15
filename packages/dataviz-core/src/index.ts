@@ -356,6 +356,8 @@ export {
   buildSequentialScale,
   buildDivergingScale,
   buildCategoricalScale,
+  colorAt,
+  makeColorScale,
 } from './color.js';
 
 // Calculations / expressions

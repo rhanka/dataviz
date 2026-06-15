@@ -184,3 +184,39 @@ export function buildCategoricalScale(palette: readonly string[], count: number)
   if (n === 0 || palette.length === 0) return [];
   return Array.from({ length: n }, (_, i) => palette[i % palette.length]!);
 }
+
+/**
+ * Map a continuous `value` in the domain `[min, max]` to a color along `stops`
+ * (OKLab gradient). This is the data-driven companion to the ramp builders:
+ * use it to colour a heatmap cell, a severity indicator, a choropleth region…
+ *
+ * Out-of-domain values clamp to the nearest endpoint (via {@link sampleScale}).
+ * A degenerate domain (`min === max`) or a non-finite value/bound returns the
+ * first stop, so callers never get `NaN`-driven colors.
+ */
+export function colorAt(
+  value: number,
+  min: number,
+  max: number,
+  stops: readonly string[],
+): string {
+  if (!Number.isFinite(value) || !Number.isFinite(min) || !Number.isFinite(max)) {
+    return sampleScale(stops, 0);
+  }
+  const t = max === min ? 0 : (value - min) / (max - min);
+  return sampleScale(stops, t);
+}
+
+/**
+ * Build a reusable value→color mapper bound to a domain and `stops` (the
+ * gradient is interpolated per call but the inputs are captured once). Mirrors
+ * the `makeFormatter` shape so it can be passed straight to a chart's color
+ * accessor.
+ */
+export function makeColorScale(
+  min: number,
+  max: number,
+  stops: readonly string[],
+): (value: number) => string {
+  return (value: number): string => colorAt(value, min, max, stops);
+}
