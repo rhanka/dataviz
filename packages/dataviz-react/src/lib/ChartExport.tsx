@@ -5,6 +5,7 @@ import {
   downloadBlob,
   downloadPng,
   downloadSvg,
+  downloadPdf,
   printElement,
   resolveSvg,
   type ChartExportFormat,
@@ -39,6 +40,7 @@ export const DEFAULT_EXPORT_LABELS: Record<ChartExportFormat, string> = {
   csv: 'CSV',
   png: 'PNG',
   svg: 'SVG',
+  pdf: 'PDF',
   print: 'Imprimer',
 };
 
@@ -62,7 +64,7 @@ export function ChartExport({
   const label = (f: ChartExportFormat) => labels?.[f] ?? DEFAULT_EXPORT_LABELS[f];
 
   const shownFormats: ChartExportFormat[] =
-    formats ?? [...(['png', 'svg', 'print'] as ChartExportFormat[]), ...(store ? (['csv'] as ChartExportFormat[]) : [])];
+    formats ?? [...(['png', 'svg', 'pdf', 'print'] as ChartExportFormat[]), ...(store ? (['csv'] as ChartExportFormat[]) : [])];
 
   const locate = (): Element | string | null =>
     typeof target === 'function' ? target() : ((target as Element | string | null) ?? null);
@@ -94,7 +96,8 @@ export function ChartExport({
     }
     const svg = resolveSvg(locate());
     if (!svg) return;
-    if (format === 'svg') downloadSvg(svg, `${filename}.svg`, { background });
+    if (format === 'pdf') void downloadPdf(svg, `${filename}.pdf`, { background });
+    else if (format === 'svg') downloadSvg(svg, `${filename}.svg`, { background });
     else void downloadPng(svg, `${filename}.png`, { background });
   };
 

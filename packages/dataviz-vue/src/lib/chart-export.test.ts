@@ -6,6 +6,7 @@ import {
   downloadBlob,
   downloadSvg,
   downloadPng,
+  downloadPdf,
   printElement,
   resolveSvg,
 } from './chart-export.js';
@@ -121,6 +122,12 @@ describe('rasterisation / download (jsdom no-op guards)', () => {
 
   it('downloadPng reports false when rasterisation is unavailable', async () => {
     expect(await downloadPng(makeSvg(), 'chart.png', { inlineStyles: false })).toBe(false);
+  });
+
+  it('downloadPdf reports false (no-op) when the SVG has no resolvable dimensions', async () => {
+    // A bare, dimensionless <svg> bails before the lazy jspdf/svg2pdf import.
+    const bare = document.createElementNS(SVG_NS, 'svg') as SVGElement;
+    expect(await downloadPdf(bare, 'chart.pdf')).toBe(false);
   });
 
   it('downloadBlob does not throw', () => {

@@ -40,6 +40,15 @@ export type RasterizeOptions = SerializeSvgOptions & {
   quality?: number;
 };
 
+export type PdfExportOptions = {
+  /** Force a page width (px → pt 1:1). Defaults to the SVG's own width. */
+  width?: number;
+  /** Force a page height. Defaults to the SVG's own height. */
+  height?: number;
+  /** Solid page background painted behind the vector (e.g. `#ffffff`). Omit for white page. */
+  background?: string;
+};
+
 /** True when running somewhere with a usable DOM (browser, not SSR). */
 function hasDom(): boolean {
   return typeof document !== 'undefined' && typeof window !== 'undefined';
@@ -241,6 +250,58 @@ export async function downloadPng(
   return true;
 }
 
+/** Parse a `#rrggbb` (or `rrggbb`) hex string to an `[r, g, b]` triple. */
+function hexToRgb(hex: string): [number, number, number] | null {
+  const match = /^#?([0-9a-f]{6})$/i.exec(hex.trim());
+  if (!match) return null;
+  const value = Number.parseInt(match[1]!, 16);
+  return [(value >> 16) & 0xff, (value >> 8) & 0xff, value & 0xff];
+}
+
+/**
+ * Export an `<svg>` to a *true vector* PDF (not a rasterised page) and download
+ * it. `jspdf` + `svg2pdf.js` are loaded lazily via dynamic `import()`, so they
+ * never enter the main bundle and this module stays statically dependency-free
+ * and SSR-safe. The live SVG (with its computed styles) is converted to PDF
+ * drawing operations, so text and shapes stay crisp at any zoom.
+ *
+ * Resolves to `true` when a file was produced, `false` on the no-op path (SSR /
+ * jsdom, missing dimensions, or a conversion failure) — mirroring
+ * {@link downloadPng}.
+ */
+export async function downloadPdf(
+  svg: SVGElement,
+  filename = 'chart.pdf',
+  options: PdfExportOptions = {},
+): Promise<boolean> {
+  if (!hasDom()) return false;
+  const width = options.width ?? svgDimension(svg, 'width') ?? 0;
+  const height = options.height ?? svgDimension(svg, 'height') ?? 0;
+  if (!(width > 0) || !(height > 0)) return false;
+
+  try {
+    const [{ jsPDF }, { svg2pdf }] = await Promise.all([
+      import('jspdf'),
+      import('svg2pdf.js'),
+    ]);
+    const pdf = new jsPDF({
+      orientation: width >= height ? 'landscape' : 'portrait',
+      unit: 'pt',
+      format: [width, height],
+    });
+    const rgb = options.background ? hexToRgb(options.background) : null;
+    if (rgb) {
+      pdf.setFillColor(rgb[0], rgb[1], rgb[2]);
+      pdf.rect(0, 0, width, height, 'F');
+    }
+    await svg2pdf(svg, pdf, { x: 0, y: 0, width, height });
+    pdf.save(filename);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 /**
  * Print path (PDF via the browser's "Save as PDF"): opens the print dialog. When
  * a `target` is given it is cloned into a transient, full-page print container so
@@ -287,7 +348,7 @@ function safePrint(): void {
 }
 
 /** Export format understood by the ChartExport menu. */
-export type ChartExportFormat = 'csv' | 'png' | 'svg' | 'print';
+export type ChartExportFormat = 'csv' | 'png' | 'svg' | 'pdf' | 'print';
 
 /**
  * Resolve a chart's `<svg>` from a target that may be the SVG itself, a container
