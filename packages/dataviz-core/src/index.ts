@@ -346,6 +346,18 @@ export type {
 } from './format-value.js';
 export { formatValue, makeFormatter, FORMAT_VALUE_FALLBACK } from './format-value.js';
 
+// Color scales (categorical / sequential / diverging, OKLab interpolation, no hardcoded colors)
+export type { RGB } from './color.js';
+export {
+  parseHex,
+  toHex,
+  mix,
+  sampleScale,
+  buildSequentialScale,
+  buildDivergingScale,
+  buildCategoricalScale,
+} from './color.js';
+
 // Calculations / expressions
 export type {
   CalculationVariable,
