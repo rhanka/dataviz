@@ -77,9 +77,12 @@ Le track « WP20 » était partiellement **périmé** (des items « to-do/in-pro
 - **Échelles de couleur** : ✅ **v0.4.46** — `dataviz-core/color.ts` (categorical/sequential/diverging, interpolation OKLab, zéro couleur hardcodée).
 - **Modèle de layout dashboard** : ✅ **DÉJÀ présent** — `dataviz-core/layout.ts` (`DashboardLayout`/`PanelLayout`, createLayout/addPanel/movePanel/resizePanel/normalizeLayout, serializeLayout/deserializeLayout, `LayoutState`, guards `isDashboardLayout`). NB : non encore consommé par une UI (cf dashboard edit-mode ci-dessous). [Doublon `dashboardLayout.ts` que j'avais commencé → supprimé, le gate a attrapé la collision.]
 
-**🟡 DS-bloqué (FR déposée au DS, je câble à livraison) :**
-- **Palette picker + page doc « échelles de couleur »** : besoin d'un composant DS **ColorSwatch** (afficher une couleur arbitraire) + **ColorScaleBar** (gradient) — Tag/Badge ne prennent qu'un tone category1..8. FR déposée 2026-06-15. Le core (color.ts) est prêt.
-- **Dashboard edit-mode (UI drag-resize)** : DS a Grid/Tile/TileGroup mais pas de resize/drag — heads-up déposé au DS. Le modèle (dashboardLayout.ts) est prêt à être consommé.
+**✅ Palette picker + échelles de couleur** : ✅ **v0.4.48** — DS a livré **ColorSwatch + ColorScaleBar** (quad-fw, v_svelte 0.34.45 / react+vue 0.36.42) ; câblé `PalettePicker` 3 fw (catégoriel via ColorSwatch + séquentiel/divergent via ColorScaleBar + buildSequentialScale/buildDivergingScale OKLab core) + démo registry 'palette-picker' (explique catégoriel/séquentiel/divergent) + îlot. Core couleur : color.ts v0.4.46 (builders) + v0.4.47 (colorAt/makeColorScale mapper continu).
+
+**🟡 DS-bloqué (FR formelle déposée, je câble à livraison) :**
+- **Dashboard edit-mode (UI drag-resize)** : FR formelle **DashboardGrid** déposée 2026-06-15 (columns + tiles{id,x,y,w,h} + editable + onLayoutChange) — mappe `dataviz-core/layout.ts` (déjà prêt). Pas encore livré.
+- **Heatmap colormap séquentielle** (feedback QA) : FR déposée (scale:'sequential' OU color par-cellule). Pas encore livré.
+- **Tooltip nearest-X** (feedback QA, cf docs/chart-ux-qa.md) : FR déposée (tooltipMode:'nearest-x' défaut + hideTooltipOnLeave + crosshair). Pas encore livré ; je valide sur les démos au tag.
 
 **⚪ À confirmer :** régression sidebar mobile = ✅ RÉSOLUE (trigger `isSidebarOpen` fonctionnel dans App.svelte, toggle + aria-expanded ; mon ancien grep cherchait `sidebarOpen`, mauvais nom) ; header chrome parité = lane autre agent + validation visuelle = user.
 
