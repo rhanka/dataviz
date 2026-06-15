@@ -170,6 +170,8 @@ export { RenkoChart } from './lib/RenkoChart.js';
 export type { RenkoChartProps } from './lib/RenkoChart.js';
 export { PointAndFigureChart } from './lib/PointAndFigureChart.js';
 export type { PointAndFigureChartProps } from './lib/PointAndFigureChart.js';
+export { PalettePicker } from './lib/PalettePicker.js';
+export type { PalettePickerProps } from './lib/PalettePicker.js';
 export { BellCurveChart } from './lib/BellCurveChart.js';
 export type { BellCurveChartProps } from './lib/BellCurveChart.js';
 export { OrganizationChart } from './lib/OrganizationChart.js';
