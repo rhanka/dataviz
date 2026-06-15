@@ -31,6 +31,7 @@
     csv: 'CSV',
     png: 'PNG',
     svg: 'SVG',
+    pdf: 'PDF',
     print: 'Imprimer',
   };
 </script>
@@ -39,7 +40,7 @@
   import { Button, Inline } from '@sentropic/design-system-svelte';
   import { findMeasure } from '@sentropic/dataviz-core';
   import { rowsToCsv } from './ExportMenu.svelte';
-  import { downloadBlob, downloadPng, downloadSvg, printElement, resolveSvg } from './chart-export.js';
+  import { downloadBlob, downloadPng, downloadSvg, downloadPdf, printElement, resolveSvg } from './chart-export.js';
 
   let {
     target,
@@ -57,7 +58,7 @@
 
   const shownFormats = $derived(
     formats ?? [
-      ...((['png', 'svg', 'print'] as ChartExportFormat[])),
+      ...((['png', 'svg', 'pdf', 'print'] as ChartExportFormat[])),
       ...(store ? (['csv'] as ChartExportFormat[]) : []),
     ],
   );
@@ -94,7 +95,8 @@
     }
     const svg = resolveSvg(locate());
     if (!svg) return;
-    if (format === 'svg') downloadSvg(svg, `${filename}.svg`, { background });
+    if (format === 'pdf') void downloadPdf(svg, `${filename}.pdf`, { background });
+    else if (format === 'svg') downloadSvg(svg, `${filename}.svg`, { background });
     else void downloadPng(svg, `${filename}.png`, { background });
   }
 </script>

@@ -9,10 +9,11 @@ const model: DataModel = {
 };
 
 describe('ChartExport (react)', () => {
-  it('renders PNG / SVG / Print buttons by default', () => {
+  it('renders PNG / SVG / PDF / Print buttons by default', () => {
     render(<ChartExport target="#nope" />);
     expect(screen.getByRole('button', { name: DEFAULT_EXPORT_LABELS.png })).toBeTruthy();
     expect(screen.getByRole('button', { name: DEFAULT_EXPORT_LABELS.svg })).toBeTruthy();
+    expect(screen.getByRole('button', { name: DEFAULT_EXPORT_LABELS.pdf })).toBeTruthy();
     expect(screen.getByRole('button', { name: DEFAULT_EXPORT_LABELS.print })).toBeTruthy();
   });
 
@@ -31,7 +32,7 @@ describe('ChartExport (react)', () => {
   it('clicking a button never throws (downloads are no-ops in jsdom)', () => {
     const store = createDashboardStore({ model, data: [{ country: 'FR', sales: 1 }] as Row[] });
     render(<ChartExport store={store} target="#nope" />);
-    for (const f of ['png', 'svg', 'print', 'csv'] as const) {
+    for (const f of ['png', 'svg', 'pdf', 'print', 'csv'] as const) {
       expect(() =>
         screen.getByRole('button', { name: DEFAULT_EXPORT_LABELS[f] }).click(),
       ).not.toThrow();

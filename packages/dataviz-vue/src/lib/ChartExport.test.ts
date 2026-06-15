@@ -9,20 +9,21 @@ const model: DataModel = {
 };
 
 describe('ChartExport (vue)', () => {
-  it('renders PNG / SVG / Print buttons by default', () => {
+  it('renders PNG / SVG / PDF / Print buttons by default', () => {
     const w = mount(ChartExport, { props: { target: '#nope' } });
     const text = w.text();
     expect(text).toContain(DEFAULT_EXPORT_LABELS.png);
     expect(text).toContain(DEFAULT_EXPORT_LABELS.svg);
+    expect(text).toContain(DEFAULT_EXPORT_LABELS.pdf);
     expect(text).toContain(DEFAULT_EXPORT_LABELS.print);
-    expect(w.findAll('button').length).toBe(3);
+    expect(w.findAll('button').length).toBe(4);
   });
 
   it('adds a CSV button when a store is provided', () => {
     const store = createDashboardStore({ model, data: [{ country: 'FR', sales: 1 }] as Row[] });
     const w = mount(ChartExport, { props: { store, target: '#nope' } });
     expect(w.text()).toContain(DEFAULT_EXPORT_LABELS.csv);
-    expect(w.findAll('button').length).toBe(4);
+    expect(w.findAll('button').length).toBe(5);
   });
 
   it('honours an explicit formats list and custom labels', () => {
@@ -40,6 +41,6 @@ describe('ChartExport (vue)', () => {
     for (const btn of w.findAll('button')) {
       await btn.trigger('click');
     }
-    expect(w.findAll('button').length).toBe(4);
+    expect(w.findAll('button').length).toBe(5);
   });
 });

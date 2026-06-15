@@ -6,6 +6,7 @@ import {
   downloadBlob,
   downloadPng,
   downloadSvg,
+  downloadPdf,
   printElement,
   resolveSvg,
   type ChartExportFormat,
@@ -40,6 +41,7 @@ export const DEFAULT_EXPORT_LABELS: Record<ChartExportFormat, string> = {
   csv: 'CSV',
   png: 'PNG',
   svg: 'SVG',
+  pdf: 'PDF',
   print: 'Imprimer',
 };
 
@@ -105,14 +107,15 @@ export const ChartExport = defineComponent({
       }
       const svg = resolveSvg(locate());
       if (!svg) return;
-      if (format === 'svg') downloadSvg(svg, `${props.filename}.svg`, { background: props.background });
+      if (format === 'pdf') void downloadPdf(svg, `${props.filename}.pdf`, { background: props.background });
+      else if (format === 'svg') downloadSvg(svg, `${props.filename}.svg`, { background: props.background });
       else void downloadPng(svg, `${props.filename}.png`, { background: props.background });
     };
 
     return () => {
       const shownFormats: ChartExportFormat[] =
         props.formats ?? [
-          ...(['png', 'svg', 'print'] as ChartExportFormat[]),
+          ...(['png', 'svg', 'pdf', 'print'] as ChartExportFormat[]),
           ...(props.store ? (['csv'] as ChartExportFormat[]) : []),
         ];
       return h(

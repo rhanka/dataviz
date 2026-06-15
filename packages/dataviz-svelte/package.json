@@ -33,7 +33,9 @@
   "dependencies": {
     "@sentropic/dataviz-core": "0.4.44",
     "@sentropic/design-system-svelte": "0.34.42",
-    "@sentropic/design-system-themes": "0.11.0"
+    "@sentropic/design-system-themes": "0.11.0",
+    "jspdf": "^4.2.1",
+    "svg2pdf.js": "^2.7.0"
   },
   "peerDependencies": {
     "svelte": "^5"
