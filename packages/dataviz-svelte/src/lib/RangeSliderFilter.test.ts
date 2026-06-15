@@ -29,6 +29,47 @@ describe('rangeBoundsToSpec', () => {
   });
 });
 
+// End-to-end regression: the range filter genuinely filters (slider handles →
+// rangeBoundsToSpec → store.setFilter → applyCrossfilter returns the subset).
+// Guards the user-reported "filter range sometimes doesn't filter" — the whole
+// chain (core predicate + wrapper helpers + DS RangeSlider contract) is correct.
+describe('range filter end-to-end', () => {
+  const model: DataModel = {
+    dimensions: [{ id: 'price', label: 'Prix', type: 'continuous' }],
+    measures: [{ id: 'qty', label: 'Qté', aggregation: 'sum' }],
+  };
+  const data = [
+    { price: 1, qty: 1 },
+    { price: 5, qty: 1 },
+    { price: 9, qty: 1 },
+  ] as Row[];
+
+  it('keeps only the rows inside the narrowed window', () => {
+    const store = createDashboardStore({ model, data });
+    const spec = rangeBoundsToSpec(3, 7, numericDomain(data, 'price'));
+    expect(spec).toEqual({ kind: 'range', min: 3, max: 7 });
+    store.setFilter('price', spec!);
+    expect(store.applyCrossfilter(undefined).map((r) => r.price)).toEqual([5]);
+  });
+
+  it('full-span handles clear the filter (all rows pass)', () => {
+    const store = createDashboardStore({ model, data });
+    const domain = numericDomain(data, 'price');
+    expect(rangeBoundsToSpec(domain.min, domain.max, domain)).toBeNull();
+    store.clearFilter('price');
+    expect(store.applyCrossfilter(undefined)).toHaveLength(3);
+  });
+
+  it('notifies subscribers when the range filter changes', () => {
+    const store = createDashboardStore({ model, data });
+    let notified = 0;
+    store.subscribe(() => (notified += 1));
+    store.setFilter('price', { kind: 'range', min: 4, max: 6 });
+    expect(notified).toBeGreaterThan(0);
+    expect(store.applyCrossfilter(undefined).map((r) => r.price)).toEqual([5]);
+  });
+});
+
 const model: DataModel = {
   dimensions: [{ id: 'x', label: 'Montant', type: 'continuous' }],
   measures: [{ id: 'v', label: 'V', aggregation: 'sum' }],
