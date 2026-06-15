@@ -7,6 +7,8 @@ import {
   buildSequentialScale,
   buildDivergingScale,
   buildCategoricalScale,
+  colorAt,
+  makeColorScale,
 } from './color.js';
 
 describe('parseHex / toHex', () => {
@@ -120,5 +122,39 @@ describe('buildCategoricalScale', () => {
 
   it('returns [] for an empty palette', () => {
     expect(buildCategoricalScale([], 4)).toEqual([]);
+  });
+});
+
+describe('colorAt / makeColorScale', () => {
+  const stops = ['#000000', '#ffffff'];
+
+  it('maps the domain endpoints to the scale endpoints', () => {
+    expect(colorAt(0, 0, 100, stops)).toBe('#000000');
+    expect(colorAt(100, 0, 100, stops)).toBe('#ffffff');
+  });
+
+  it('clamps out-of-domain values to the endpoints', () => {
+    expect(colorAt(-50, 0, 100, stops)).toBe('#000000');
+    expect(colorAt(999, 0, 100, stops)).toBe('#ffffff');
+  });
+
+  it('interpolates an interior value', () => {
+    const mid = parseHex(colorAt(50, 0, 100, stops))!;
+    expect(mid.r).toBe(mid.g);
+    expect(mid.r).toBeGreaterThan(0);
+    expect(mid.r).toBeLessThan(255);
+  });
+
+  it('returns the first stop for a degenerate domain or non-finite input', () => {
+    expect(colorAt(5, 10, 10, stops)).toBe('#000000');
+    expect(colorAt(Number.NaN, 0, 100, stops)).toBe('#000000');
+    expect(colorAt(5, Number.POSITIVE_INFINITY, 100, stops)).toBe('#000000');
+  });
+
+  it('makeColorScale builds a reusable mapper', () => {
+    const scale = makeColorScale(0, 10, ['#2166ac', '#f7f7f7', '#b2182b']);
+    expect(scale(0)).toBe('#2166ac');
+    expect(scale(5)).toBe('#f7f7f7');
+    expect(scale(10)).toBe('#b2182b');
   });
 });
