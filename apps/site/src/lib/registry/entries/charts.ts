@@ -1028,6 +1028,18 @@ export function CHART_ENTRIES(ChartDemo: Demo, GeoDemo: Demo): DemoEntry[] {
     }, ChartDemo),
 
     chart({
+      slug: 'palette-picker', name: 'PalettePicker', group: 'Couche analytique', kind: 'palette-picker', hasControls: false,
+      tagline: 'Aperçu des trois familles d’échelles de couleur.',
+      useCase:
+        "Différencier les trois familles d'échelles : **catégorielle** (teintes distinctes pour des catégories non ordonnées), **séquentielle** (rampe mono-teinte clair→foncé pour une mesure continue Low→High — la bonne échelle pour un heatmap), et **divergente** (deux teintes via un neutre central, pour une valeur signée/centrée). Les rampes séquentielle et divergente sont interpolées en **OKLab** (`dataviz-core`) → perceptuellement régulières, sans zone terne au milieu (contrairement à un dégradé sRGB naïf). Rendu 100% via les composants DS `ColorSwatch` + `ColorScaleBar` ; les couleurs viennent des tokens DS (ici des palettes d'exemple).",
+      code: storeCode(['PalettePicker'], {
+        svelte: `<PalettePicker categorical={cat} sequential={seq} diverging={div} min="Low" max="High" label="Revenu" />`,
+        react: `<PalettePicker categorical={cat} sequential={seq} diverging={div} min="Low" max="High" label="Revenu" />`,
+        vue: `<PalettePicker :categorical="cat" :sequential="seq" :diverging="div" min="Low" max="High" label="Revenu" />`,
+      }),
+    }, ChartDemo),
+
+    chart({
       slug: 'correlation-matrix', name: 'CorrelationMatrix', group: 'Distribution & statistique', kind: 'correlation-matrix', hasControls: false,
       tagline: 'Matrice de corrélation de Pearson entre mesures numériques.',
       useCase:

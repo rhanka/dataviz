@@ -174,6 +174,8 @@ export { default as RenkoChart } from './lib/RenkoChart.svelte';
 export type { RenkoChartProps } from './lib/RenkoChart.svelte';
 export { default as PointAndFigureChart } from './lib/PointAndFigureChart.svelte';
 export type { PointAndFigureChartProps } from './lib/PointAndFigureChart.svelte';
+export { default as PalettePicker } from './lib/PalettePicker.svelte';
+export type { PalettePickerProps } from './lib/PalettePicker.svelte';
 export { default as BellCurveChart } from './lib/BellCurveChart.svelte';
 export type { BellCurveChartProps } from './lib/BellCurveChart.svelte';
 export { default as OrganizationChart } from './lib/OrganizationChart.svelte';

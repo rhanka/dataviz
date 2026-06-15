@@ -49,6 +49,7 @@ import { makeContourStore } from '../../data/contour';
 import { makeWindBarbStore } from '../../data/windBarb';
 import { makeRenkoStore } from '../../data/renko';
 import { makePointAndFigureStore } from '../../data/pointAndFigure';
+import { CATEGORICAL_DEMO, SEQUENTIAL_DEMO, DIVERGING_DEMO } from '../../data/colorScales';
 
 /** One mounted dataviz component: its export name + props. */
 export interface NodeSpec {
@@ -287,6 +288,8 @@ function chartSpec(kind: string, ctx: SpecContext): NodeSpec[] | null {
       return [{ comp: 'RenkoChart', props: { store: renkoStore, viewId: 'rk', date: 'date', close: 'close', boxSize: 3, label: 'Renko (briques de prix)' } }];
     case 'point-and-figure':
       return [{ comp: 'PointAndFigureChart', props: { store: pointAndFigureStore, viewId: 'pf', date: 'date', close: 'close', boxSize: 2, reversal: 3, label: 'Point & Figure (X/O)' } }];
+    case 'palette-picker':
+      return [{ comp: 'PalettePicker', props: { categorical: CATEGORICAL_DEMO, sequential: SEQUENTIAL_DEMO, diverging: DIVERGING_DEMO, min: 'Low', max: 'High', label: 'Revenu' } }];
     case 'solid-gauge':
       return [{ comp: 'SolidGaugeChart', props: { store, viewId: 'c', value: 'revenue', min: 0, max: 2000000, label: 'Revenu vs objectif', format: 'number', unit: '€', thresholds: [{ value: 800000, tone: 'warning' }, { value: 1400000, tone: 'success' }] } }];
     default:

@@ -86,6 +86,7 @@
     WindBarbChart,
     RenkoChart,
     PointAndFigureChart,
+    PalettePicker,
   } from '@sentropic/dataviz-svelte';
   import { ContentSwitcher } from '@sentropic/design-system-svelte';
   import { lineAnnotation, regionAnnotation, makeFormatter } from '@sentropic/dataviz-core';
@@ -116,6 +117,7 @@
   import { makeWindBarbStore } from '../../data/windBarb';
   import { makeRenkoStore } from '../../data/renko';
   import { makePointAndFigureStore } from '../../data/pointAndFigure';
+  import { CATEGORICAL_DEMO, SEQUENTIAL_DEMO, DIVERGING_DEMO } from '../../data/colorScales';
   import { makeBellCurveStore } from '../../data/bellCurve';
   import { makeHierarchyStore } from '../../data/hierarchy';
   import { makeWordCloudStore } from '../../data/wordCloud';
@@ -377,6 +379,8 @@
     <RenkoChart store={renkoStore} viewId="rk" date="date" close="close" boxSize={3} label="Renko (briques de prix)" />
   {:else if kind === 'point-and-figure'}
     <PointAndFigureChart store={pointAndFigureStore} viewId="pf" date="date" close="close" boxSize={2} reversal={3} label="Point & Figure (X/O)" />
+  {:else if kind === 'palette-picker'}
+    <PalettePicker categorical={CATEGORICAL_DEMO} sequential={SEQUENTIAL_DEMO} diverging={DIVERGING_DEMO} min="Low" max="High" label="Revenu" />
   {:else if kind === 'solid-gauge'}
     <SolidGaugeChart {store} viewId="c" value="revenue" min={0} max={2000000} label="Revenu vs objectif" format="number" unit="€" thresholds={[{ value: 800000, tone: 'warning' }, { value: 1400000, tone: 'success' }]} />
   {/if}
