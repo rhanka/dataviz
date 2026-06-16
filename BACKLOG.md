@@ -81,7 +81,7 @@ Le track « WP20 » était partiellement **périmé** (des items « to-do/in-pro
 
 **🟡 DS-bloqué (FR formelle déposée, je câble à livraison) :**
 - **Dashboard edit-mode (UI drag-resize)** : FR formelle **DashboardGrid** déposée 2026-06-15 (columns + tiles{id,x,y,w,h} + editable + onLayoutChange) — mappe `dataviz-core/layout.ts` (déjà prêt). Pas encore livré.
-- **Heatmap colormap séquentielle** (feedback QA) : FR déposée (scale:'sequential' OU color par-cellule). Pas encore livré.
+- **Heatmap colormap séquentielle** (feedback QA) : FR déposée (scale:'sequential' OU color par-cellule). Pas encore livré. **VÉRIFIÉ (2026-06-16) impossible à contourner côté consumer** : `HeatmapChart.toneForValue(value,min,max)` bucketise la valeur continue dans une des 8 teintes **catégorielles** `category1..8`, cellule colorée par **classe CSS** `st-heatmapChart__cell--{tone}` → le prop `tone?` n'accepte QUE category1..8 (pas de hex/escape-hatch). Seul le DS peut corriger (mode séquentiel OU `color?` par-cellule inline-fill) ; core couleur (colorAt/makeColorScale) prêt à fournir la rampe.
 - **Tooltip nearest-X** (feedback QA, cf docs/chart-ux-qa.md) : FR déposée (tooltipMode:'nearest-x' défaut + hideTooltipOnLeave + crosshair). Pas encore livré ; je valide sur les démos au tag.
 
 **⚪ À confirmer :** régression sidebar mobile = ✅ RÉSOLUE (trigger `isSidebarOpen` fonctionnel dans App.svelte, toggle + aria-expanded ; mon ancien grep cherchait `sidebarOpen`, mauvais nom) ; header chrome parité = lane autre agent + validation visuelle = user.
