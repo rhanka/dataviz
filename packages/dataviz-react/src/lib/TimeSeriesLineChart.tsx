@@ -187,10 +187,12 @@ export function TimeSeriesLineChart({
   const hiddenSet = new Set(hiddenSeries ?? []);
   const visibleSeries = model.series.filter((item) => !hiddenSet.has(item.label));
   const values = visibleSeries.flatMap((item) => item.values).filter((value): value is number => value !== null && Number.isFinite(value));
-  const minRaw = values.length === 0 ? 0 : Math.min(0, ...values);
-  const maxRaw = values.length === 0 ? 1 : Math.max(0, ...values);
+  const minRaw = values.length === 0 ? 0 : Math.min(...values);
+  const maxRaw = values.length === 0 ? 1 : Math.max(...values);
   const padded = (maxRaw - minRaw) * 0.08 || Math.max(Math.abs(maxRaw), 1) * 0.1;
-  const yTicks = niceTicks(minRaw - padded, maxRaw + padded, 5);
+  const yMinRaw = minRaw >= 0 ? 0 : minRaw - padded;
+  const yMaxRaw = maxRaw <= 0 ? 0 : maxRaw + padded;
+  const yTicks = niceTicks(yMinRaw, yMaxRaw, 5);
   const yMin = yTicks[0] ?? 0;
   const yMax = yTicks[yTicks.length - 1] ?? 1;
   const longestY = Math.max(...yTicks.map((tick) => formatValue(tick).length), 1);
