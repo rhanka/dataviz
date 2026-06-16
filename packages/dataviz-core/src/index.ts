@@ -92,6 +92,14 @@ export {
   buildDivergingBarModel,
 } from './categorical.js';
 
+// Time series
+export type {
+  TimeSeriesConfig,
+  TimeSeriesSeries,
+  TimeSeriesModel,
+} from './timeseries.js';
+export { buildTimeSeriesModel } from './timeseries.js';
+
 // Part-of-whole / flow
 export type {
   PartWholeSort,
