@@ -38,6 +38,8 @@ export { LollipopChart } from './lib/LollipopChart.js';
 export type { LollipopChartProps } from './lib/LollipopChart.js';
 export { StepLineChart } from './lib/StepLineChart.js';
 export type { StepLineChartProps } from './lib/StepLineChart.js';
+export { TimeSeriesLineChart } from './lib/TimeSeriesLineChart.js';
+export type { TimeSeriesLineChartProps, TimeSeriesLineChartTone } from './lib/TimeSeriesLineChart.js';
 export { AreaChart } from './lib/AreaChart.js';
 export type { AreaChartProps } from './lib/AreaChart.js';
 export { DonutChart } from './lib/DonutChart.js';
