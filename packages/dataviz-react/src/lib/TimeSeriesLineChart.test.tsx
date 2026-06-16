@@ -40,6 +40,7 @@ describe('TimeSeriesLineChart', () => {
     expect(screen.getByRole('img', { name: 'Users per day' })).toBeTruthy();
     expect(container.querySelectorAll('.st-timeSeriesLineChart__line')).toHaveLength(1);
     expect(container.querySelectorAll('.st-timeSeriesLineChart__xTickLabel').length).toBeLessThanOrEqual(6);
+    expect([...container.querySelectorAll('.st-timeSeriesLineChart__yTickLabel')].some((tick) => tick.textContent?.trim().startsWith('-'))).toBe(false);
     expect(screen.queryByRole('button', { name: /May 10: 0/ })).toBeNull();
   });
 

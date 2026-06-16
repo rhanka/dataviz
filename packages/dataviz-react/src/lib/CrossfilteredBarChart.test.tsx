@@ -68,6 +68,32 @@ describe('CrossfilteredBarChart (react)', () => {
     expect(screen.queryByRole('button', { name: /^FR:/ })).toBeNull();
   });
 
+  it('allocates enough horizontal label margin for long category labels', () => {
+    const longModel: DataModel = {
+      dimensions: [{ id: 'maildomain', label: 'Domaine', type: 'discrete' }],
+      measures: [{ id: 'calls', label: 'Appels', aggregation: 'sum' }],
+    };
+    const longRows: Row[] = [
+      { maildomain: 'ca-norddefrance.fr', calls: 431_000 },
+      { maildomain: 'o-lambret.fr', calls: 366_000 },
+    ];
+    const { container } = render(
+      <CrossfilteredBarChart
+        store={createDashboardStore({ model: longModel, data: longRows })}
+        viewId="maildomains"
+        dimension="maildomain"
+        measure="calls"
+        label="Appels par maildomain"
+        orientation="horizontal"
+        selectable={false}
+        width={360}
+      />,
+    );
+
+    const firstLabel = container.querySelector('.st-barChart__categoryLabel');
+    expect(Number(firstLabel?.getAttribute('x'))).toBeGreaterThan(80);
+  });
+
   it('renders no bars when the measure or dimension is unknown', () => {
     const { container: c1 } = render(
       <CrossfilteredBarChart store={newStore()} viewId="v" dimension="country" measure="nope" label="Vide" />,
