@@ -14,6 +14,8 @@ export * from './adapter.js';
 // Dashboard components (state consumers built on the design system).
 export { DashboardFilterBar } from './lib/DashboardFilterBar.js';
 export type { DashboardFilterBarProps } from './lib/DashboardFilterBar.js';
+export { DashboardGrid } from './lib/DashboardGrid.js';
+export type { DashboardGridPanel, DashboardGridProps } from './lib/DashboardGrid.js';
 export { QueryBar } from './lib/QueryBar.js';
 export type { QueryBarProps } from './lib/QueryBar.js';
 export { BookmarkNavigator } from './lib/BookmarkNavigator.js';

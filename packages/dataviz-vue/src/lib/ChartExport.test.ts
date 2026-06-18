@@ -9,6 +9,10 @@ const model: DataModel = {
 };
 
 describe('ChartExport (vue)', () => {
+  it('keeps default export labels locale-neutral', () => {
+    expect(DEFAULT_EXPORT_LABELS.print).toBe('Print');
+  });
+
   it('renders PNG / SVG / PDF / Print buttons by default', () => {
     const w = mount(ChartExport, { props: { target: '#nope' } });
     const text = w.text();

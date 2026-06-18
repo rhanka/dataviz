@@ -42,7 +42,7 @@ export const DEFAULT_EXPORT_LABELS: Record<ChartExportFormat, string> = {
   png: 'PNG',
   svg: 'SVG',
   pdf: 'PDF',
-  print: 'Imprimer',
+  print: 'Print',
 };
 
 /**

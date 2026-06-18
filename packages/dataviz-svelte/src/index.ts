@@ -14,6 +14,8 @@ export * from './adapter.js';
 // Dashboard components (state consumers built on the design system).
 export { default as DashboardFilterBar } from './lib/DashboardFilterBar.svelte';
 export type { DashboardFilterBarProps } from './lib/DashboardFilterBar.svelte';
+export { default as DashboardGrid } from './lib/DashboardGrid.svelte';
+export type { DashboardGridPanel, DashboardGridProps } from './lib/DashboardGrid.svelte';
 export { default as QueryBar } from './lib/QueryBar.svelte';
 export type { QueryBarProps } from './lib/QueryBar.svelte';
 export { default as BookmarkNavigator } from './lib/BookmarkNavigator.svelte';

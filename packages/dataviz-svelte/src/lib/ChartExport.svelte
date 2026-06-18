@@ -32,7 +32,7 @@
     png: 'PNG',
     svg: 'SVG',
     pdf: 'PDF',
-    print: 'Imprimer',
+    print: 'Print',
   };
 </script>
 

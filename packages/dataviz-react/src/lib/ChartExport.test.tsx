@@ -9,6 +9,10 @@ const model: DataModel = {
 };
 
 describe('ChartExport (react)', () => {
+  it('keeps default export labels locale-neutral', () => {
+    expect(DEFAULT_EXPORT_LABELS.print).toBe('Print');
+  });
+
   it('renders PNG / SVG / PDF / Print buttons by default', () => {
     render(<ChartExport target="#nope" />);
     expect(screen.getByRole('button', { name: DEFAULT_EXPORT_LABELS.png })).toBeTruthy();
