@@ -152,72 +152,84 @@ const measure   = ref('revenue');
       section: 'dashboards',
       name: 'Tableau de bord complet',
       group: 'Tableaux de bord',
-      tagline: 'Dashboard BI complet : KPI + tendance + barres + donut + table, tout cross-filtré.',
+      tagline: 'Dashboard BI complet : KPI + tendance + barres + donut + table sur grille éditable.',
       hasControls: true,
       useCase:
-        "Un seul `createDashboardStore` relie quatre vues — KPI, graphique en aires, barres cross-filtrées par catégorie, donut part-of-whole par canal, et table d'enregistrements — en un tableau de bord BI opérationnel.\n\nCliquer une barre ou un segment du donut applique `applyCrossfilter` dans le store, et toutes les autres vues (KPI, tendance, table) se recalculent instantanément sans aucune logique de filtrage custom.\n\n`DashboardFilterBar` résume les filtres actifs sous forme de chips et permet de tout effacer d'un clic. `SelectionLegend` rappelle quelles valeurs sont sélectionnées par vue.\n\nLa présentation vient à 100 % des surfaces du design system via les composants dataviz : aucun markup de chart ou de table n'est écrit à la main. La grille CSS utilise uniquement des tokens DS (`--st-spacing-*`, `--st-semantic-*`, `--st-radius-*`).",
+        "Un seul `createDashboardStore` relie quatre vues — KPI, graphique en aires, barres cross-filtrées par catégorie, donut part-of-whole par canal, et table d'enregistrements — en un tableau de bord BI opérationnel.\n\n`DashboardGrid` consomme un `DashboardLayout` sérialisable (`createLayout`, `addPanel`, `movePanel`, `resizePanel`, `serializeLayout`) et expose un mode édition : déplacement, redimensionnement et callback `onLayoutChange` renvoient un layout normalisé prêt à persister.\n\nCliquer une barre ou un segment du donut applique `applyCrossfilter` dans le store, et toutes les autres vues (KPI, tendance, table) se recalculent instantanément sans aucune logique de filtrage custom.\n\nLa présentation vient à 100 % des surfaces du design system via les composants dataviz : aucun markup de chart ou de table n'est écrit à la main. La grille utilise uniquement des tokens DS (`--st-spacing-*`, `--st-semantic-*`, `--st-radius-*`).",
       demo: FullDashboard,
       demoProps: {},
       code: storeCode(
-        ['DashboardFilterBar', 'SelectionLegend', 'KpiCardGroup', 'CrossfilteredBarChart', 'AreaChart', 'DonutChart', 'RecordsTable'],
+        ['DashboardFilterBar', 'DashboardGrid', 'SelectionLegend', 'KpiCardGroup', 'CrossfilteredBarChart', 'AreaChart', 'DonutChart', 'RecordsTable'],
         {
-          svelte: `<DashboardFilterBar {store} />
+          svelte: `let layout = $state(initialLayout);
+let editMode = $state(false);
+
+<DashboardFilterBar {store} />
 <SelectionLegend {store} labels={{ byCat: 'Catégorie', byChan: 'Canal' }} />
 
-<!-- Bandeau KPI (recalculé à chaque cross-filter) -->
-<KpiCardGroup {store} configs={[
-  { id: 'revenue', measure: 'revenue', label: 'Revenu total' },
-  { id: 'units',   measure: 'units',   label: 'Unités vendues' },
-  { id: 'margin',  measure: 'margin',  label: 'Marge brute (€)' },
-]} />
+<DashboardGrid {layout} panels={dashboardPanels} editable={editMode}
+  onLayoutChange={(next) => (layout = next)}>
+  {#snippet children(meta)}
+    {#if meta.id === 'kpis'}
+      <KpiCardGroup {store} configs={kpiConfigs} />
+    {:else if meta.id === 'trend'}
+      <AreaChart {store} viewId="trend" category="month" measure="revenue"
+        label="Tendance mensuelle du revenu" smooth={true} />
+    {:else if meta.id === 'byCat'}
+      <CrossfilteredBarChart {store} viewId="byCat" dimension="category"
+        measure="revenue" label="Revenu par catégorie" />
+    {:else if meta.id === 'byChan'}
+      <DonutChart {store} viewId="byChan" category="channel" measure="revenue"
+        centerLabel="Canal" label="Répartition par canal" />
+    {:else if meta.id === 'table'}
+      <RecordsTable {store} pageSize={8}
+        fields={['region', 'category', 'product', 'channel', 'revenue', 'units', 'margin']} />
+    {/if}
+  {/snippet}
+</DashboardGrid>`,
+          react: `const [layout, setLayout] = useState(initialLayout);
+const [editMode, setEditMode] = useState(false);
 
-<!-- Tendance mensuelle (aire) -->
-<AreaChart {store} viewId="trend" category="month" measure="revenue"
-  label="Tendance mensuelle du revenu" smooth={true} />
-
-<!-- Barres cross-filtrées par catégorie -->
-<CrossfilteredBarChart {store} viewId="byCat" dimension="category"
-  measure="revenue" label="Revenu par catégorie" />
-
-<!-- Donut part-of-whole par canal -->
-<DonutChart {store} viewId="byChan" category="channel" measure="revenue"
-  centerLabel="Canal" label="Répartition par canal" />
-
-<!-- Table d'enregistrements cross-filtrés -->
-<RecordsTable {store} pageSize={8}
-  fields={['region', 'category', 'product', 'channel', 'revenue', 'units', 'margin']} />`,
-          react: `<>
+<>
   <DashboardFilterBar store={store} />
   <SelectionLegend store={store} labels={{ byCat: 'Catégorie', byChan: 'Canal' }} />
-  <KpiCardGroup store={store} configs={[
-    { id: 'revenue', measure: 'revenue', label: 'Revenu total' },
-    { id: 'units',   measure: 'units',   label: 'Unités vendues' },
-    { id: 'margin',  measure: 'margin',  label: 'Marge brute (€)' },
-  ]} />
-  <AreaChart store={store} viewId="trend" category="month" measure="revenue"
-    label="Tendance mensuelle du revenu" smooth />
-  <CrossfilteredBarChart store={store} viewId="byCat" dimension="category"
-    measure="revenue" label="Revenu par catégorie" />
-  <DonutChart store={store} viewId="byChan" category="channel" measure="revenue"
-    centerLabel="Canal" label="Répartition par canal" />
-  <RecordsTable store={store} pageSize={8}
-    fields={['region', 'category', 'product', 'channel', 'revenue', 'units', 'margin']} />
+  <DashboardGrid layout={layout} panels={dashboardPanels} editable={editMode}
+    onLayoutChange={setLayout}
+    renderPanel={(meta) => {
+      if (meta.id === 'kpis') return <KpiCardGroup store={store} configs={kpiConfigs} />;
+      if (meta.id === 'trend') return <AreaChart store={store} viewId="trend" category="month" measure="revenue"
+        label="Tendance mensuelle du revenu" smooth />;
+      if (meta.id === 'byCat') return <CrossfilteredBarChart store={store} viewId="byCat" dimension="category"
+        measure="revenue" label="Revenu par catégorie" />;
+      if (meta.id === 'byChan') return <DonutChart store={store} viewId="byChan" category="channel" measure="revenue"
+        centerLabel="Canal" label="Répartition par canal" />;
+      return <RecordsTable store={store} pageSize={8}
+        fields={['region', 'category', 'product', 'channel', 'revenue', 'units', 'margin']} />;
+    }}
+  />
 </>`,
-          vue: `<DashboardFilterBar :store="store" />
+          vue: `<script setup lang="ts">
+import { ref } from 'vue';
+const layout = ref(initialLayout);
+const editMode = ref(false);
+<\/script>
+
+<DashboardFilterBar :store="store" />
 <SelectionLegend :store="store" :labels="{ byCat: 'Catégorie', byChan: 'Canal' }" />
-<KpiCardGroup :store="store" :configs="[
-  { id: 'revenue', measure: 'revenue', label: 'Revenu total' },
-  { id: 'units',   measure: 'units',   label: 'Unités vendues' },
-  { id: 'margin',  measure: 'margin',  label: 'Marge brute (€)' },
-]" />
-<AreaChart :store="store" viewId="trend" category="month" measure="revenue"
-  label="Tendance mensuelle du revenu" :smooth="true" />
-<CrossfilteredBarChart :store="store" viewId="byCat" dimension="category"
-  measure="revenue" label="Revenu par catégorie" />
-<DonutChart :store="store" viewId="byChan" category="channel" measure="revenue"
-  centerLabel="Canal" label="Répartition par canal" />
-<RecordsTable :store="store" :pageSize="8"
-  :fields="['region', 'category', 'product', 'channel', 'revenue', 'units', 'margin']" />`,
+<DashboardGrid :layout="layout" :panels="dashboardPanels" :editable="editMode"
+  @layout-change="(next) => (layout = next)">
+  <template #default="{ meta }">
+    <KpiCardGroup v-if="meta.id === 'kpis'" :store="store" :configs="kpiConfigs" />
+    <AreaChart v-else-if="meta.id === 'trend'" :store="store" viewId="trend"
+      category="month" measure="revenue" label="Tendance mensuelle du revenu" :smooth="true" />
+    <CrossfilteredBarChart v-else-if="meta.id === 'byCat'" :store="store" viewId="byCat"
+      dimension="category" measure="revenue" label="Revenu par catégorie" />
+    <DonutChart v-else-if="meta.id === 'byChan'" :store="store" viewId="byChan"
+      category="channel" measure="revenue" centerLabel="Canal" label="Répartition par canal" />
+    <RecordsTable v-else :store="store" :pageSize="8"
+      :fields="['region', 'category', 'product', 'channel', 'revenue', 'units', 'margin']" />
+  </template>
+</DashboardGrid>`,
         },
       ),
     },

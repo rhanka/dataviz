@@ -12,6 +12,7 @@
 <script lang="ts">
   import {
     DashboardFilterBar,
+    DashboardGrid,
     SelectionLegend,
     KpiCardGroup,
     CrossfilteredBarChart,
@@ -19,6 +20,7 @@
     DonutChart,
     RecordsTable,
   } from '@sentropic/dataviz-svelte';
+  import { addPanel, createLayout, type DashboardLayout } from '@sentropic/dataviz-core';
   import { makeStore } from '../../data/store';
 
   const store = makeStore();
@@ -29,6 +31,31 @@
     { id: 'units',   measure: 'units',   label: 'Unités vendues' },
     { id: 'margin',  measure: 'margin',  label: 'Marge brute (€)' },
   ];
+
+  const initialLayout = addPanel(
+    addPanel(
+      addPanel(
+        addPanel(
+          addPanel(createLayout(12), { id: 'kpis', x: 0, y: 0, w: 12, h: 2 }),
+          { id: 'trend', x: 0, y: 2, w: 6, h: 3 },
+        ),
+        { id: 'byCat', x: 6, y: 2, w: 3, h: 3 },
+      ),
+      { id: 'byChan', x: 9, y: 2, w: 3, h: 3 },
+    ),
+    { id: 'table', x: 0, y: 5, w: 12, h: 3 },
+  );
+
+  const dashboardPanels = [
+    { id: 'kpis', title: 'Indicateurs' },
+    { id: 'trend', title: 'Tendance mensuelle' },
+    { id: 'byCat', title: 'Catégories' },
+    { id: 'byChan', title: 'Canaux' },
+    { id: 'table', title: 'Enregistrements' },
+  ];
+
+  let layout = $state<DashboardLayout>(initialLayout);
+  let editMode = $state(false);
 </script>
 
 <div class="full-dash">
@@ -36,52 +63,62 @@
   <DashboardFilterBar {store} />
   <SelectionLegend {store} labels={{ byCat: 'Catégorie', byChan: 'Canal' }} />
 
-  <!-- Rangée KPI -->
-  <div class="dash-kpi-row">
-    <KpiCardGroup {store} configs={kpiConfigs} />
+  <div class="full-dash__toolbar">
+    <button
+      type="button"
+      class:active={editMode}
+      aria-pressed={editMode}
+      onclick={() => (editMode = !editMode)}
+    >
+      Édition
+    </button>
   </div>
 
-  <!-- Rangée graphiques : tendance | barres catégorie | donut canal -->
-  <div class="dash-charts-row">
-    <div class="dash-chart dash-chart--main">
-      <AreaChart
-        {store}
-        viewId="trend"
-        category="month"
-        measure="revenue"
-        label="Tendance mensuelle du revenu"
-        smooth={true}
-      />
-    </div>
-    <div class="dash-chart dash-chart--side">
-      <CrossfilteredBarChart
-        {store}
-        viewId="byCat"
-        dimension="category"
-        measure="revenue"
-        label="Revenu par catégorie"
-      />
-    </div>
-    <div class="dash-chart dash-chart--side">
-      <DonutChart
-        {store}
-        viewId="byChan"
-        category="channel"
-        measure="revenue"
-        centerLabel="Canal"
-        label="Répartition par canal"
-      />
-    </div>
-  </div>
-
-  <!-- Table d'enregistrements cross-filtrés -->
-  <div class="dash-table">
-    <RecordsTable
-      {store}
-      pageSize={8}
-      fields={['region', 'category', 'product', 'channel', 'revenue', 'units', 'margin']}
-    />
-  </div>
+  <DashboardGrid
+    {layout}
+    panels={dashboardPanels}
+    editable={editMode}
+    rowHeight={96}
+    onLayoutChange={(next) => (layout = next)}
+  >
+    {#snippet children(meta)}
+      {#if meta.id === 'kpis'}
+        <KpiCardGroup {store} configs={kpiConfigs} />
+      {:else if meta.id === 'trend'}
+        <AreaChart
+          {store}
+          viewId="trend"
+          category="month"
+          measure="revenue"
+          label="Tendance mensuelle du revenu"
+          smooth={true}
+        />
+      {:else if meta.id === 'byCat'}
+        <CrossfilteredBarChart
+          {store}
+          viewId="byCat"
+          dimension="category"
+          measure="revenue"
+          label="Revenu par catégorie"
+        />
+      {:else if meta.id === 'byChan'}
+        <DonutChart
+          {store}
+          viewId="byChan"
+          category="channel"
+          measure="revenue"
+          centerLabel="Canal"
+          label="Répartition par canal"
+        />
+      {:else if meta.id === 'table'}
+        <RecordsTable
+          {store}
+          pageSize={8}
+          fields={['region', 'category', 'product', 'channel', 'revenue', 'units', 'margin']}
+        />
+      {/if}
+    {/snippet}
+  </DashboardGrid>
 </div>
 
 <style>
@@ -92,41 +129,24 @@
     width: 100%;
   }
 
-  /* KPI row — auto-fill, min 180 px par carte */
-  .dash-kpi-row {
-    width: 100%;
+  .full-dash__toolbar {
+    display: flex;
+    justify-content: flex-end;
   }
 
-  /* Rangée graphiques : tendance principale large (2fr) + deux panneaux latéraux (1fr chacun) */
-  .dash-charts-row {
-    display: grid;
-    gap: var(--st-spacing-4, 1rem);
-    grid-template-columns: 2fr 1fr 1fr;
-    width: 100%;
-  }
-
-  .dash-chart {
+  .full-dash__toolbar button {
     background: var(--st-semantic-surface-raised, #ffffff);
-    border: 1px solid var(--st-semantic-border-subtle, #e2e8f0);
-    border-radius: var(--st-radius-md, 0.5rem);
-    overflow: hidden;
-    padding: var(--st-spacing-4, 1rem);
+    border: 1px solid var(--st-semantic-border-subtle, #d8dee8);
+    border-radius: var(--st-radius-sm, 0.375rem);
+    color: var(--st-semantic-text, #0f172a);
+    cursor: pointer;
+    font: inherit;
+    min-height: 2rem;
+    padding: 0 var(--st-spacing-3, 0.75rem);
   }
 
-  /* Table pleine largeur */
-  .dash-table {
-    background: var(--st-semantic-surface-raised, #ffffff);
-    border: 1px solid var(--st-semantic-border-subtle, #e2e8f0);
-    border-radius: var(--st-radius-md, 0.5rem);
-    overflow: hidden;
-    padding: var(--st-spacing-4, 1rem);
-    width: 100%;
-  }
-
-  /* Responsive : sous 860 px, graphiques en colonne */
-  @media (max-width: 860px) {
-    .dash-charts-row {
-      grid-template-columns: 1fr;
-    }
+  .full-dash__toolbar button.active {
+    background: var(--st-semantic-accent-subtle, #dbeafe);
+    border-color: var(--st-semantic-accent, #2563eb);
   }
 </style>
