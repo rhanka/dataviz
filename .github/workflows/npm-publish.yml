@@ -47,6 +47,8 @@ jobs:
       - name: Verify package versions match tag
         run: |
           EXPECTED="${TAG#v}"
+          # Angular stays excluded until @sentropic/design-system-angular is
+          # published to npm and its Search/BarChart components render DOM.
           for pkg in dataviz-core dataviz-svelte dataviz-react dataviz-vue; do
             ACTUAL=$(node -p "require('./packages/${pkg}/package.json').version")
             if [ "$EXPECTED" != "$ACTUAL" ]; then
@@ -77,6 +79,7 @@ jobs:
           npm run build
       - name: Publish packages
         run: |
+          # Angular stays private while it depends on a vendored DS Angular tarball.
           npm publish --workspace @sentropic/dataviz-core --access public
           npm publish --workspace @sentropic/dataviz-svelte --access public
           npm publish --workspace @sentropic/dataviz-react --access public
@@ -95,6 +98,7 @@ jobs:
       - name: Wait for npm propagation
         run: |
           VERSION="${TAG#v}"
+          # Keep this list aligned with the intentionally publishable packages above.
           for pkg in dataviz-core dataviz-svelte dataviz-react dataviz-vue; do
             ok=""
             for attempt in $(seq 1 20); do
