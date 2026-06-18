@@ -59,13 +59,7 @@ function selectionKeyFor(bin: DateHistogramBin): string {
   return rangeSelectionKey(range.min, range.max);
 }
 
-/**
- * State wiring for a DS Angular BarChart-backed date histogram.
- *
- * Upstream blocker: `@sentropic/design-system-angular` currently exposes
- * `BarChart` as a projection shell only, so this wrapper forwards computed data
- * and selection callbacks without recreating the DS DOM internally.
- */
+/** State wiring for a DS Angular BarChart-backed date histogram. */
 @Component({
   selector: 'st-dataviz-date-histogram-chart',
   standalone: true,
