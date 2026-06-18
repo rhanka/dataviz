@@ -18,13 +18,7 @@ export type QueryBarProps = {
   class?: string;
 };
 
-/**
- * State wiring for a DS Angular Search.
- *
- * Upstream blocker: `@sentropic/design-system-angular` currently exposes
- * `Search` as a projection shell only, so this wrapper forwards state and
- * callbacks without recreating the DS DOM internally.
- */
+/** State wiring for a DS Angular Search. */
 @Component({
   selector: 'st-dataviz-query-bar',
   standalone: true,
@@ -38,6 +32,8 @@ export type QueryBarProps = {
       [clearLabel]="clearLabel"
       [size]="size"
       [class]="searchClass"
+      (modelValueChange)="handleSearchValueChange($event)"
+      (clear)="handleClear()"
     ></st-search>
   `,
 })
