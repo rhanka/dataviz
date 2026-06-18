@@ -14,6 +14,8 @@ export * from './adapter.js';
 // Dashboard components (state consumers built on the design system).
 export { DashboardFilterBar } from './lib/DashboardFilterBar.js';
 export type { DashboardFilterBarProps } from './lib/DashboardFilterBar.js';
+export { QueryBar } from './lib/QueryBar.js';
+export type { QueryBarProps } from './lib/QueryBar.js';
 export { BookmarkNavigator } from './lib/BookmarkNavigator.js';
 export type { BookmarkNavigatorProps } from './lib/BookmarkNavigator.js';
 export { CalculationEditor } from './lib/CalculationEditor.js';
@@ -64,6 +66,8 @@ export { RadarChart } from './lib/RadarChart.js';
 export type { RadarChartProps } from './lib/RadarChart.js';
 export { HistogramChart } from './lib/HistogramChart.js';
 export type { HistogramChartProps } from './lib/HistogramChart.js';
+export { DateHistogramChart } from './lib/DateHistogramChart.js';
+export type { DateHistogramChartProps, DateHistogramChartTone, DateHistogramLabelFormatter } from './lib/DateHistogramChart.js';
 export { BoxPlotChart } from './lib/BoxPlotChart.js';
 export type { BoxPlotChartProps } from './lib/BoxPlotChart.js';
 export { HeatmapChart } from './lib/HeatmapChart.js';

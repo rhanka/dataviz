@@ -169,6 +169,15 @@ export {
   buildBulletChartModel,
   buildGaugeChartModel,
 } from './distribution.js';
+export type { QueryFilterConfig } from './query.js';
+export { buildQueryFilterSpec } from './query.js';
+export type {
+  DateHistogramInterval,
+  DateHistogramConfig,
+  DateHistogramBin,
+  DateHistogramModel,
+} from './dateHistogram.js';
+export { buildDateHistogramModel } from './dateHistogram.js';
 
 // Advanced pivot / matrix
 export type {
@@ -444,7 +453,8 @@ export {
 
 // Crossfilter
 export type { CrossfilterView, CrossfilterGraph } from './crossfilter.js';
-export { sourcesFor, applyCrossfilter } from './crossfilter.js';
+export type { CrossfilterSelectionMode } from './crossfilter.js';
+export { sourcesFor, applyCrossfilter, rangeSelectionKey } from './crossfilter.js';
 
 // Aggregate
 export {

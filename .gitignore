@@ -11,5 +11,6 @@ coverage/
 !.env.example
 .remote/
 .playwright-mcp/
+.track/
 .claude/settings.local.json
 .claude/scheduled_tasks.lock
