@@ -5,6 +5,7 @@ import {
   type Row,
   createDashboardStore,
   applyCrossfilter,
+  rangeSelectionKey,
   sourcesFor,
 } from './index.js';
 
@@ -128,6 +129,40 @@ describe('applyCrossfilter', () => {
     store.toggleSelection('b', 'B');
     const out = applyCrossfilter(store.getState(), store.data, 'target', tri);
     expect(out).toEqual([{ country: 'FR', category: 'B', revenue: 20 }]);
+  });
+
+  it('applies range selections from bucketed views while preserving self-exclusion', () => {
+    const start = Date.UTC(2026, 0, 1);
+    const datedModel: DataModel = {
+      dimensions: [
+        { id: 'ts', label: 'Timestamp', type: 'continuous' },
+        { id: 'service', label: 'Service', type: 'discrete' },
+      ],
+      measures: [{ id: 'events', label: 'Events', aggregation: 'sum' }],
+    };
+    const datedRows: Row[] = [
+      { ts: start + 1_000, service: 'api', events: 1 },
+      { ts: start + 2_000, service: 'worker', events: 1 },
+      { ts: start + 24 * 60 * 60 * 1000 + 1_000, service: 'api', events: 1 },
+    ];
+    const datedGraph: CrossfilterGraph = {
+      views: {
+        eventHistogram: { field: 'ts', selection: 'range' },
+        serviceChart: { field: 'service' },
+      },
+    };
+    const store = createDashboardStore({ model: datedModel, data: datedRows, crossfilter: datedGraph });
+    store.toggleSelection('eventHistogram', rangeSelectionKey(start, start + 24 * 60 * 60 * 1000 - 1));
+
+    expect(applyCrossfilter(store.getState(), store.data, 'eventHistogram', datedGraph).map((row) => row.ts)).toEqual([
+      start + 1_000,
+      start + 2_000,
+      start + 24 * 60 * 60 * 1000 + 1_000,
+    ]);
+    expect(applyCrossfilter(store.getState(), store.data, 'serviceChart', datedGraph).map((row) => row.ts)).toEqual([
+      start + 1_000,
+      start + 2_000,
+    ]);
   });
 
   it('only global filters apply when graph omitted', () => {

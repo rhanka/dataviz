@@ -14,6 +14,8 @@ export * from './adapter.js';
 // Dashboard components (state consumers built on the design system).
 export { default as DashboardFilterBar } from './lib/DashboardFilterBar.svelte';
 export type { DashboardFilterBarProps } from './lib/DashboardFilterBar.svelte';
+export { default as QueryBar } from './lib/QueryBar.svelte';
+export type { QueryBarProps } from './lib/QueryBar.svelte';
 export { default as BookmarkNavigator } from './lib/BookmarkNavigator.svelte';
 export type { BookmarkNavigatorProps } from './lib/BookmarkNavigator.svelte';
 export { default as CalculationEditor } from './lib/CalculationEditor.svelte';
@@ -68,6 +70,8 @@ export { default as RadarChart } from './lib/RadarChart.svelte';
 export type { RadarChartProps } from './lib/RadarChart.svelte';
 export { default as HistogramChart } from './lib/HistogramChart.svelte';
 export type { HistogramChartProps } from './lib/HistogramChart.svelte';
+export { default as DateHistogramChart } from './lib/DateHistogramChart.svelte';
+export type { DateHistogramChartProps, DateHistogramChartTone, DateHistogramLabelFormatter } from './lib/DateHistogramChart.svelte';
 export { default as BoxPlotChart } from './lib/BoxPlotChart.svelte';
 export type { BoxPlotChartProps } from './lib/BoxPlotChart.svelte';
 export { default as HeatmapChart } from './lib/HeatmapChart.svelte';

@@ -16,10 +16,19 @@ import type { Cell, Row } from './model.js';
 import type { DashboardState } from './store.js';
 import { applyFilters } from './store.js';
 
+export type CrossfilterSelectionMode = 'key' | 'range';
+
 /** Declaration of a single view participating in cross-filtering. */
 export interface CrossfilterView {
   /** The dimension id this view's selection keys refer to. */
   field: string;
+  /**
+   * How selection keys should be interpreted for this view. The default `key`
+   * mode compares stringified field values. `range` mode expects keys produced
+   * by {@link rangeSelectionKey} and keeps rows whose numeric/date value falls
+   * inside at least one selected range.
+   */
+  selection?: CrossfilterSelectionMode;
   /**
    * The view ids this view's selection filters. If omitted, defaults to
    * "every other view" (a fully-linked dashboard). An empty array means the
@@ -33,9 +42,55 @@ export interface CrossfilterGraph {
   views: Record<string, CrossfilterView>;
 }
 
+const RANGE_SELECTION_PREFIX = 'range:';
+
+interface RangeSelection {
+  min: number;
+  max: number;
+}
+
+export function rangeSelectionKey(min: number, max: number): string {
+  if (!Number.isFinite(min) || !Number.isFinite(max) || min > max) {
+    throw new Error('Range selection bounds must be finite and ordered');
+  }
+  return `${RANGE_SELECTION_PREFIX}${min}:${max}`;
+}
+
+function parseRangeSelectionKey(key: string): RangeSelection | null {
+  if (!key.startsWith(RANGE_SELECTION_PREFIX)) return null;
+  const [minRaw, maxRaw] = key.slice(RANGE_SELECTION_PREFIX.length).split(':');
+  const min = Number(minRaw);
+  const max = Number(maxRaw);
+  return Number.isFinite(min) && Number.isFinite(max) && min <= max ? { min, max } : null;
+}
+
 /** Stringify a cell the same way selections/groupBy keys are produced. */
 function keyOf(value: Cell): string {
   return value == null ? 'null' : String(value);
+}
+
+function rangeComparable(value: Cell): number | null {
+  if (typeof value === 'number') return Number.isFinite(value) ? value : null;
+  if (typeof value !== 'string' || value.trim() === '') return null;
+  const numeric = Number(value);
+  if (Number.isFinite(numeric)) return numeric;
+  const parsed = Date.parse(value);
+  return Number.isFinite(parsed) ? parsed : null;
+}
+
+function matchesSelection(
+  row: Row,
+  field: string,
+  selectedKeys: readonly string[],
+  mode: CrossfilterSelectionMode | undefined,
+): boolean {
+  if (mode !== 'range') {
+    return new Set(selectedKeys).has(keyOf(row[field] ?? null));
+  }
+  const ranges = selectedKeys.map(parseRangeSelectionKey).filter((range): range is RangeSelection => range !== null);
+  if (ranges.length === 0) return false;
+  const value = rangeComparable(row[field] ?? null);
+  return value !== null && ranges.some((range) => value >= range.min && value <= range.max);
 }
 
 /**
@@ -84,8 +139,7 @@ export function applyCrossfilter(
     const sourceView = graph.views[sourceId];
     if (!sourceView) continue;
     const field = sourceView.field;
-    const wanted = new Set(selectedKeys);
-    rows = rows.filter((row) => wanted.has(keyOf(row[field] ?? null)));
+    rows = rows.filter((row) => matchesSelection(row, field, selectedKeys, sourceView.selection));
   }
 
   return rows;
