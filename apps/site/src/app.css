@@ -134,6 +134,11 @@ select {
 /* La barre du haut est le composant Header porté (`<header class="st-header docs-header">`).
    On surcharge l'habillage du composant pour conserver l'identité de la doc, tout en
    laissant sa structure flex (leading | navigation | actions) piloter la mise en page. */
+.docs-header.st-header,
+.docs-header.st-header * {
+  font-family: var(--st-font-sans, Inter, ui-sans-serif, system-ui, sans-serif);
+}
+
 .docs-header.st-header {
   background: color-mix(in srgb, var(--st-semantic-surface-default, #ffffff) 96%, transparent);
   border-bottom: 1px solid var(--docs-line);
@@ -155,7 +160,7 @@ select {
 
 .docs-header.st-header .st-header__navigation {
   flex: 1 1 auto;
-  justify-content: flex-start;
+  justify-content: center;
 }
 
 .docs-header .st-header__actions {

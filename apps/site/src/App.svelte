@@ -70,7 +70,7 @@
   const componentGroups = $derived(buildComponentNavGroups(locale.value));
   const breadcrumbs = $derived(resolveBreadcrumb(router.path, locale.value));
   const frameworkLabel = $derived(FRAMEWORKS.find((f) => f.id === framework.value)?.label ?? 'Svelte');
-  const showFrameworkSwitcher = $derived(route.kind === 'demo' || route.kind === 'catalogue');
+  const showFrameworkSwitcher = $derived(true);
 
   // ── Données pour le composant DS AppChrome (source de vérité du chrome) ──────
   const appNavItems = $derived<AppChromeNavItem[]>(
