@@ -29,7 +29,7 @@
   },
   "dependencies": {
     "@sentropic/dataviz-core": "0.4.51",
-    "@sentropic/design-system-react": "0.36.46",
+    "@sentropic/design-system-react": "0.36.51",
     "@sentropic/design-system-themes": "0.11.0",
     "jspdf": "^4.2.1",
     "svg2pdf.js": "^2.7.0"
