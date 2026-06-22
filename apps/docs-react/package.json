@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@sentropic/dataviz-react": "*",
-    "@sentropic/design-system-react": "0.36.51",
+    "@sentropic/design-system-react": "0.36.49",
     "@sentropic/design-system-themes": "0.11.0",
     "react": "^19.2.7",
     "react-dom": "^19.2.7"
