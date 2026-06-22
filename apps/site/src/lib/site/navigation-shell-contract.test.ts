@@ -11,18 +11,19 @@ function source(path: string): string {
 }
 
 describe("dataviz navigation shell contract", () => {
-  it("renders the top bar via the published DS AppChrome component", () => {
+  it("renders the top bar via the published DS AppHeader component", () => {
     const app = source("App.svelte");
 
     expect(app).toContain("@sentropic/design-system-svelte");
-    expect(app).toContain("<AppChrome");
-    // marque + nav + contrôles pilotés par les props du composant DS
+    expect(app).toContain("<AppHeader");
+    // marque + nav + actions + tiroir pilotés par les props/snippets du composant DS
     expect(app).toContain('brandName="Sentropic"');
     expect(app).toContain('productName="dataviz"');
-    expect(app).toContain("nav={appNavItems}");
-    expect(app).toContain("themes={appThemeOptions}");
-    expect(app).toContain("identity={identityControl}");
-    expect(app).toContain("extraSelectors={extraControls}");
+    expect(app).toContain("nav={appNav}");
+    expect(app).toContain("actions={headerActions}");
+    expect(app).toContain("drawer={headerDrawer}");
+    // l'ancien wrapper AppChrome a disparu au profit de AppHeader direct
+    expect(app).not.toContain("<AppChrome");
     // le chrome bespoke (Header + snippets copiés) a disparu
     expect(app).not.toContain("{#snippet docsBrand()}");
     expect(app).not.toContain("{#snippet docsTopNav()}");
@@ -49,12 +50,15 @@ describe("dataviz navigation shell contract", () => {
     expect(app).toContain("docs-login-trigger");
     // hauteur de contrôle alignée sur le DS source (36px), pas la dérive 2.75rem
     expect(css).toContain("--docs-header-control-height: 2.25rem;");
-    // recherche + framework remontés en tête des contrôles utilitaires
-    const extraRule = css.match(/\.st-appChrome__extraSelectors\s*\{[^}]+\}/)?.[0] ?? "";
-    expect(extraRule).toContain("order: -1;");
+    // recherche → identité : l'ordre source est porté par le snippet headerActions
+    // (recherche en premier dans la zone actions du AppHeader).
+    expect(app).toContain("{#snippet headerActions()}");
+    const actionsOrder = app.match(/\{#snippet headerActions\(\)\}[\s\S]*?\{\/snippet\}/)?.[0] ?? "";
+    expect(actionsOrder.indexOf("searchTrigger")).toBeGreaterThanOrEqual(0);
+    expect(actionsOrder.indexOf("searchTrigger")).toBeLessThan(actionsOrder.indexOf("identityControl"));
   });
 
-  it("drops the per-tenant bespoke chrome copies in favour of AppChrome", () => {
+  it("drops the per-tenant bespoke chrome copies in favour of AppHeader", () => {
     for (const file of [
       "lib/site/chrome/ChromeAirbus.svelte",
       "lib/site/chrome/ChromeCanada.svelte",
