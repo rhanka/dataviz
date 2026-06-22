@@ -532,6 +532,7 @@
 <div class="docs-shell" data-st-theme={theme.value} use:chromeRouting>
   <AppHeader
     class="st-appChrome__header"
+    brandMode="full"
     brandName="Sentropic"
     productName="dataviz"
     logoSrc={`${import.meta.env.BASE_URL}SENT-logo-squared.svg`}
