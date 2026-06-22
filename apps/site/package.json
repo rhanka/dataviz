@@ -16,7 +16,7 @@
     "@sentropic/dataviz-svelte": "*",
     "@sentropic/dataviz-vue": "*",
     "@sentropic/design-system-react": "0.36.49",
-    "@sentropic/design-system-svelte": "0.34.62",
+    "@sentropic/design-system-svelte": "0.34.63",
     "@sentropic/design-system-theme-airbus": "0.1.0",
     "@sentropic/design-system-theme-canada": "file:../../vendor/sentropic-design-system-theme-canada-0.1.0.tgz",
     "@sentropic/design-system-theme-carbon": "0.2.2",
