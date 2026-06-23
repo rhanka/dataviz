@@ -4,7 +4,7 @@
   font-family: var(--st-font-sans, Inter, ui-sans-serif, system-ui, sans-serif);
   --docs-header-height: 5rem;
   --docs-sidebar-width: 19.5rem;
-  --docs-accent: #0043ce;
+  --docs-accent: var(--st-semantic-action-primary, #0043ce);
   --docs-ink: var(--st-semantic-text-primary, #0f172a);
   --docs-muted: var(--st-semantic-text-secondary, #475569);
   --docs-line: var(--st-semantic-border-subtle, #e2e8f0);
@@ -148,6 +148,21 @@ select {
 .st-appChrome__header .st-appHeader__nav {
   flex: 1 1 auto;
   justify-content: center;
+}
+
+/* Neutralise la cascade React (font-weight: 700 sur navLink actif) et ajoute
+   le fond au hover comme dans DS docs (.docs-top-nav a:hover). */
+.st-appChrome__header .st-appHeader__navLink {
+  font-weight: 400;
+}
+
+.st-appChrome__header .st-appHeader__navLink:hover,
+.st-appChrome__header .st-appHeader__navLink:focus-visible {
+  background: var(--st-semantic-surface-subtle, #f8fafc);
+}
+
+.st-appChrome__header .st-appHeader__navLink[aria-current="page"] {
+  font-weight: 650;
 }
 
 /* Zone de contrôles utilitaires (recherche, framework, thème, mode couleur,
