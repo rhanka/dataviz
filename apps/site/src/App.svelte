@@ -206,8 +206,6 @@
     aria-haspopup="dialog"
   >
     <SearchIcon size={16} strokeWidth={2.1} aria-hidden="true" />
-    <span class="docs-search-trigger__label">{locale.value === 'fr' ? 'Rechercher…' : 'Search…'}</span>
-    <kbd class="docs-search-trigger__kbd">/</kbd>
   </button>
 {/snippet}
 
@@ -322,6 +320,9 @@
       aria-haspopup="true"
       aria-label={locale.value === 'fr' ? 'Changer la langue' : 'Change language'}
     >
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="12" cy="12" r="10" /><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+      </svg>
       <span>{locale.value.toUpperCase()}</span>
       <ChevronDown size={12} class="docs-locale-trigger-chevron {isLocaleOpen ? 'rotated' : ''}" aria-hidden="true" />
     </button>
@@ -348,20 +349,6 @@
   </div>
 {/snippet}
 
-{#snippet githubLink()}
-  {#each DOCS_UTILITY_NAV as item (item.href)}
-    <a
-      class="docs-header-control docs-header-iconLink"
-      href={item.href}
-      rel={item.external ? 'noreferrer' : undefined}
-      target={item.external ? '_blank' : undefined}
-      aria-label={item.label}
-    >
-      <Github size={16} strokeWidth={2.1} aria-hidden="true" />
-    </a>
-  {/each}
-{/snippet}
-
 <!-- Liens de nav principaux du AppHeader (classe utilitaire publiée du DS). -->
 {#snippet appNav()}
   {#each appNavItems as item (item.href)}
@@ -376,7 +363,7 @@
 {/snippet}
 
 <!-- Zone actions (droite) : recherche, framework, thème, mode couleur, langue,
-     GitHub, identité — reproduit l'ancien utilityNav d'AppChrome. -->
+     identité — reproduit l'ancien utilityNav d'AppChrome. -->
 {#snippet headerActions()}
   <div class="st-appChrome__utilityNav">
     {@render searchTrigger()}
@@ -384,7 +371,6 @@
     {@render themeSelector()}
     {@render colorModeToggle()}
     {@render localeSelector()}
-    {@render githubLink()}
     {@render identityControl()}
   </div>
 {/snippet}
@@ -612,7 +598,7 @@
 
         <div class="docs-sidebar-footer">
           <span class="docs-sidebar-version">dataviz</span>
-          {#each DOCS_UTILITY_NAV as item (item.href)}
+          {#each DOCS_UTILITY_NAV.filter((item) => item.external) as item (item.href)}
             <a
               class="docs-sidebar-github"
               href={item.href}
