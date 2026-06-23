@@ -32,7 +32,10 @@ export default defineConfig({
   },
   // React/Vue islands are imported dynamically at runtime; keep their core
   // libs out of the optimizer's eager scan so the Svelte SPA stays lean.
+  // design-system-svelte is excluded so Vite compiles .svelte files on demand
+  // (avoids stale pre-bundle cache overriding scoped style fixes).
   optimizeDeps: {
+    exclude: ['@sentropic/design-system-svelte'],
     include: ['react', 'react-dom/client', 'vue'],
   },
 });
