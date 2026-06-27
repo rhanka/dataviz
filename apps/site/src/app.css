@@ -138,7 +138,13 @@ select {
   max-width: none;
 }
 
-.st-appChrome__header .st-appHeader__bar {
+/* Spécificité (0,3,0) via l'ancêtre .docs-shell : bat le style SCOPED du
+   composant AppHeader (.st-appHeader__bar.svelte-xxx = 0,2,0, padding 0 1rem).
+   Sans le préfixe, l'override (0,2,0) et le scoped (0,2,0) sont à égalité et
+   l'ordre du bundle PROD fait gagner le scoped → logo à 16px (collé trop à
+   gauche). En dev l'ordre d'injection faisait gagner l'override (24px), ce qui
+   masquait le bug. Le préfixe garantit 24px (= valeur DS docs) en dev ET prod. */
+.docs-shell .st-appChrome__header .st-appHeader__bar {
   height: auto;
   min-height: var(--docs-header-height);
   padding: 0 1.5rem;
