@@ -53,7 +53,7 @@ const DARK_TOKENS: Record<string, string> = {
   '--st-semantic-surface-inverse': '#f8fafc',
   '--st-semantic-surface-overlay': 'rgb(2 6 23 / 0.62)',
   '--st-semantic-text-primary': '#f1f5f9',
-  '--st-semantic-text-secondary': '#cbd5e1',
+  '--st-semantic-text-secondary': 'oklch(78% 0.012 250)',
   '--st-semantic-text-muted': '#94a3b8',
   '--st-semantic-text-inverse': '#0f172a',
   '--st-semantic-text-link': '#7dd3fc',
