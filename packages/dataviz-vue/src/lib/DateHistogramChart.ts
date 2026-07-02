@@ -1,5 +1,5 @@
-import { defineComponent, h, type PropType } from 'vue';
-import { BarChart, type BarChartDatum, type BarChartTone } from '@sentropic/design-system-vue';
+import { defineComponent, h, type PropType, type Component } from 'vue';
+import { BarChart, DatePicker, type BarChartDatum, type BarChartTone } from '@sentropic/design-system-vue';
 import {
   buildDateHistogramModel,
   rangeSelectionKey,
@@ -7,6 +7,7 @@ import {
   type DateHistogramBin,
   type DateHistogramConfig,
   type DateHistogramModel,
+  type TimeRange,
 } from '@sentropic/dataviz-core';
 import { useDashboard } from '../adapter.js';
 
@@ -29,6 +30,9 @@ export type DateHistogramChartProps = {
   onHoverKeyChange?: (key: string | null) => void;
   onSelectKey?: (key: string | null) => void;
   formatLabel?: DateHistogramLabelFormatter;
+  enableBrush?: boolean;
+  brushRange?: TimeRange | null;
+  onTimeRangeChange?: (range: TimeRange | null) => void;
   class?: string;
 };
 
@@ -75,6 +79,9 @@ export const DateHistogramChart = defineComponent({
     onHoverKeyChange: { type: Function as PropType<(key: string | null) => void>, default: undefined },
     onSelectKey: { type: Function as PropType<(key: string | null) => void>, default: undefined },
     formatLabel: { type: Function as PropType<DateHistogramLabelFormatter>, default: defaultFormatLabel },
+    enableBrush: { type: Boolean, default: false },
+    brushRange: { type: Object as PropType<TimeRange | null>, default: undefined },
+    onTimeRangeChange: { type: Function as PropType<(range: TimeRange | null) => void>, default: undefined },
     class: { type: String, default: undefined },
   },
   setup(props) {
@@ -112,7 +119,27 @@ export const DateHistogramChart = defineComponent({
           }
         : undefined;
 
-      return h(BarChart, {
+      function handlePickerChange(value: unknown) {
+        if (!value || typeof value !== 'object' || !('start' in value)) {
+          props.onTimeRangeChange?.(null);
+          if (!props.onTimeRangeChange) props.store.clearFilter(props.date);
+          return;
+        }
+        const r = value as { start: Date | null; end: Date | null };
+        if (r.start && r.end) {
+          const range: TimeRange = { from: r.start.toISOString(), to: r.end.toISOString() };
+          props.onTimeRangeChange?.(range);
+          if (!props.onTimeRangeChange) {
+            props.store.setFilter(props.date, { kind: 'range', min: r.start.getTime(), max: r.end.getTime() });
+          }
+        }
+      }
+
+      const pickerValue = props.brushRange
+        ? { start: new Date(props.brushRange.from), end: new Date(props.brushRange.to) }
+        : null;
+
+      const barChart = h(BarChart, {
         data,
         label: props.label,
         width: props.width,
@@ -124,6 +151,18 @@ export const DateHistogramChart = defineComponent({
         onSelectKey: props.onSelectKey,
         class: ['st-dateHistogramChart', props.class].filter(Boolean).join(' '),
       });
+
+      if (!props.enableBrush) return barChart;
+
+      return h('div', { class: 'st-dateHistogramChart__wrapper' }, [
+        barChart,
+        h(DatePicker as Component, {
+          mode: 'range',
+          label: `${props.label} — plage de dates`,
+          value: pickerValue,
+          onChange: handlePickerChange,
+        }),
+      ]);
     };
   },
 });

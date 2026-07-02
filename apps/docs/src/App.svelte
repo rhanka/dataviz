@@ -1,7 +1,7 @@
 <script lang="ts">
   import {
     createDashboardStore,
-    DashboardFilterBar,
+    DashboardActiveFilters,
     SelectionLegend,
     CrossfilteredBarChart,
     SmallMultiples,
@@ -34,7 +34,7 @@
   </header>
 
   <section class="bar">
-    <DashboardFilterBar {store} />
+    <DashboardActiveFilters {store} />
     <SelectionLegend {store} labels={legendLabels} />
   </section>
 

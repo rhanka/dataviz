@@ -12,7 +12,7 @@
 -->
 <script lang="ts">
   import {
-    DashboardFilterBar,
+    DashboardActiveFilters,
     SelectionLegend,
     CrossfilteredBarChart,
     RecordsTable,
@@ -52,7 +52,7 @@
 
 <div class="explorer">
   <!-- Barre de filtres actifs + légende des sélections -->
-  <DashboardFilterBar {store} />
+  <DashboardActiveFilters {store} />
   <SelectionLegend {store} labels={{ main: dimLabel }} />
 
   <!-- Sélecteurs de dimension et de mesure -->

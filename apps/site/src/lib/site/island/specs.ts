@@ -326,7 +326,7 @@ function biSpec(kind: string, ctx: SpecContext): NodeSpec[] | null {
   switch (kind) {
     case 'crossfilter':
       return [
-        { comp: 'DashboardFilterBar', props: { store } },
+        { comp: 'DashboardActiveFilters', props: { store } },
         { comp: 'SelectionLegend', props: { store, labels: { byCat: 'Catégorie', byChannel: 'Canal' } } },
         { comp: 'CrossfilteredBarChart', props: { store, viewId: 'byCat', dimension: 'category', measure: 'revenue', label: 'Revenu par catégorie' } },
         { comp: 'CrossfilteredBarChart', props: { store, viewId: 'byChannel', dimension: 'channel', measure: 'revenue', tone: 'category2', label: 'Revenu par canal' } },
@@ -334,7 +334,7 @@ function biSpec(kind: string, ctx: SpecContext): NodeSpec[] | null {
       ];
     case 'filterbar':
       return [
-        { comp: 'DashboardFilterBar', props: { store } },
+        { comp: 'DashboardActiveFilters', props: { store } },
         { comp: 'ValueSlicer', props: { store, dimension: 'region', orientation: 'horizontal' } },
         { comp: 'RecordsTable', props: { store, pageSize: 6 } },
       ];

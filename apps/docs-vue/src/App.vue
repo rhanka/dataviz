@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {
   createDashboardStore,
-  DashboardFilterBar,
+  DashboardActiveFilters,
   SelectionLegend,
   CrossfilteredBarChart,
   SmallMultiples,
@@ -35,7 +35,7 @@ const drillHierarchy = ['country', 'city'];
     </header>
 
     <section class="bar">
-      <DashboardFilterBar :store="store" />
+      <DashboardActiveFilters :store="store" />
       <SelectionLegend :store="store" :labels="legendLabels" />
     </section>
 

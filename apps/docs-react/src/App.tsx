@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import {
   createDashboardStore,
-  DashboardFilterBar,
+  DashboardActiveFilters,
   SelectionLegend,
   CrossfilteredBarChart,
   SmallMultiples,
@@ -35,7 +35,7 @@ export function App() {
       </header>
 
       <section className="bar">
-        <DashboardFilterBar store={store} />
+        <DashboardActiveFilters store={store} />
         <SelectionLegend store={store} labels={legendLabels} />
       </section>
 

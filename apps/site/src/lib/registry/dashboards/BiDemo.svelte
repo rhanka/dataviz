@@ -6,7 +6,7 @@
 -->
 <script lang="ts">
   import {
-    DashboardFilterBar,
+    DashboardActiveFilters,
     SelectionLegend,
     CrossfilteredBarChart,
     SmallMultiples,
@@ -74,7 +74,7 @@
 
 <div class="stage">
   {#if kind === 'crossfilter'}
-    <DashboardFilterBar {store} />
+    <DashboardActiveFilters {store} />
     <SelectionLegend {store} labels={{ byCat: 'Catégorie', byChannel: 'Canal' }} />
     <div class="grid2">
       <CrossfilteredBarChart {store} viewId="byCat" dimension="category" measure="revenue" label="Revenu par catégorie" />
@@ -82,7 +82,7 @@
     </div>
     <RecordsTable {store} pageSize={6} fields={['region', 'category', 'channel', 'revenue', 'units']} />
   {:else if kind === 'filterbar'}
-    <DashboardFilterBar {store} />
+    <DashboardActiveFilters {store} />
     <ValueSlicer {store} dimension="region" orientation="horizontal" />
     <RecordsTable {store} pageSize={6} />
   {:else if kind === 'selectionlegend'}

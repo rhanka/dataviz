@@ -4,6 +4,7 @@
     DateHistogramBin,
     DateHistogramConfig,
     DateHistogramModel,
+    TimeRange,
   } from '@sentropic/dataviz-core';
   import type { BarChartTone } from '@sentropic/design-system-svelte';
 
@@ -26,13 +27,17 @@
     onHoverKeyChange?: (key: string | null) => void;
     onSelectKey?: (key: string | null) => void;
     formatLabel?: DateHistogramLabelFormatter;
+    enableBrush?: boolean;
+    brushRange?: TimeRange | null;
+    onTimeRangeChange?: (range: TimeRange | null) => void;
     class?: string;
   };
 </script>
 
 <script lang="ts">
+  import { untrack } from 'svelte';
   import { buildDateHistogramModel, rangeSelectionKey } from '@sentropic/dataviz-core';
-  import { BarChart as DsBarChart, type BarChartDatum } from '@sentropic/design-system-svelte';
+  import { BarChart as DsBarChart, DatePicker, type BarChartDatum, type DatePickerRange } from '@sentropic/design-system-svelte';
   import { useDashboard } from '../adapter.js';
 
   const DATE_LABEL = new Intl.DateTimeFormat('en-US', {
@@ -76,6 +81,9 @@
     onHoverKeyChange,
     onSelectKey,
     formatLabel = defaultFormatLabel,
+    enableBrush = false,
+    brushRange,
+    onTimeRangeChange,
     class: className,
   }: DateHistogramChartProps = $props();
 
@@ -103,6 +111,23 @@
     );
   });
   const classes = $derived(['st-dateHistogramChart', className].filter(Boolean).join(' '));
+  let localPickerValue = $state<DatePickerRange | null>(null);
+
+  $effect(() => {
+    localPickerValue = brushRange
+      ? { start: new Date(brushRange.from), end: new Date(brushRange.to) }
+      : null;
+  });
+
+  $effect(() => {
+    const p = localPickerValue;
+    if (!p?.start || !p.end) return;
+    const br = untrack(() => brushRange);
+    const pFrom = p.start.toISOString();
+    const pTo = p.end.toISOString();
+    if (br?.from === pFrom && br?.to === pTo) return;
+    handlePickerChange(p);
+  });
 
   function onSelect(key: string) {
     if (!viewId) return;
@@ -111,17 +136,55 @@
     if (!bin) return;
     store.toggleSelection(viewId, selectionKeyFor(bin));
   }
+
+  function handlePickerChange(value: unknown) {
+    if (!value || typeof value !== 'object' || !('start' in value)) {
+      onTimeRangeChange?.(null);
+      if (!onTimeRangeChange) store.clearFilter(date);
+      return;
+    }
+    const r = value as { start: Date | null; end: Date | null };
+    if (r.start && r.end) {
+      const range: TimeRange = { from: r.start.toISOString(), to: r.end.toISOString() };
+      onTimeRangeChange?.(range);
+      if (!onTimeRangeChange) {
+        store.setFilter(date, { kind: 'range', min: r.start.getTime(), max: r.end.getTime() });
+      }
+    }
+  }
 </script>
 
-<DsBarChart
-  {data}
-  {label}
-  {width}
-  {height}
-  selectedKeys={selectable && viewId ? selectedKeys : []}
-  onSelect={selectable && viewId ? onSelect : undefined}
-  {hoverKey}
-  {onHoverKeyChange}
-  {onSelectKey}
-  class={classes}
-/>
+{#if enableBrush}
+  <div class="st-dateHistogramChart__wrapper">
+    <DsBarChart
+      {data}
+      {label}
+      {width}
+      {height}
+      selectedKeys={selectable && viewId ? selectedKeys : []}
+      onSelect={selectable && viewId ? onSelect : undefined}
+      {hoverKey}
+      {onHoverKeyChange}
+      {onSelectKey}
+      class={classes}
+    />
+    <DatePicker
+      mode="range"
+      label="{label} — plage de dates"
+      bind:value={localPickerValue}
+    />
+  </div>
+{:else}
+  <DsBarChart
+    {data}
+    {label}
+    {width}
+    {height}
+    selectedKeys={selectable && viewId ? selectedKeys : []}
+    onSelect={selectable && viewId ? onSelect : undefined}
+    {hoverKey}
+    {onHoverKeyChange}
+    {onSelectKey}
+    class={classes}
+  />
+{/if}

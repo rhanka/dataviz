@@ -635,3 +635,6 @@ export { buildPolygonData } from './polygon.js';
 // Venn chart model
 export type { VennArea, VennConfig } from './venn.js';
 export { buildVennData } from './venn.js';
+
+// Shared UI contract types (framework-agnostic, consumed by dataviz-{react,vue,svelte})
+export type TimeRange = { from: string; to: string; relativeLabel?: string };

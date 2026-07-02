@@ -1,68 +1,81 @@
-import { render, screen, act } from '@testing-library/react';
-import { describe, it, expect } from 'vitest';
-import { createDashboardStore, type DataModel } from '@sentropic/dataviz-core';
+import { render, screen, fireEvent } from '@testing-library/react';
+import { describe, it, expect, vi } from 'vitest';
 import { DashboardFilterBar } from './DashboardFilterBar.js';
 
-const model: DataModel = {
-  dimensions: [
-    { id: 'country', label: 'Pays', type: 'discrete' },
-    { id: 'price', label: 'Prix', type: 'continuous' },
-  ],
-  measures: [{ id: 'sales', label: 'Ventes', aggregation: 'sum' }],
-};
-
-const newStore = () => createDashboardStore({ model, data: [] });
-
 describe('DashboardFilterBar (react)', () => {
-  it('exposes the filter group with its aria-label', () => {
-    render(<DashboardFilterBar store={newStore()} label="Filtres actifs" />);
-    expect(screen.getByRole('group', { name: 'Filtres actifs' })).toBeTruthy();
+  it('renders a Search for query-search control', () => {
+    render(
+      <DashboardFilterBar
+        controls={[{ kind: 'query-search', label: 'Recherche', fields: ['source', 'severity'] }]}
+      />,
+    );
+    expect(screen.getByRole('searchbox')).toBeTruthy();
   });
 
-  it('renders one pill per active filter, labelled by the dimension', () => {
-    const store = newStore();
-    store.setFilter('country', { kind: 'include', values: ['France', 'Italie'] });
-    render(<DashboardFilterBar store={store} />);
-    expect(screen.getByText('Pays')).toBeTruthy();
-    expect(screen.getByText('France, Italie')).toBeTruthy();
+  it('renders a DatePicker for date-range control', () => {
+    render(
+      <DashboardFilterBar
+        controls={[{ kind: 'date-range', label: 'Période' }]}
+      />,
+    );
+    expect(screen.getByText('Période')).toBeTruthy();
   });
 
-  it('clears a single filter via its pill remove button', () => {
-    const store = newStore();
-    store.setFilter('country', { kind: 'include', values: ['France'] });
-    render(<DashboardFilterBar store={store} />);
-    act(() => {
-      screen.getByRole('button', { name: 'Retirer le filtre Pays' }).click();
-    });
-    expect(store.getState().filters.country).toBeUndefined();
+  it('renders a Select with presets for relative-date control', () => {
+    const presets = [
+      { label: 'Dernière heure', from: '-1h', to: 'now' },
+      { label: 'Dernier jour', from: '-1d', to: 'now' },
+    ];
+    render(
+      <DashboardFilterBar
+        controls={[{ kind: 'relative-date', label: 'Période relative', presets }]}
+      />,
+    );
+    expect(screen.getByText('Période relative')).toBeTruthy();
+    expect(screen.getByText('Dernière heure')).toBeTruthy();
+    expect(screen.getByText('Dernier jour')).toBeTruthy();
   });
 
-  it('clears every filter — but preserves selections — via the clear-all button', () => {
-    const store = newStore();
-    store.setFilter('country', { kind: 'include', values: ['France'] });
-    store.setFilter('price', { kind: 'range', min: 10 });
-    store.toggleSelection('byCountry', 'FR');
-    render(<DashboardFilterBar store={store} />);
-    act(() => {
-      screen.getByRole('button', { name: 'Tout effacer' }).click();
-    });
-    expect(Object.keys(store.getState().filters)).toHaveLength(0);
-    expect(store.getState().selections.byCountry).toEqual(['FR']);
+  it('calls onQueryChange when Search changes', () => {
+    const onQueryChange = vi.fn();
+    render(
+      <DashboardFilterBar
+        controls={[{ kind: 'query-search', label: 'Recherche', fields: ['source'] }]}
+        onQueryChange={onQueryChange}
+      />,
+    );
+    fireEvent.change(screen.getByRole('searchbox'), { target: { value: 'error' } });
+    expect(onQueryChange).toHaveBeenCalledWith('error');
   });
 
-  it('shows no clear-all button when there are no filters', () => {
-    render(<DashboardFilterBar store={newStore()} />);
-    expect(screen.queryByRole('button', { name: 'Tout effacer' })).toBeNull();
+  it('renders FilterPill chips when chips=true and activeFilters provided', () => {
+    const activeFilters = [
+      { field: 'severity', operator: 'eq' as const, value: 'error', label: 'Sévérité' },
+    ];
+    render(
+      <DashboardFilterBar
+        controls={[]}
+        chips
+        activeFilters={activeFilters}
+      />,
+    );
+    expect(screen.getByText('Sévérité')).toBeTruthy();
+    expect(screen.getByText('error')).toBeTruthy();
   });
 
-  it('reacts to a filter set after mount', () => {
-    const store = newStore();
-    render(<DashboardFilterBar store={store} />);
-    expect(screen.queryByText('≥ 5')).toBeNull();
-    act(() => {
-      store.setFilter('price', { kind: 'range', min: 5 });
-    });
-    expect(screen.getByText('≥ 5')).toBeTruthy();
-    expect(screen.getByText('Prix')).toBeTruthy();
+  it('renders export button when export config provided', () => {
+    const onExport = vi.fn();
+    const exportConfig = { label: 'Exporter CSV', fields: ['time', 'source'], filenameTemplate: '{tenant}-logs.csv' };
+    render(
+      <DashboardFilterBar
+        controls={[]}
+        export={exportConfig}
+        onExport={onExport}
+      />,
+    );
+    const btn = screen.getByRole('button', { name: 'Exporter CSV' });
+    expect(btn).toBeTruthy();
+    fireEvent.click(btn);
+    expect(onExport).toHaveBeenCalledWith(exportConfig);
   });
 });

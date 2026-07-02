@@ -1,4 +1,4 @@
-import { BarChart, type BarChartDatum, type BarChartTone } from '@sentropic/design-system-react';
+import { BarChart, DatePicker, type BarChartDatum, type BarChartTone, type DatePickerRange } from '@sentropic/design-system-react';
 import {
   buildDateHistogramModel,
   rangeSelectionKey,
@@ -6,6 +6,7 @@ import {
   type DateHistogramBin,
   type DateHistogramConfig,
   type DateHistogramModel,
+  type TimeRange,
 } from '@sentropic/dataviz-core';
 import { useDashboard } from '../adapter.js';
 
@@ -28,6 +29,12 @@ export type DateHistogramChartProps = {
   onHoverKeyChange?: (key: string | null) => void;
   onSelectKey?: (key: string | null) => void;
   formatLabel?: DateHistogramLabelFormatter;
+  /** When true, shows a date-range picker below the histogram for semantic time brushing. */
+  enableBrush?: boolean;
+  /** Controlled brush range (ISO strings). */
+  brushRange?: TimeRange | null;
+  /** Emitted when the brush range changes (or is cleared). */
+  onTimeRangeChange?: (range: TimeRange | null) => void;
   className?: string;
 };
 
@@ -56,6 +63,11 @@ function selectionKeyFor(bin: DateHistogramBin): string {
   return rangeSelectionKey(range.min, range.max);
 }
 
+function brushRangeToPickerValue(range: TimeRange | null | undefined): DatePickerRange | null {
+  if (!range) return null;
+  return { start: new Date(range.from), end: new Date(range.to) };
+}
+
 export function DateHistogramChart({
   store,
   viewId,
@@ -72,6 +84,9 @@ export function DateHistogramChart({
   onHoverKeyChange,
   onSelectKey,
   formatLabel = defaultFormatLabel,
+  enableBrush = false,
+  brushRange,
+  onTimeRangeChange,
   className,
 }: DateHistogramChartProps) {
   const state = useDashboard(store);
@@ -102,7 +117,23 @@ export function DateHistogramChart({
       }
     : undefined;
 
-  return (
+  function handleRangeChange(value: DatePickerRange | Date | null) {
+    if (!value || !('start' in value)) {
+      onTimeRangeChange?.(null);
+      if (!onTimeRangeChange) store.clearFilter(date);
+      return;
+    }
+    const { start, end } = value as DatePickerRange;
+    if (start && end) {
+      const range: TimeRange = { from: start.toISOString(), to: end.toISOString() };
+      onTimeRangeChange?.(range);
+      if (!onTimeRangeChange) {
+        store.setFilter(date, { kind: 'range', min: start.getTime(), max: end.getTime() });
+      }
+    }
+  }
+
+  const chart = (
     <BarChart
       data={data}
       label={label}
@@ -115,5 +146,19 @@ export function DateHistogramChart({
       onSelectKey={onSelectKey}
       className={['st-dateHistogramChart', className].filter(Boolean).join(' ') || undefined}
     />
+  );
+
+  if (!enableBrush) return chart;
+
+  return (
+    <div className="st-dateHistogramChart__wrapper">
+      {chart}
+      <DatePicker
+        mode="range"
+        label={`${label} — plage de dates`}
+        value={brushRangeToPickerValue(brushRange)}
+        onChange={(value) => handleRangeChange(value as DatePickerRange | Date | null)}
+      />
+    </div>
   );
 }
