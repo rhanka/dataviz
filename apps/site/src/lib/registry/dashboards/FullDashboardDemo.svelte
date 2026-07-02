@@ -11,7 +11,7 @@
 -->
 <script lang="ts">
   import {
-    DashboardFilterBar,
+    DashboardActiveFilters,
     DashboardGrid,
     SelectionLegend,
     KpiCardGroup,
@@ -60,7 +60,7 @@
 
 <div class="full-dash">
   <!-- Barre de filtres actifs + légende des sélections -->
-  <DashboardFilterBar {store} />
+  <DashboardActiveFilters {store} />
   <SelectionLegend {store} labels={{ byCat: 'Catégorie', byChan: 'Canal' }} />
 
   <div class="full-dash__toolbar">

@@ -23,11 +23,11 @@ export function DASHBOARD_ENTRIES(BiDemo: Demo, FullDashboard: Demo, DataExplore
       tagline: 'Surface BI exploration : dimension/mesure dynamiques + cross-filter + slicers + table.',
       hasControls: false,
       useCase:
-        "Un seul `createDashboardStore` alimente une surface d'exploration BI complète en libre-service.\n\nDeux `ContentSwitcher` DS permettent de choisir à la volée la **dimension** (catégorie, région, canal, segment) et la **mesure** (revenu, unités, marge) à visualiser. Le `CrossfilteredBarChart` se recompose instantanément à chaque changement.\n\nCliquer une barre applique `applyCrossfilter` dans le store : la `RecordsTable` et les slicers (`TopNFilter`, `ValueSlicer`) se recalculent en temps réel sans aucune logique custom.\n\n`DashboardFilterBar` résume les filtres actifs sous forme de chips effaçables ; `SelectionLegend` indique quelles valeurs sont sélectionnées dans la vue principale.\n\nMiroir de la vue DS « data-explorer » : presentation 100 % composants dataviz/DS, tokens CSS uniquement.",
+        "Un seul `createDashboardStore` alimente une surface d'exploration BI complète en libre-service.\n\nDeux `ContentSwitcher` DS permettent de choisir à la volée la **dimension** (catégorie, région, canal, segment) et la **mesure** (revenu, unités, marge) à visualiser. Le `CrossfilteredBarChart` se recompose instantanément à chaque changement.\n\nCliquer une barre applique `applyCrossfilter` dans le store : la `RecordsTable` et les slicers (`TopNFilter`, `ValueSlicer`) se recalculent en temps réel sans aucune logique custom.\n\n`DashboardActiveFilters` résume les filtres actifs sous forme de chips effaçables ; `SelectionLegend` indique quelles valeurs sont sélectionnées dans la vue principale.\n\nMiroir de la vue DS « data-explorer » : presentation 100 % composants dataviz/DS, tokens CSS uniquement.",
       demo: DataExplorer,
       demoProps: {},
       code: storeCode(
-        ['DashboardFilterBar', 'SelectionLegend', 'CrossfilteredBarChart', 'RecordsTable', 'TopNFilter', 'ValueSlicer'],
+        ['DashboardActiveFilters', 'SelectionLegend', 'CrossfilteredBarChart', 'RecordsTable', 'TopNFilter', 'ValueSlicer'],
         {
           svelte: `<!-- Sélecteurs DS ContentSwitcher pour dimension + mesure -->
 <script>
@@ -36,7 +36,7 @@ export function DASHBOARD_ENTRIES(BiDemo: Demo, FullDashboard: Demo, DataExplore
   let measure = $state('revenue');
 <\/script>
 
-<DashboardFilterBar {store} />
+<DashboardActiveFilters {store} />
 <SelectionLegend {store} labels={{ main: 'Dimension active' }} />
 
 <ContentSwitcher size="sm" label="Dimension"
@@ -78,7 +78,7 @@ export function DataExplorer() {
   const [measure, setMeasure]     = useState('revenue');
   return (
     <>
-      <DashboardFilterBar store={store} />
+      <DashboardActiveFilters store={store} />
       <SelectionLegend store={store} labels={{ main: 'Dimension active' }} />
       <ContentSwitcher size="sm" label="Dimension"
         items={[
@@ -116,7 +116,7 @@ const measure   = ref('revenue');
 <\/script>
 
 <template>
-  <DashboardFilterBar :store="store" />
+  <DashboardActiveFilters :store="store" />
   <SelectionLegend :store="store" :labels="{ main: 'Dimension active' }" />
   <ContentSwitcher size="sm" label="Dimension"
     :items="[
@@ -159,12 +159,12 @@ const measure   = ref('revenue');
       demo: FullDashboard,
       demoProps: {},
       code: storeCode(
-        ['DashboardFilterBar', 'DashboardGrid', 'SelectionLegend', 'KpiCardGroup', 'CrossfilteredBarChart', 'AreaChart', 'DonutChart', 'RecordsTable'],
+        ['DashboardActiveFilters', 'DashboardGrid', 'SelectionLegend', 'KpiCardGroup', 'CrossfilteredBarChart', 'AreaChart', 'DonutChart', 'RecordsTable'],
         {
           svelte: `let layout = $state(initialLayout);
 let editMode = $state(false);
 
-<DashboardFilterBar {store} />
+<DashboardActiveFilters {store} />
 <SelectionLegend {store} labels={{ byCat: 'Catégorie', byChan: 'Canal' }} />
 
 <DashboardGrid {layout} panels={dashboardPanels} editable={editMode}
@@ -191,7 +191,7 @@ let editMode = $state(false);
 const [editMode, setEditMode] = useState(false);
 
 <>
-  <DashboardFilterBar store={store} />
+  <DashboardActiveFilters store={store} />
   <SelectionLegend store={store} labels={{ byCat: 'Catégorie', byChan: 'Canal' }} />
   <DashboardGrid layout={layout} panels={dashboardPanels} editable={editMode}
     onLayoutChange={setLayout}
@@ -214,7 +214,7 @@ const layout = ref(initialLayout);
 const editMode = ref(false);
 <\/script>
 
-<DashboardFilterBar :store="store" />
+<DashboardActiveFilters :store="store" />
 <SelectionLegend :store="store" :labels="{ byCat: 'Catégorie', byChan: 'Canal' }" />
 <DashboardGrid :layout="layout" :panels="dashboardPanels" :editable="editMode"
   @layout-change="(next) => (layout = next)">
@@ -239,20 +239,20 @@ const editMode = ref(false);
       tagline: 'Deux barres liées + barre de filtres + table. Cliquez une barre.',
       useCase:
         "Le pattern fondateur du tableau de bord BI : cliquer une barre filtre toutes les autres vues et la table d'enregistrements. La barre de filtres résume les sélections actives et permet de tout effacer.\n\nTout passe par l'état partagé `dataviz-core` : aucune logique de filtrage n'est recopiée dans la présentation.",
-      code: storeCode(['DashboardFilterBar', 'SelectionLegend', 'CrossfilteredBarChart', 'RecordsTable'], {
-        svelte: `<DashboardFilterBar {store} />
+      code: storeCode(['DashboardActiveFilters', 'SelectionLegend', 'CrossfilteredBarChart', 'RecordsTable'], {
+        svelte: `<DashboardActiveFilters {store} />
 <SelectionLegend {store} labels={{ byCat: 'Catégorie', byChannel: 'Canal' }} />
 <CrossfilteredBarChart {store} viewId="byCat" dimension="category" measure="revenue" label="Revenu par catégorie" />
 <CrossfilteredBarChart {store} viewId="byChannel" dimension="channel" measure="revenue" tone="category2" label="Revenu par canal" />
 <RecordsTable {store} pageSize={6} />`,
         react: `<>
-  <DashboardFilterBar store={store} />
+  <DashboardActiveFilters store={store} />
   <SelectionLegend store={store} labels={{ byCat: 'Catégorie', byChannel: 'Canal' }} />
   <CrossfilteredBarChart store={store} viewId="byCat" dimension="category" measure="revenue" label="Revenu par catégorie" />
   <CrossfilteredBarChart store={store} viewId="byChannel" dimension="channel" measure="revenue" tone="category2" label="Revenu par canal" />
   <RecordsTable store={store} pageSize={6} />
 </>`,
-        vue: `<DashboardFilterBar :store="store" />
+        vue: `<DashboardActiveFilters :store="store" />
 <SelectionLegend :store="store" :labels="{ byCat: 'Catégorie', byChannel: 'Canal' }" />
 <CrossfilteredBarChart :store="store" viewId="byCat" dimension="category" measure="revenue" label="Revenu par catégorie" />
 <CrossfilteredBarChart :store="store" viewId="byChannel" dimension="channel" measure="revenue" tone="category2" label="Revenu par canal" />
@@ -260,20 +260,20 @@ const editMode = ref(false);
       }),
     }, BiDemo),
     bi({
-      slug: 'filter-bar', name: 'DashboardFilterBar', group: 'Cross-filter & exploration', kind: 'filterbar', hasControls: true,
+      slug: 'filter-bar', name: 'DashboardActiveFilters', group: 'Cross-filter & exploration', kind: 'filterbar', hasControls: true,
       tagline: 'Résumé des filtres actifs + effacement global.',
       useCase:
         "Affiche sous forme de chips tous les filtres en vigueur (issus des slicers, du cross-filter, du drill) et offre un bouton « tout effacer ». C'est le tableau de bord de l'état de filtrage.",
-      code: storeCode(['DashboardFilterBar', 'ValueSlicer', 'RecordsTable'], {
-        svelte: `<DashboardFilterBar {store} />
+      code: storeCode(['DashboardActiveFilters', 'ValueSlicer', 'RecordsTable'], {
+        svelte: `<DashboardActiveFilters {store} />
 <ValueSlicer {store} dimension="region" orientation="horizontal" />
 <RecordsTable {store} pageSize={6} />`,
         react: `<>
-  <DashboardFilterBar store={store} />
+  <DashboardActiveFilters store={store} />
   <ValueSlicer store={store} dimension="region" orientation="horizontal" />
   <RecordsTable store={store} pageSize={6} />
 </>`,
-        vue: `<DashboardFilterBar :store="store" />
+        vue: `<DashboardActiveFilters :store="store" />
 <ValueSlicer :store="store" dimension="region" orientation="horizontal" />
 <RecordsTable :store="store" :pageSize="6" />`,
       }),

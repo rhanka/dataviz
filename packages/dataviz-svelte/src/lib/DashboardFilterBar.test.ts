@@ -1,67 +1,62 @@
 import { render, screen } from '@testing-library/svelte';
-import { tick } from 'svelte';
-import { describe, it, expect } from 'vitest';
-import { createDashboardStore, type DataModel } from '@sentropic/dataviz-core';
+import { describe, it, expect, vi } from 'vitest';
 import DashboardFilterBar from './DashboardFilterBar.svelte';
 
-const model: DataModel = {
-  dimensions: [
-    { id: 'country', label: 'Pays', type: 'discrete' },
-    { id: 'price', label: 'Prix', type: 'continuous' },
-  ],
-  measures: [{ id: 'sales', label: 'Ventes', aggregation: 'sum' }],
-};
-
-const newStore = () => createDashboardStore({ model, data: [] });
-
-describe('DashboardFilterBar', () => {
-  it('exposes the filter group with its aria-label', () => {
-    const store = newStore();
-    render(DashboardFilterBar, { props: { store, label: 'Filtres actifs' } });
-    expect(screen.getByRole('group', { name: 'Filtres actifs' })).toBeTruthy();
+describe('DashboardFilterBar (svelte)', () => {
+  it('renders a search input for query-search control', () => {
+    render(DashboardFilterBar, {
+      props: {
+        controls: [{ kind: 'query-search', label: 'Recherche', fields: ['source'] }],
+      },
+    });
+    expect(screen.getByRole('searchbox')).toBeTruthy();
   });
 
-  it('renders one pill per active filter, labelled by the dimension', () => {
-    const store = newStore();
-    store.setFilter('country', { kind: 'include', values: ['France', 'Italie'] });
-    render(DashboardFilterBar, { props: { store } });
-    expect(screen.getByText('Pays')).toBeTruthy();
-    expect(screen.getByText('France, Italie')).toBeTruthy();
+  it('renders a date picker label for date-range control', () => {
+    render(DashboardFilterBar, {
+      props: {
+        controls: [{ kind: 'date-range', label: 'Période' }],
+      },
+    });
+    expect(screen.getByText('Période')).toBeTruthy();
   });
 
-  it('clears a single filter via its pill remove button', () => {
-    const store = newStore();
-    store.setFilter('country', { kind: 'include', values: ['France'] });
-    render(DashboardFilterBar, { props: { store } });
-    const remove = screen.getByRole('button', { name: 'Retirer le filtre Pays' });
-    remove.click();
-    expect(store.getState().filters.country).toBeUndefined();
+  it('renders a select with presets for relative-date control', () => {
+    const presets = [
+      { label: 'Dernière heure', from: '-1h', to: 'now' },
+      { label: 'Dernier jour', from: '-1d', to: 'now' },
+    ];
+    render(DashboardFilterBar, {
+      props: {
+        controls: [{ kind: 'relative-date', label: 'Période relative', presets }],
+      },
+    });
+    expect(screen.getByText('Période relative')).toBeTruthy();
+    expect(screen.getByText('Dernière heure')).toBeTruthy();
+    expect(screen.getByText('Dernier jour')).toBeTruthy();
   });
 
-  it('clears every filter — but preserves selections — via the clear-all button', () => {
-    const store = newStore();
-    store.setFilter('country', { kind: 'include', values: ['France'] });
-    store.setFilter('price', { kind: 'range', min: 10 });
-    store.toggleSelection('byCountry', 'FR');
-    render(DashboardFilterBar, { props: { store } });
-    screen.getByRole('button', { name: 'Tout effacer' }).click();
-    expect(Object.keys(store.getState().filters)).toHaveLength(0);
-    expect(store.getState().selections.byCountry).toEqual(['FR']);
+  it('renders FilterPill chips when chips=true and activeFilters provided', () => {
+    const activeFilters = [
+      { field: 'severity', operator: 'eq' as const, value: 'error', label: 'Sévérité' },
+    ];
+    render(DashboardFilterBar, {
+      props: { controls: [], chips: true, activeFilters },
+    });
+    expect(screen.getByText('Sévérité')).toBeTruthy();
+    expect(screen.getByText('error')).toBeTruthy();
   });
 
-  it('shows no clear-all button when there are no filters', () => {
-    const store = newStore();
-    render(DashboardFilterBar, { props: { store } });
-    expect(screen.queryByRole('button', { name: 'Tout effacer' })).toBeNull();
-  });
-
-  it('reacts to a filter set after mount', async () => {
-    const store = newStore();
-    render(DashboardFilterBar, { props: { store } });
-    expect(screen.queryByText('≥ 5')).toBeNull();
-    store.setFilter('price', { kind: 'range', min: 5 });
-    await tick();
-    expect(screen.getByText('≥ 5')).toBeTruthy();
-    expect(screen.getByText('Prix')).toBeTruthy();
+  it('renders export button when export config provided', () => {
+    const onExport = vi.fn();
+    const exportConfig = {
+      label: 'Exporter CSV',
+      fields: ['time', 'source'],
+      filenameTemplate: '{tenant}-logs.csv',
+    };
+    render(DashboardFilterBar, {
+      props: { controls: [], export: exportConfig, onExport },
+    });
+    expect(screen.getByRole('button', { name: 'Exporter CSV' })).toBeTruthy();
   });
 });
