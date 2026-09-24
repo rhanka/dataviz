@@ -9,7 +9,20 @@ sync-slicers, drill, bookmarks.
 
 > **Le DS émet/reçoit l'intention UI ; dataviz détient, synchronise et persiste l'état inter-vues.**
 
+## Où vivent ces bibliothèques
+
+Les paquets `@sentropic/dataviz-*` sont désormais maintenus et **publiés depuis le
+design system** : [rhanka/sent-tech-design-system](https://github.com/rhanka/sent-tech-design-system).
+
+Ce dépôt ne publie plus rien sur npm : ses paquets sont marqués `private` et sa CI
+se limite à `build` + `check` + `test`, plus le déploiement GitHub Pages du site et
+des démos. Pour installer, consommer ou faire évoluer ces bibliothèques, aller dans
+le dépôt du design system.
+
 ## Packages
+
+Conservés ici pour le site et les démos de ce dépôt (liens npm workspaces, aucune
+publication) ; la version de référence est celle du design system.
 
 | Package | Rôle |
 |---|---|

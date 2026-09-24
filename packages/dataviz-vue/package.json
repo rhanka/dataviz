@@ -1,6 +1,7 @@
 {
   "name": "@sentropic/dataviz-vue",
   "version": "0.4.52",
+  "private": true,
   "description": "Vue 3 adapter for @sentropic/dataviz-core, built on @sentropic/design-system-vue.",
   "type": "module",
   "license": "MIT",
@@ -42,8 +43,5 @@
     "@vue/test-utils": "^2.4.11",
     "jsdom": "^29.1.1",
     "vue": "^3.5.35"
-  },
-  "publishConfig": {
-    "access": "public"
   }
 }
