@@ -5,8 +5,10 @@
 > qui est la source de référence (code, docs, site :
 > <https://design-system.sent-tech.ca>). Le site de ce dépôt redirige vers
 > <https://design-system.sent-tech.ca/components> (cible provisoire, en
-> attendant une section dataviz dédiée) ; la galerie historique reste
-> accessible sur ses pages (voir [docs/site-inventory.md](./docs/site-inventory.md)).
+> attendant une section dataviz dédiée) — **toutes ses adresses**, racine comme
+> liens profonds. La galerie historique n'est plus publiée ; son inventaire est
+> conservé dans [docs/site-inventory.md](./docs/site-inventory.md). Les démos
+> par framework restent en ligne sous `/demos/svelte|react|vue`.
 
 Couche **BI / dashboard** construite **nativement sur le [design system Sent Tech](https://github.com/rhanka/sent-tech-design-system)**.
 
