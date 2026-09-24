@@ -4,8 +4,9 @@
 > vivent désormais dans le [design system Sentropic](https://github.com/rhanka/sent-tech-design-system),
 > qui est la source de référence (code, docs, site :
 > <https://design-system.sent-tech.ca>). Le site de ce dépôt redirige vers
-> celui du design system ; la galerie historique reste accessible sur ses
-> pages (voir [docs/site-inventory.md](./docs/site-inventory.md)).
+> <https://design-system.sent-tech.ca/components> (cible provisoire, en
+> attendant une section dataviz dédiée) ; la galerie historique reste
+> accessible sur ses pages (voir [docs/site-inventory.md](./docs/site-inventory.md)).
 
 Couche **BI / dashboard** construite **nativement sur le [design system Sent Tech](https://github.com/rhanka/sent-tech-design-system)**.
 

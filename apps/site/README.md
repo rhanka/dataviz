@@ -2,10 +2,12 @@
 
 > **Redirection (lot C).** `@sentropic/dataviz-*` vit désormais dans le design
 > system Sentropic (<https://design-system.sent-tech.ca>, source de
-> référence). La racine déployée redirige vers ce site
-> (`apps/site/redirect.html`, branché dans `.github/workflows/pages.yml`) ;
+> référence). La racine déployée redirige vers
+> <https://design-system.sent-tech.ca/components> (cible provisoire, en
+> attendant une section dataviz dédiée : voir le commentaire dans
+> `apps/site/redirect.html`, branché dans `.github/workflows/pages.yml`) ;
 > la galerie historique (112 démos, `/coverage`, `/demos/*`) reste accessible.
-> Inventaire : `docs/site-inventory.md`.
+> Inventaire : `../../docs/site-inventory.md`.
 
 Docs + gallery website for **@sentropic/dataviz**, in the spirit of
 `highcharts.com/docs`. It is mapped to the **Sent Tech design-system website**:
