@@ -67,5 +67,10 @@ SSR/hydration sûrs, tree-shaking préservé, `dataviz-core` 100 % testé.
 
 ## Publication
 
-npm scope `@sentropic/*` (même token granulaire que le DS). Versionnage indépendant
-du DS. CI : build/check/test + publish + GitHub Pages pour la démo.
+Les paquets `@sentropic/dataviz-*` sont publiés **depuis le design system**
+([rhanka/sent-tech-design-system](https://github.com/rhanka/sent-tech-design-system)),
+qui en est le seul éditeur, sur sa propre ligne de version.
+
+Ce dépôt ne publie plus sur npm : ses paquets sont `private`, aucun tag n'y déclenche
+de publication, et sa CI se limite à build/check/test + GitHub Pages pour le site et
+les démos.

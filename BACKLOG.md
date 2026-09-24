@@ -1,10 +1,16 @@
 # dataviz — Backlog couverture « marché total »
 
+> **Les paquets `@sentropic/dataviz-*` vivent désormais dans le design system**
+> ([rhanka/sent-tech-design-system](https://github.com/rhanka/sent-tech-design-system)),
+> qui est leur seul éditeur npm (tags `dataviz-v*`). Ce dépôt ne publie plus : aucune
+> consigne de release ci-dessous ne vaut ici, la livraison npm relève du dépôt du
+> design system.
+
 Objectif : zéro composant manquant face à **New Relic, Kibana/Elastic, Grafana, Dataiku, SAS Visual Analytics, Qlik Sense, Tableau, Power BI, Highcharts**. Inventaire issu d'une revue des galeries/docs officielles (2026-06-14). Sur ~150 types de viz recensés, **~95 % déjà couverts** par les 77 composants dataviz. Ce backlog liste les écarts réels.
 
 > **Historique (livré)** : le backlog « classe Highcharts / capacités transverses » (cross-filter, drilldown, bookmarks, URL-sync, export, calculated fields, small multiples, crosshair, légende interactive, annotations, data-labels, a11y datapoint-nav, conditional-formatting, header AppChrome) est **100 % livré** (≤ v0.4.27). Les 18 nouveaux types de charts + la parité cross-fw (îlots React/Vue) sont livrés en v0.4.28→v0.4.32. La couverture des composants charts DS existants est complète.
 
-Règle d'or : 100 % composant DS (zéro SVG hand-rollé), parité 3 fw, démo registry + îlot cross-fw, gate vert, release lockstep OIDC. Lire les contrats DS depuis le `node_modules` **nested** (0.36.33), jamais la racine périmée.
+Règle d'or : 100 % composant DS (zéro SVG hand-rollé), parité 3 fw, démo registry + îlot cross-fw, gate vert. La livraison npm ne se fait plus depuis ce dépôt : elle passe par le design system, par tag `dataviz-v*`. Lire les contrats DS depuis le `node_modules` **nested** (0.36.33), jamais la racine périmée.
 
 Page cible : **matrice de mapping** composants ↔ solutions dans la doc du site.
 
@@ -31,7 +37,7 @@ Réalisables en composant dataviz qui orchestre/compose des composants DS exista
 
 ## Catégorie B — FR au DS (composant DS inexistant → demander, wrapper à livraison)
 
-**FR envoyée + relancée + ACCEPTÉE par le DS** (claude:sent-tech-design-system). Ordre de livraison DS par lots : **LOT1** = StateTimeline (P1) + SolidGauge → **LOT2** = StatusHistory + Waffle + Ribbon → **LOT3** = AnomalySwimLane + Flamegraph + TraceWaterfall → **LOT4** = DecompositionTree + Density2D + EventFeedPanel → **LOT5** (P3) = Vector + Contour + WindBarb + Renko + PointAndFigure. Ping DS à chaque tag npm ; je câble chaque lot sous ~10 min (3 fw + core builder + démo + îlot + matrice fr-ds→covered + release lockstep, bump deps DS). ✅ **DÉCOUPLAGE OBTENU** (mon driving) : le DS a accepté de lancer B en parallèle de son chantier header (pas d'attente de la validation rhanka). **LOT1 (StateTimeline + SolidGauge) EN CONSTRUCTION côté DS** (part de svelte 0.34.33) — tag imminent, je câble dès le ping. Ordre lots révisé DS : LOT1 StateTimeline+SolidGauge → LOT2 StatusHistory+Waffle → LOT3 Ribbon+AnomalySwimLane → LOT4 Flamegraph+TraceWaterfall+DecompositionTree+Density2D+EventFeed → LOT5(P3) Vector/Contour/WindBarb/Renko/PointAndFigure.
+**FR envoyée + relancée + ACCEPTÉE par le DS** (claude:sent-tech-design-system). Ordre de livraison DS par lots : **LOT1** = StateTimeline (P1) + SolidGauge → **LOT2** = StatusHistory + Waffle + Ribbon → **LOT3** = AnomalySwimLane + Flamegraph + TraceWaterfall → **LOT4** = DecompositionTree + Density2D + EventFeedPanel → **LOT5** (P3) = Vector + Contour + WindBarb + Renko + PointAndFigure. Ping DS à chaque tag npm ; je câble chaque lot sous ~10 min (3 fw + core builder + démo + îlot + matrice fr-ds→covered + bump deps DS ; la livraison npm se fait ensuite depuis le design system, par tag `dataviz-v*`, plus par un tag de ce dépôt). ✅ **DÉCOUPLAGE OBTENU** (mon driving) : le DS a accepté de lancer B en parallèle de son chantier header (pas d'attente de la validation rhanka). **LOT1 (StateTimeline + SolidGauge) EN CONSTRUCTION côté DS** (part de svelte 0.34.33) — tag imminent, je câble dès le ping. Ordre lots révisé DS : LOT1 StateTimeline+SolidGauge → LOT2 StatusHistory+Waffle → LOT3 Ribbon+AnomalySwimLane → LOT4 Flamegraph+TraceWaterfall+DecompositionTree+Density2D+EventFeed → LOT5(P3) Vector/Contour/WindBarb/Renko/PointAndFigure.
 
 | # | Composant | Prio | Highcharts equiv | Vu dans | État |
 |---|-----------|------|------------------|---------|------|
@@ -64,7 +70,7 @@ Réalisables en composant dataviz qui orchestre/compose des composants DS exista
 - ✅ **Matrice de mapping** : données (`apps/site/src/lib/data/market-matrix.ts`, 9 solutions × ~85 composants) + **PAGE livrée** (route `/coverage`, `MarketMatrixPage.svelte`, lien nav « Couverture marché ») — intégration additive pure (chrome de l'autre agent intact), build vert, déployée.
 - ✅ **Catégorie B** (16 composants) : **SOLDÉE 16/16** 🎉. LOT1 v0.4.38 (StateTimeline+SolidGauge), LOT2 v0.4.39 (StatusHistory+Waffle), LOT3 v0.4.40 (Ribbon+AnomalySwimLane), LOT4 v0.4.41 (Flamegraph+TraceWaterfall+DecompositionTree+Density2D), LOT6a v0.4.42 (EventFeedPanel+VectorField), LOT7b v0.4.43 (Contour+WindBarb), LOT8 v0.4.44 (Renko+PointAndFigure). Les 16 composants FR-au-DS sont livrés (composants DS + core builders + 3 fw + démos + îlots cross-fw), matrice marché 100% gap-filled.
 
-Méthode : `/loop` 2 agents (un composant disjoint par agent), intégration registry/index/specs + gate + release lockstep par le conducteur, publication régulière sur `main`.
+Méthode : `/loop` 2 agents (un composant disjoint par agent), intégration registry/index/specs + gate par le conducteur, intégration régulière sur `main` ; la livraison npm relève du design system (tag `dataviz-v*`).
 
 ## WP20 — Capacités transverses & site docs (état réel 2026-06-15)
 

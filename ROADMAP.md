@@ -1,5 +1,11 @@
 # dataviz — ROADMAP (couverture BI intégrale)
 
+> **Les paquets `@sentropic/dataviz-*` vivent désormais dans le design system**
+> ([rhanka/sent-tech-design-system](https://github.com/rhanka/sent-tech-design-system)),
+> qui est leur seul éditeur npm. Ce dépôt ne publie plus : les jalons ci-dessous
+> qui parlent de tag/release/publication npm depuis dataviz sont historiques ; la
+> livraison de ces bibliothèques passe par le dépôt du design system.
+
 **Objectif : 100 % de l'inventaire BI** (Tableau / Qlik / Power BI / Superset / Metabase).
 Source de vérité : `~/src/sent-tech-design-system/docs/bi-study/INVENTORY.md` (165 items ;
 29 ✅ déjà couverts par le DS, 71 🟡 partiels, 91 ❌ manquants). **LOT ZÉRO (état partagé)
@@ -21,8 +27,9 @@ Source de vérité : `~/src/sent-tech-design-system/docs/bi-study/INVENTORY.md` 
    `npx vitest run src --no-cache --no-file-parallelism` vert → commit+push → CI verte →
    case cochée ici.
 5. **Boucle jusqu'à 100 %.** Ne PAS s'arrêter après quelques familles. Pousser main
-   régulièrement. Publier par tag `v<version>` (les 4 packages en lockstep) quand une
-   vague est stable.
+   régulièrement. **Ne pas taguer ce dépôt pour publier** : la livraison npm des paquets
+   `@sentropic/dataviz-*` passe désormais par le design system, par tag `dataviz-v*`.
+   Quand une vague est stable, la signaler au dépôt du design system, qui publie.
 
 ## Répartition
 

@@ -3,7 +3,12 @@
 Angular adapter for `@sentropic/dataviz-core`, built against
 `@sentropic/design-system-angular`.
 
-This workspace package is private for now. It depends on a vendored
+> The `@sentropic/dataviz-*` libraries now live in and are published from the
+> design system: <https://github.com/rhanka/sent-tech-design-system>. The copy
+> in this repository is kept for the local site and demos only; it is private and
+> this repository publishes nothing to npm.
+
+This workspace package is private. It depends on a vendored
 `@sentropic/design-system-angular@0.36.47` tarball because the DS Angular
 package is not published to npm yet.
 
@@ -23,6 +28,6 @@ Consumers must load the DS CSS once:
 import '@sentropic/design-system-angular/styles.css';
 ```
 
-Once the DS Angular package is published to npm, remove `private: true`, replace
-the `file:../../vendor/...` dependency with the published DS version, and add
-the package to the npm publishing workflow.
+Replacing the `file:../../vendor/...` dependency with a published DS version, and
+publishing this adapter at all, are now decisions owned by the design system
+repository. Nothing in this repository should be made publishable again.
