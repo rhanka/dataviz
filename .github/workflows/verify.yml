@@ -1,0 +1,35 @@
+name: Verify
+
+# Build + check + test du monorepo dataviz. Ce dépôt NE PUBLIE PLUS sur npm.
+#
+# Les paquets @sentropic/dataviz-* ont été rapatriés dans le design system
+# (https://github.com/rhanka/sent-tech-design-system), qui est désormais le seul
+# éditeur : il les publie depuis ses propres workspaces, par tag `dataviz-v*`,
+# via npm Trusted Publishing (OIDC).
+#
+# Ce fichier remplace l'ancien `npm-publish.yml`, qui se déclenchait sur les tags
+# `v*` et publiait dataviz-core/svelte/react/vue. Ce chemin est supprimé : le
+# nom de fichier auquel l'ancien trusted publisher npm (`rhanka/dataviz +
+# npm-publish.yml`) était adossé n'existe plus, et aucun tag de ce dépôt ne
+# déclenche de publication. Les paquets du dépôt sont par ailleurs `private`.
+#
+# Ne pas réintroduire de job de publication ici : un tag `v<version>` côté
+# dataviz publierait la version que le design system doit publier.
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+      - run: npm ci
+      - run: npm run verify

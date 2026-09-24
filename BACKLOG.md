@@ -1,5 +1,11 @@
 # dataviz — Backlog couverture « marché total »
 
+> **Les paquets `@sentropic/dataviz-*` vivent désormais dans le design system**
+> ([rhanka/sent-tech-design-system](https://github.com/rhanka/sent-tech-design-system)),
+> qui est leur seul éditeur npm. Ce dépôt ne publie plus : la mention « release
+> lockstep OIDC » de la règle d'or ci-dessous ne s'applique plus ici, elle est
+> désormais du ressort du dépôt du design system.
+
 Objectif : zéro composant manquant face à **New Relic, Kibana/Elastic, Grafana, Dataiku, SAS Visual Analytics, Qlik Sense, Tableau, Power BI, Highcharts**. Inventaire issu d'une revue des galeries/docs officielles (2026-06-14). Sur ~150 types de viz recensés, **~95 % déjà couverts** par les 77 composants dataviz. Ce backlog liste les écarts réels.
 
 > **Historique (livré)** : le backlog « classe Highcharts / capacités transverses » (cross-filter, drilldown, bookmarks, URL-sync, export, calculated fields, small multiples, crosshair, légende interactive, annotations, data-labels, a11y datapoint-nav, conditional-formatting, header AppChrome) est **100 % livré** (≤ v0.4.27). Les 18 nouveaux types de charts + la parité cross-fw (îlots React/Vue) sont livrés en v0.4.28→v0.4.32. La couverture des composants charts DS existants est complète.
