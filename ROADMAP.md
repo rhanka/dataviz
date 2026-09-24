@@ -27,8 +27,9 @@ Source de vérité : `~/src/sent-tech-design-system/docs/bi-study/INVENTORY.md` 
    `npx vitest run src --no-cache --no-file-parallelism` vert → commit+push → CI verte →
    case cochée ici.
 5. **Boucle jusqu'à 100 %.** Ne PAS s'arrêter après quelques familles. Pousser main
-   régulièrement. Publier par tag `v<version>` (les 4 packages en lockstep) quand une
-   vague est stable.
+   régulièrement. **Ne pas taguer ce dépôt pour publier** : la livraison npm des paquets
+   `@sentropic/dataviz-*` passe désormais par le design system, par tag `dataviz-v*`.
+   Quand une vague est stable, la signaler au dépôt du design system, qui publie.
 
 ## Répartition
 
