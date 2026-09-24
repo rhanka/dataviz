@@ -1,13 +1,15 @@
 # @sentropic/dataviz-site
 
-> **Redirection (lot C).** `@sentropic/dataviz-*` vit désormais dans le design
-> system Sentropic (<https://design-system.sent-tech.ca>, source de
-> référence). La racine déployée redirige vers
-> <https://design-system.sent-tech.ca/components> (cible provisoire, en
-> attendant une section dataviz dédiée : voir le commentaire dans
-> `apps/site/redirect.html`, branché dans `.github/workflows/pages.yml`) ;
-> la galerie historique (112 démos, `/coverage`, `/demos/*`) reste accessible.
-> Inventaire : `../../docs/site-inventory.md`.
+> **Not deployed any more.** `@sentropic/dataviz-*` now lives in the Sentropic
+> design system (<https://design-system.sent-tech.ca>, reference source). This
+> SPA still builds and runs locally, but `.github/workflows/pages.yml` no longer
+> copies its `dist/` to Pages: it publishes `apps/site/redirect.html` as BOTH
+> `_site/index.html` and `_site/404.html`, so every address on
+> `dataviz.sent-tech.ca` — root and historical deep links alike — redirects to
+> <https://design-system.sent-tech.ca/components> (provisional target, pending a
+> dedicated dataviz section; see the comment in `apps/site/redirect.html`).
+> The per-framework demos stay published under `/demos/*`.
+> Inventory of what the gallery used to serve: `../../docs/site-inventory.md`.
 
 Docs + gallery website for **@sentropic/dataviz**, in the spirit of
 `highcharts.com/docs`. It is mapped to the **Sent Tech design-system website**:
@@ -15,8 +17,9 @@ same stack family (Vite + Svelte 5 + design-system tokens/themes), same chrome
 (sticky header + left sidebar + content), same theming/dark-mode mechanism, so
 the two sites feel like one product.
 
-Live target: `dataviz.sent-tech.ca` · deployed on GitHub Pages under
-`/dataviz/site/`.
+Former live target: `dataviz.sent-tech.ca`. That domain now serves only the
+redirect page (root and 404 fallback) plus `/demos/*`; this SPA is a local-only
+reference build.
 
 ## What it is
 
@@ -84,15 +87,23 @@ npm run preview --workspace apps/site
 
 An absolute base is required for an SPA with deep links: with a relative base,
 loading `/charts/treemap` directly would request assets under `/charts/assets/…`
-and 404. A `404.html` (copy of `index.html`) is emitted at deploy time so deep
-links resolve on the static host.
+and 404. A `404.html` copy of `index.html` used to be emitted at deploy time so
+deep links resolved on the static host; the deployment no longer does that (the
+404 fallback is the redirect page), so this only matters for local previews.
 
 ## Deployment
 
-`.github/workflows/pages.yml` builds the three demos **and** this site, then
-publishes it under `/site` (with the `404.html` fallback) alongside the existing
-demos. The root `npm run build` already includes `apps/site` because it is a
-workspace with a `build` script.
+`.github/workflows/pages.yml` builds the three demos **and** this site (the root
+`npm run build` includes `apps/site` because it is a workspace with a `build`
+script), but it publishes only:
+
+- `apps/site/redirect.html` as `_site/index.html` **and** `_site/404.html` — so
+  every address on the domain, resolved or not, serves the redirect page;
+- `_site/demos/svelte|react|vue` — the three framework demos;
+- `_site/CNAME`.
+
+This SPA's `dist/` is intentionally not copied: publishing it is what made
+`/charts` & co. answer with an unmaintained gallery under a 404 status.
 
 ## Status (iteration 1)
 

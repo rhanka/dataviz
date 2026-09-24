@@ -10,7 +10,8 @@ import { defineConfig } from 'vite';
 // relative base, loading `/charts/treemap` directly would request assets under
 // `/charts/assets/…` and 404. The site is deployed under `/dataviz/site/` on
 // GitHub Pages; override with DV_SITE_BASE for other hosts (use '/' for root).
-// A 404.html fallback (copied at deploy time) makes every deep link resolve.
+// NOTE: this SPA is no longer deployed — pages.yml publishes the redirect page as
+// both index.html and 404.html. The base only affects local dev/preview now.
 const BASE = process.env.DV_SITE_BASE ?? '/dataviz/site/';
 
 export default defineConfig({
