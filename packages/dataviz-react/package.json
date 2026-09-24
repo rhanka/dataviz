@@ -1,6 +1,7 @@
 {
   "name": "@sentropic/dataviz-react",
   "version": "0.4.52",
+  "private": true,
   "description": "React adapter for @sentropic/dataviz-core, built on @sentropic/design-system-react.",
   "type": "module",
   "license": "MIT",
@@ -45,8 +46,5 @@
     "jsdom": "^29.1.1",
     "react": "^19.2.7",
     "react-dom": "^19.2.7"
-  },
-  "publishConfig": {
-    "access": "public"
   }
 }
