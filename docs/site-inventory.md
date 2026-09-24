@@ -118,8 +118,14 @@ Conditional Formatting, RecordsTable, PivotDataTable, AdvancedPivotDataTable
   renvoi, donc le navigateur redirige ; seul le code de statut reste 404.
 - Contenu encore publié : la page de renvoi (racine + repli), `/demos/*`,
   `CNAME`. Plus aucun fragment de la galerie SPA.
-- Renvoi inverse (du site du design system vers cette galerie pour les 29
-  démos sans équivalent) : traité dans l'autre dépôt (voir § 9).
+- Renvoi inverse : le plan initial était de faire pointer le site du design
+  system vers cette galerie pour les 29 démos sans équivalent (§ 9 C). Ce
+  renvoi n'est plus possible — la galerie n'est plus publiée, et toute URL
+  de `dataviz.sent-tech.ca` redirige vers le design system. Les 29 démos
+  restent donc à porter dans le design system ; le tableau § 9 C en est la
+  liste de travail. Le bandeau « Ouvrir le site dataviz » présent sur
+  `design-system.sent-tech.ca/components` renvoie désormais sur la page de
+  renvoi (aller-retour) : à reformuler dans l'autre dépôt.
 
 ## 9. Croisement démo par démo avec le site du design system
 
