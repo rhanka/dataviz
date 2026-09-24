@@ -3,8 +3,8 @@ name: GitHub Pages
 # Build the three framework demos (Svelte / React / Vue) AND the docs + gallery
 # website (apps/site), then deploy them to GitHub Pages behind a landing page.
 # The demos use a relative `base` (served from their own sub-paths); the docs
-# website is an SPA with an absolute base `/dataviz/site/` and a 404.html
-# fallback so its deep links resolve on a static host.
+# website is an SPA with an absolute base `/` (DV_SITE_BASE, custom-domain
+# root) and a 404.html fallback so its deep links resolve on a static host.
 
 on:
   push:
