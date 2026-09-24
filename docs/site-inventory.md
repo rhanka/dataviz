@@ -1,23 +1,29 @@
-# Inventaire du site dataviz (avant redirection — lot C)
+# Inventaire du site dataviz (avant retrait — lot C)
 
 > Contexte : les paquets `@sentropic/dataviz-*` et le paquet `graph` ont été
 > rapatriés dans le design system Sentropic (dépôt de référence, site
 > https://design-system.sent-tech.ca). Ce document décrit ce que le site
-> dataviz présente réellement, pour décider ce qui se redirige et ce qui se
-> conserve. Le site historique reste accessible sur ses pages profondes ;
-> seule la racine redirige (voir § 6).
+> dataviz présentait réellement, pour décider ce qui se redirige et ce qui se
+> conserve. La galerie SPA n'est plus publiée : racine et liens profonds
+> redirigent tous vers le design system (voir § 8). Ce document reste la trace
+> de son contenu.
 
 ## 1. Assemblage déployé (`.github/workflows/pages.yml`)
 
-- `apps/site/dist` (base `DV_SITE_BASE=/`) copié à la racine du domaine
-  `dataviz.sent-tech.ca` (fichier `CNAME` conservé à l'assemblage).
-- `apps/site/dist/index.html` dupliqué en `_site/404.html` : la SPA est servie
-  en repli pour toute URL profonde (liens directs type `/charts/treemap`).
+État courant :
+
+- `apps/site/dist` n'est plus copié : la galerie SPA n'est pas publiée.
+- `apps/site/redirect.html` est copié DEUX fois — `_site/index.html` (racine)
+  et `_site/404.html` (repli Pages pour toute URL non résolue). Toute adresse
+  du domaine sert donc la page de renvoi.
 - Les trois démos frameworks (`apps/docs`, `apps/docs-react`, `apps/docs-vue`,
-  base relative) copiées sous `_site/demos/svelte|react|vue`.
-- Depuis le lot C : `_site/index.html` est remplacé par la page de redirection
-  `apps/site/redirect.html` ; `404.html`, les pages profondes et `/demos/*`
-  sont inchangés.
+  base relative) restent copiées sous `_site/demos/svelte|react|vue` : chemins
+  réels, résolus avant le repli 404.
+- `CNAME` (`dataviz.sent-tech.ca`) conservé à l'assemblage.
+
+Historique (avant ce retrait) : `apps/site/dist` était copié à la racine et son
+`index.html` dupliqué en `404.html`, ce qui faisait servir la galerie en repli
+pour toute URL profonde ; le lot C n'avait remplacé que `_site/index.html`.
 
 ## 2. `apps/site` — docs + galerie (Vite 8 + Svelte 5, SPA History API)
 
@@ -97,19 +103,29 @@ Conditional Formatting, RecordsTable, PivotDataTable, AdvancedPivotDataTable
   d'où l'URL sans `/`). Cible provisoire : la cible visée est une section
   dataviz dédiée du site du design system, qui n'existe pas encore (voir le
   commentaire dans `apps/site/redirect.html`).
-- Mécanisme : `_site/index.html` statique (`apps/site/redirect.html`) —
-  `meta refresh` à 1 s + `location.replace` + `canonical` + message court
-  (FR) et deux liens visibles : le site du design system, et la galerie
-  historique conservée (`/charts`). Sans JS, le `meta refresh` et les liens
+- Mécanisme : `apps/site/redirect.html` statique, publié comme
+  `_site/index.html` ET `_site/404.html` — `meta refresh` à 1 s +
+  `location.replace` + `canonical` + message court (FR) et un lien visible
+  vers le site du design system. Sans JS, le `meta refresh` et le lien
   couvrent le repli.
-- La page d'accueil du site dataviz (`/`) n'est plus atteignable par URL :
-  `_site/index.html` est la page de redirection. Seules les pages profondes
-  (`/charts/*`, `/dashboards/*`, `/grids/*`, `/coverage`, servies en repli
-  par `404.html`) et `/demos/*` restent accessibles.
-- Contenu conservé et accessible : `404.html` (SPA), toutes les pages
-  profondes, `/demos/*`, `CNAME`.
-- Renvoi inverse (du site du design system vers cette galerie pour les 29
-  démos sans équivalent) : traité dans l'autre dépôt (voir § 9).
+- Portée : toutes les adresses du domaine. La racine sert la page de renvoi ;
+  toute URL non résolue (donc `/charts`, `/charts/:slug`, `/dashboards/*`,
+  `/grids/*`, `/coverage`, et tout lien profond historique) est servie par
+  `404.html`, qui est la même page de renvoi.
+- Limite du support statique : GitHub Pages renvoie le **statut HTTP 404** pour
+  ces URL non résolues (aucun 301 possible sans serveur ; le domaine n'est pas
+  derrière un CDN — `server: GitHub.com`). Le corps servi est bien la page de
+  renvoi, donc le navigateur redirige ; seul le code de statut reste 404.
+- Contenu encore publié : la page de renvoi (racine + repli), `/demos/*`,
+  `CNAME`. Plus aucun fragment de la galerie SPA.
+- Renvoi inverse : le plan initial était de faire pointer le site du design
+  system vers cette galerie pour les 29 démos sans équivalent (§ 9 C). Ce
+  renvoi n'est plus possible — la galerie n'est plus publiée, et toute URL
+  de `dataviz.sent-tech.ca` redirige vers le design system. Les 29 démos
+  restent donc à porter dans le design system ; le tableau § 9 C en est la
+  liste de travail. Le bandeau « Ouvrir le site dataviz » présent sur
+  `design-system.sent-tech.ca/components` renvoie désormais sur la page de
+  renvoi (aller-retour) : à reformuler dans l'autre dépôt.
 
 ## 9. Croisement démo par démo avec le site du design system
 

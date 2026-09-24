@@ -1,10 +1,13 @@
 name: GitHub Pages
 
-# Build the three framework demos (Svelte / React / Vue) AND the docs + gallery
-# website (apps/site), then deploy them to GitHub Pages behind a landing page.
-# The demos use a relative `base` (served from their own sub-paths); the docs
-# website is an SPA with an absolute base `/` (DV_SITE_BASE, custom-domain
-# root) and a 404.html fallback so its deep links resolve on a static host.
+# Publish dataviz.sent-tech.ca. The docs/gallery SPA (apps/site) is no longer
+# deployed: @sentropic/dataviz-* moved to the Sentropic design system, so EVERY
+# path on this domain must land on the redirect page (apps/site/redirect.html).
+# GitHub Pages resolves any unknown path with the published-site-root 404.html,
+# so that page is deployed twice — as the root document and as the catch-all —
+# which makes historical deep links (/charts, /charts/treemap, /dashboards, …)
+# redirect instead of rendering a stale gallery. The three framework demos keep
+# their own real paths under /demos/* (relative base).
 
 on:
   push:
@@ -31,25 +34,27 @@ jobs:
           node-version: "22"
           cache: "npm"
       - run: npm ci
-      # Builds packages + every app workspace. apps/site builds at base "/"
-      # (DV_SITE_BASE) so the docs website serves at the custom-domain ROOT
-      # (dataviz.sent-tech.ca). The three demos use a relative base (served
-      # from /demos/*).
-      - run: DV_SITE_BASE=/ npm run build
-      - name: Assemble site (redirect at root + gallery history + per-framework demos)
+      # Builds packages + every app workspace. apps/site still builds (it stays
+      # a compile gate and a local `npm run dev` target) but its dist is NOT
+      # deployed any more, so DV_SITE_BASE no longer matters here; only the
+      # three demos (relative base) are published, under /demos/*.
+      - run: npm run build
+      - name: Assemble site (redirect on every path + per-framework demos)
         run: |
           mkdir -p _site
-          # Docs + gallery website (apps/site, base "/") at the custom-domain root.
-          cp -r apps/site/dist/* _site/
-          # GitHub Pages serves the published-site-root 404.html for any missing
-          # path, so the docs SPA index doubles as the deep-link fallback.
-          cp apps/site/dist/index.html _site/404.html
-          # Lot C: the root redirects to the design-system site (new home of
-          # @sentropic/dataviz-*); deep gallery pages stay reachable via 404.html.
+          # Nothing from apps/site/dist is copied: publishing the SPA shell is
+          # what made /charts & co. answer with an unmaintained gallery.
+          # The redirect page is the root document AND the 404 catch-all, so
+          # every unknown path (every historical deep link) redirects to the
+          # design system — with JS (location.replace) and without (meta
+          # refresh). GitHub Pages still returns the 404 status code for those
+          # paths: a static host cannot issue a 301 here.
           cp apps/site/redirect.html _site/index.html
+          cp apps/site/redirect.html _site/404.html
           # Custom domain (keeps the Pages custom-domain binding across deploys).
           echo dataviz.sent-tech.ca > _site/CNAME
-          # The three framework demos (relative base) under /demos/*.
+          # The three framework demos (relative base) under /demos/*. These are
+          # real published paths, resolved before the 404 fallback.
           mkdir -p _site/demos
           cp -r apps/docs/dist _site/demos/svelte
           cp -r apps/docs-react/dist _site/demos/react

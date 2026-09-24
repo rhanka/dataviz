@@ -72,5 +72,6 @@ Les paquets `@sentropic/dataviz-*` sont publiés **depuis le design system**
 qui en est le seul éditeur, sur sa propre ligne de version.
 
 Ce dépôt ne publie plus sur npm : ses paquets sont `private`, aucun tag n'y déclenche
-de publication, et sa CI se limite à build/check/test + GitHub Pages pour le site et
-les démos.
+de publication, et sa CI se limite à build/check/test + GitHub Pages, qui ne déploie
+plus que la page de renvoi vers le design system (racine **et** repli 404, donc toute
+adresse du domaine) et les trois démos frameworks sous `/demos/*`.
