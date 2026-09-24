@@ -3,8 +3,8 @@ name: GitHub Pages
 # Build the three framework demos (Svelte / React / Vue) AND the docs + gallery
 # website (apps/site), then deploy them to GitHub Pages behind a landing page.
 # The demos use a relative `base` (served from their own sub-paths); the docs
-# website is an SPA with an absolute base `/dataviz/site/` and a 404.html
-# fallback so its deep links resolve on a static host.
+# website is an SPA with an absolute base `/` (DV_SITE_BASE, custom-domain
+# root) and a 404.html fallback so its deep links resolve on a static host.
 
 on:
   push:
@@ -36,7 +36,7 @@ jobs:
       # (dataviz.sent-tech.ca). The three demos use a relative base (served
       # from /demos/*).
       - run: DV_SITE_BASE=/ npm run build
-      - name: Assemble site (docs website at root + per-framework demos)
+      - name: Assemble site (redirect at root + gallery history + per-framework demos)
         run: |
           mkdir -p _site
           # Docs + gallery website (apps/site, base "/") at the custom-domain root.
@@ -44,6 +44,9 @@ jobs:
           # GitHub Pages serves the published-site-root 404.html for any missing
           # path, so the docs SPA index doubles as the deep-link fallback.
           cp apps/site/dist/index.html _site/404.html
+          # Lot C: the root redirects to the design-system site (new home of
+          # @sentropic/dataviz-*); deep gallery pages stay reachable via 404.html.
+          cp apps/site/redirect.html _site/index.html
           # Custom domain (keeps the Pages custom-domain binding across deploys).
           echo dataviz.sent-tech.ca > _site/CNAME
           # The three framework demos (relative base) under /demos/*.
