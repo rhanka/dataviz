@@ -14,7 +14,7 @@
 <div class="dv-prose">
   <p class="dv-redirect-notice">
     @sentropic/dataviz vit désormais dans le design system Sentropic —
-    <a href="https://design-system.sent-tech.ca/">continuer vers design-system.sent-tech.ca →</a>.
+    <a href="https://design-system.sent-tech.ca/components">continuer vers design-system.sent-tech.ca →</a>.
     Cette galerie reste accessible pour l'historique.
   </p>
   <section class="dv-hero">
