@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@sentropic/dataviz — déplacé vers le design system Sentropic</title>
+    <meta
+      name="description"
+      content="Le site @sentropic/dataviz a déménagé : la documentation et les paquets vivent désormais sur le site du design system Sentropic."
+    />
+    <!-- Cible provisoire : la cible visée est une section dataviz dédiée du
+      site du design system, qui n'existe pas encore. En attendant, la
+      redirection pointe vers l'index des composants. -->
+    <link rel="canonical" href="https://design-system.sent-tech.ca/components" />
+    <meta http-equiv="refresh" content="1; url=https://design-system.sent-tech.ca/components" />
+    <script>
+      // Remplace l'entrée d'historique pour que « retour » ne boucle pas ici.
+      window.location.replace('https://design-system.sent-tech.ca/components');
+    </script>
+    <style>
+      :root { color-scheme: light dark; }
+      body {
+        margin: 0;
+        font-family: system-ui, -apple-system, sans-serif;
+        line-height: 1.55;
+        color: #0f172a;
+        background: #f8fafc;
+      }
+      main { margin: 0 auto; max-width: 640px; padding: 3rem 1.5rem; }
+      h1 { font-size: 1.5rem; margin: 0 0 0.5rem; }
+      p { color: #475569; }
+      a { color: #2563eb; }
+      @media (prefers-color-scheme: dark) {
+        body { color: #f1f5f9; background: #0f172a; }
+        p { color: #94a3b8; }
+        a { color: #7dd3fc; }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>@sentropic/dataviz a déménagé</h1>
+      <p>
+        La documentation et les paquets <code>@sentropic/dataviz-*</code>
+        vivent désormais sur le site du design system Sentropic.
+        Redirection en cours…
+      </p>
+      <p>
+        <a href="https://design-system.sent-tech.ca/components">Continuer vers design-system.sent-tech.ca →</a>
+      </p>
+      <p>
+        La galerie historique (112 démos) reste consultable :
+        <a href="/charts">voir la galerie conservée →</a>
+      </p>
+    </main>
+  </body>
+</html>

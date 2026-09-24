@@ -1547,6 +1547,16 @@ select {
   padding: 0.08rem 0.25rem;
 }
 
+/* Lot C : bandeau de renvoi vers le site du design system (landing conservée). */
+.dv-redirect-notice {
+  background: var(--st-semantic-surface-subtle, #f8fafc);
+  border: 1px solid var(--st-semantic-border-subtle, #e2e8f0);
+  border-radius: 0.5rem;
+  color: var(--st-semantic-text-secondary, #475569);
+  margin: 0;
+  padding: 0.75rem 1rem;
+}
+
 .dv-h1,
 .dv-hero h1 {
   color: var(--st-semantic-text-primary, #0f172a);
