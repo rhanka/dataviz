@@ -1,13 +1,14 @@
 name: GitHub Pages
 
-# Publish dataviz.sent-tech.ca. The docs/gallery SPA (apps/site) is no longer
-# deployed: @sentropic/dataviz-* moved to the Sentropic design system, so EVERY
-# path on this domain must land on the redirect page (apps/site/redirect.html).
-# GitHub Pages resolves any unknown path with the published-site-root 404.html,
-# so that page is deployed twice — as the root document and as the catch-all —
-# which makes historical deep links (/charts, /charts/treemap, /dashboards, …)
-# redirect instead of rendering a stale gallery. The three framework demos keep
-# their own real paths under /demos/* (relative base).
+# Publish dataviz.sent-tech.ca as a redirect to the Sentropic design system.
+# This repository holds no code any more: @sentropic/dataviz-* moved to
+# rhanka/sent-tech-design-system. Every path on this domain must land on the
+# redirect page, so it is deployed twice — as the root document and as the
+# 404 catch-all, which GitHub Pages serves for any unknown path (historical deep
+# links and the former /demos/* included). A static host cannot issue a 301:
+# those paths keep a 404 status and redirect with JS (location.replace) and
+# without it (meta refresh). A true 301 needs a redirect rule at the DNS/proxy
+# layer (the sent-tech.ca zone is on Cloudflare).
 
 on:
   push:
@@ -19,7 +20,6 @@ permissions:
   pages: write
   id-token: write
 
-# Allow one concurrent deployment; cancel in-progress runs on a new push.
 concurrency:
   group: pages
   cancel-in-progress: true
@@ -29,36 +29,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: "22"
-          cache: "npm"
-      - run: npm ci
-      # Builds packages + every app workspace. apps/site still builds (it stays
-      # a compile gate and a local `npm run dev` target) but its dist is NOT
-      # deployed any more, so DV_SITE_BASE no longer matters here; only the
-      # three demos (relative base) are published, under /demos/*.
-      - run: npm run build
-      - name: Assemble site (redirect on every path + per-framework demos)
+      - name: Assemble the redirect site
         run: |
           mkdir -p _site
-          # Nothing from apps/site/dist is copied: publishing the SPA shell is
-          # what made /charts & co. answer with an unmaintained gallery.
-          # The redirect page is the root document AND the 404 catch-all, so
-          # every unknown path (every historical deep link) redirects to the
-          # design system — with JS (location.replace) and without (meta
-          # refresh). GitHub Pages still returns the 404 status code for those
-          # paths: a static host cannot issue a 301 here.
-          cp apps/site/redirect.html _site/index.html
-          cp apps/site/redirect.html _site/404.html
+          cp site/redirect.html _site/index.html
+          cp site/redirect.html _site/404.html
           # Custom domain (keeps the Pages custom-domain binding across deploys).
           echo dataviz.sent-tech.ca > _site/CNAME
-          # The three framework demos (relative base) under /demos/*. These are
-          # real published paths, resolved before the 404 fallback.
-          mkdir -p _site/demos
-          cp -r apps/docs/dist _site/demos/svelte
-          cp -r apps/docs-react/dist _site/demos/react
-          cp -r apps/docs-vue/dist _site/demos/vue
       - uses: actions/upload-pages-artifact@v3
         with:
           path: _site
