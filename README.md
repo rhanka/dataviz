@@ -1,57 +1,35 @@
-# dataviz
+# dataviz — déplacé
 
-> **Source déplacée.** Les paquets `@sentropic/dataviz-*`
-> vivent désormais dans le [design system Sentropic](https://github.com/rhanka/sent-tech-design-system),
-> qui est la source de référence (code, docs, site :
-> <https://design-system.sent-tech.ca>). Le site de ce dépôt redirige vers
-> <https://design-system.sent-tech.ca/components> (cible provisoire, en
-> attendant une section dataviz dédiée) — **toutes ses adresses**, racine comme
-> liens profonds. La galerie historique n'est plus publiée ; son inventaire est
-> conservé dans [docs/site-inventory.md](./docs/site-inventory.md). Les démos
-> par framework restent en ligne sous `/demos/svelte|react|vue`.
+> **Ce dépôt ne contient plus de code.** Les paquets `@sentropic/dataviz-*`
+> (`dataviz-core`, `-svelte`, `-react`, `-vue`, `-angular`) vivent désormais dans le
+> [design system Sentropic](https://github.com/rhanka/sent-tech-design-system), qui
+> est la source de référence : code, documentation, site
+> (<https://design-system.sent-tech.ca>) et publication npm.
 
-Couche **BI / dashboard** construite **nativement sur le [design system Sent Tech](https://github.com/rhanka/sent-tech-design-system)**.
+## Ce qui reste ici
 
-Le design system fournit les composants présentationnels contrôlés (charts, filtres, tableaux…).
-`dataviz` ajoute la seule chose qu'un design system ne doit pas porter : **l'état partagé
-inter-vues** — filtres partagés, brushing-and-linking, sélection propagée, cross-filter,
-sync-slicers, drill, bookmarks.
+- **La redirection du site** `dataviz.sent-tech.ca` : `site/redirect.html`, publié par
+  `.github/workflows/pages.yml` comme racine **et** comme page 404, pour que toute
+  adresse — racine, liens profonds historiques, anciennes démos `/demos/*` — mène au
+  design system.
+- La licence.
 
-> **Le DS émet/reçoit l'intention UI ; dataviz détient, synchronise et persiste l'état inter-vues.**
+## Retrouver l'ancien code
 
-## Où vivent ces bibliothèques
+Le dernier état contenant les paquets, les applications et la documentation est le
+commit [`d10fc62`](https://github.com/rhanka/dataviz/tree/d10fc62f71ecd60f3a15193f240d2c03102816c6) :
 
-Les paquets `@sentropic/dataviz-*` sont désormais maintenus et **publiés depuis le
-design system** : [rhanka/sent-tech-design-system](https://github.com/rhanka/sent-tech-design-system).
-
-Ce dépôt ne publie plus rien sur npm : ses paquets sont marqués `private` et sa CI
-se limite à `build` + `check` + `test`, plus le déploiement GitHub Pages du site et
-des démos. Pour installer, consommer ou faire évoluer ces bibliothèques, aller dans
-le dépôt du design system.
-
-## Packages
-
-Conservés ici pour le site et les démos de ce dépôt (liens npm workspaces, aucune
-publication) ; la version de référence est celle du design system.
-
-| Package | Rôle |
-|---|---|
-| `@sentropic/dataviz-core` | moteur agnostique : store de filtres/sélection, cross-filter, modèle dimension/mesure, agrégation, bookmarks (TS pur, zéro dépendance) |
-| `@sentropic/dataviz-svelte` | adaptateur Svelte 5 + composants dashboard (importe `@sentropic/design-system-svelte`) |
-| `@sentropic/dataviz-react` | adaptateur React + composants dashboard (importe `@sentropic/design-system-react`) |
-| `@sentropic/dataviz-vue` | adaptateur Vue 3 + composants dashboard (importe `@sentropic/design-system-vue`) |
-
-Voir [ARCHITECTURE.md](./ARCHITECTURE.md) pour le cadrage complet.
-
-## Développement
-
-```bash
-npm install
-npm run verify   # check + test + build
+```sh
+git checkout d10fc62f71ecd60f3a15193f240d2c03102816c6
 ```
 
-Monorepo npm workspaces (`packages/*`, `apps/*`). Node ≥ 20.
+Le code avait été copié dans le design system, avec une empreinte par fichier dans
+`docs/graph-dataviz-m1-provenance.json` ; mesuré le 26 septembre 2026, aucun fichier
+fonctionnel n'avait évolué ici depuis cette copie (673 fichiers sur 678 inchangés, les
+5 autres étant les manifestes et un README modifiés par l'arrêt de la publication).
 
-## Licence
+## Ne pas réintroduire de publication
 
-MIT (à confirmer).
+Ce dépôt ne publie plus sur npm. Un tag `v<version>` ici publierait une version que le
+design system doit publier : ne réintroduisez ni workflow de publication ni trusted
+publisher npm dans ce dépôt.
